@@ -4,12 +4,30 @@
  * @author  Ken Campbell
  */
 
-//#include <iostream>
 #include <stdio.h>
+
+// Includes
+#include "cmv_system.h"
+
+// Pointers
+cmv_system* p_cmv_system;       /**< pointer to a cmv_system */
+
 
 int main()
 {
     printf("Ken was here\n");
+
+    // Initialize
+    p_cmv_system = new cmv_system();
+
+    // Tidy up
+    delete p_cmv_system;
+
+    // Close
+    printf("Closing MyoVentCpp\n");
+
+    return(1);
+
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
