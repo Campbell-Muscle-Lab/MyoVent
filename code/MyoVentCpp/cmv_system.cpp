@@ -8,7 +8,9 @@
 
 #include "cmv_system.h"
 #include "circulation.h"
-#include "cmv_system.h"
+#include "hemi_vent.h"
+#include "half_sarcomere.h"
+#include "membranes.h"
 #include "cmv_results.h"
 
 
@@ -22,6 +24,7 @@ cmv_system::cmv_system(void)
 
 	// Create constituent objects
 	p_circulation = new circulation(this);
+	p_hemi_vent = new hemi_vent(this);
 
 	// Run simulation
 	run_simulation();
@@ -34,10 +37,11 @@ cmv_system::~cmv_system(void)
 	// Initialise
 
 	// Code
-	printf("cmv_constructor descructor()\n");
+	printf("cmv_system desctructor()\n");
 
 	// Tidy up
 	delete p_circulation;
+	delete p_hemi_vent;
 }
 
 void cmv_system::run_simulation(void)
@@ -50,13 +54,16 @@ void cmv_system::run_simulation(void)
 	p_cmv_results = new cmv_results(no_of_time_points);
 
 	// Add in the results
-	p_circulation->initialise_results();
+	p_circulation->prepare_for_cmv_results();
+	p_hemi_vent->prepare_for_cmv_results();
 
 	// Simulation
 	for (int i = 0; i < no_of_time_points; i++)
 	{
-		p_circulation->p_aorta = p_circulation->p_aorta + 1.0;
-		p_circulation->p_ventricle = p_circulation->p_ventricle - 0.5;
+		p_circulation->pressure_aorta = p_circulation->pressure_aorta + 1.0;
+		p_hemi_vent->p_hs->hs_length = p_hemi_vent->p_hs->hs_length + 0.1;
+		p_hemi_vent->p_hs->p_membranes->Ca_myofil_conc =
+			p_hemi_vent->p_hs->p_membranes->Ca_myofil_conc - 0.2;
 
 		p_cmv_results->update_results_vectors(i);
 	}

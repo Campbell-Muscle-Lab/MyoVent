@@ -149,6 +149,9 @@
     <ClCompile Include="circulation.cpp" />
     <ClCompile Include="cmv_results.cpp" />
     <ClCompile Include="cmv_system.cpp" />
+    <ClCompile Include="half_sarcomere.cpp" />
+    <ClCompile Include="hemi_vent.cpp" />
+    <ClCompile Include="membranes.cpp" />
     <ClCompile Include="MyoVentCpp.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -156,6 +159,9 @@
     <ClInclude Include="cmv_results.h" />
     <ClInclude Include="cmv_system.h" />
     <ClInclude Include="global_definitions.h" />
+    <ClInclude Include="half_sarcomere.h" />
+    <ClInclude Include="hemi_vent.h" />
+    <ClInclude Include="membranes.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

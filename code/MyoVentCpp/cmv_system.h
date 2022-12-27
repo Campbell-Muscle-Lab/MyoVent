@@ -11,6 +11,7 @@
 // Forward declarations
 class cmv_results;
 class circulation;
+class hemi_vent;
 
 class cmv_system
 {
@@ -29,6 +30,8 @@ public:
 	cmv_results*  p_cmv_results;			/**< Pointer to cmv_results */
 
 	circulation* p_circulation;				/**< Pointer to a circulation */
+
+	hemi_vent* p_hemi_vent;					/**< Pointer to a hemi_vent object */
 
 	// Functions
 

@@ -27,6 +27,15 @@
     <ClCompile Include="circulation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="hemi_vent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="half_sarcomere.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="membranes.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cmv_system.h">
@@ -39,6 +48,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="circulation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="half_sarcomere.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="membranes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="hemi_vent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -4,19 +4,21 @@
 
 classDiagram
 
-    CMyoVent <|-- CMV_model
-    CMyoVent <|-- CMV_protocol
-    CMyoVent <|-- CMV_results
-    CMyoVent <|-- CV_system
-    CV_system <|-- Circulation
-    CV_system <|-- HemiVent
-    CV_system <|-- Baroreflex
-    CV_system <|-- Growth
-    HemiVent <|-- Half_sarcomere
-    Half_sarcomere <|-- Membranes
-    Half_sarcomere <|-- Myofilaments
+    CMyoVent <|-- cmv_system
+    cmv_system <|-- cmv_model
+    cmv_system <|-- cmv_protocol
+    cmv_system <|-- cmv_results
+    cmv_system <|-- circulation
+    cmv_system <|-- hemi_vent
+    cmv_system <|-- Baroreflex
+    cmv_system <|-- Growth
+    hemi_vent <|-- half_sarcomere
+    half_sarcomere <|-- membranes
+    half_sarcomere <|-- Heart_rate
+    half_sarcomere <|-- Myofilaments
     
-    CMyoVent: + *CMV_model p_CMV_model
-    CMyoVent: +run_simulation()
+    cmv_system: + *cmv_model p_cmv_model
+    cmv_system: + run_simulation()
+
 
 ````

@@ -30,8 +30,7 @@ public:
 	~circulation(void);
 
 	// Variables
-	double p_ventricle;
-	double p_aorta;
+	double pressure_aorta;
 
 	double* p_data_fields[MAX_NO_OF_RESULT_FIELDS];			/**< array of pointers for data fields */
 
@@ -46,10 +45,5 @@ public:
 	/**
 	/* function adds data fields and vectors to the results objet
 	*/
-	void initialise_results(void);							
-
-	/**
-	/* function runs a simulation
-	*/
-//	void run_simulation(void);
+	void prepare_for_cmv_results(void);
 };
