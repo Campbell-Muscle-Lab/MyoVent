@@ -63,3 +63,10 @@ void hemi_vent::prepare_for_cmv_results(void)
 	std::cout << "finished prepare for hemi_vent results\n";
 }
 
+void hemi_vent::implement_time_step(double time_step_s)
+{
+	//! Implements time-step
+
+	p_hs->implement_time_step(time_step_s);
+
+}

@@ -41,4 +41,9 @@ public:
 	/* function adds data fields and vectors to the results objet
 	*/
 	void prepare_for_cmv_results(void);
+
+	/**
+	/* function updates state variables
+	*/
+	void implement_time_step(void);
 };

@@ -36,6 +36,9 @@
     <ClCompile Include="membranes.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="heart_rate.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cmv_system.h">
@@ -57,6 +60,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="hemi_vent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="heart_rate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

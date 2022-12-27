@@ -17,6 +17,7 @@ class cmv_system;
 class cmv_results;
 class hemi_vent;
 class membranes;
+class heart_rate;
 
 class half_sarcomere
 {
@@ -38,6 +39,8 @@ public:
 
 	membranes* p_membranes;
 
+	heart_rate* p_heart_rate;
+
 	double hs_length;
 	double hs_force;
 
@@ -45,4 +48,6 @@ public:
 	/* function adds data fields and vectors to the results objet
 	*/
 	void prepare_for_cmv_results(void);
+
+	void implement_time_step(double time_step_s);
 };

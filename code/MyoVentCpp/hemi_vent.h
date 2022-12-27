@@ -47,4 +47,6 @@ public:
 	/* function adds data fields and vectors to the results objet
 	*/
 	void prepare_for_cmv_results(void);
+
+	void implement_time_step(double time_step_s);
 };
