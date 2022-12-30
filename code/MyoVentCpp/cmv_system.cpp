@@ -51,8 +51,8 @@ void cmv_system::run_simulation(void)
 {
 	//! Code runs a simulation
 
-	int no_of_time_points = 500;
-	double time_step_s = 0.01;
+	int no_of_time_points = 100000;
+	double time_step_s = 0.001;
 
 	// Initialise the results object
 	p_cmv_results = new cmv_results(no_of_time_points);

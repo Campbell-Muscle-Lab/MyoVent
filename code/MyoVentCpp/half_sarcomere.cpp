@@ -70,6 +70,14 @@ void half_sarcomere::implement_time_step(double time_step_s)
 {
 	//! Implements time-step
 
-	p_heart_rate->implement_time_step(time_step_s);
+	// Variables
+	bool new_beat;
+
+	// Code
+
+	new_beat = p_heart_rate->implement_time_step(time_step_s);
+
+	p_membranes->implement_time_step(time_step_s, new_beat);
+	
 	
 }
