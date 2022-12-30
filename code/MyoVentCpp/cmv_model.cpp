@@ -72,7 +72,7 @@ void cmv_model::initialise_model_from_JSON_file(string JSON_model_file_string)
 	JSON_functions::check_JSON_member_number(hr, "t_RR_interval_s");
 	hr_t_RR_interval_s = hr["t_RR_interval_s"].GetDouble();
 
-	// Load the half-sarcomere object
+	// Load the half-sarcomere structure
 	JSON_functions::check_JSON_member_object(doc, "half_sarcomere");
 	const rapidjson::Value& hs = doc["half_sarcomere"];
 
@@ -80,7 +80,7 @@ void cmv_model::initialise_model_from_JSON_file(string JSON_model_file_string)
 	JSON_functions::check_JSON_member_number(hs, "initial_hs_length");
 	hs_initial_hs_length = hs["initial_hs_length"].GetDouble();
 		
-	// Load the membranes object
+	// Load the membranes structure
 	JSON_functions::check_JSON_member_exists(hs, "membranes");
 	const rapidjson::Value& memb = hs["membranes"];
 
@@ -98,4 +98,24 @@ void cmv_model::initialise_model_from_JSON_file(string JSON_model_file_string)
 
 	JSON_functions::check_JSON_member_number(memb, "t_open");
 	memb_t_open_s = memb["t_open"].GetDouble();
+
+	// Load the myofilaments structure
+	JSON_functions::check_JSON_member_exists(hs, "myofilaments");
+	const rapidjson::Value& myof = hs["myofilaments"];
+
+	JSON_functions::check_JSON_member_number(myof, "cb_number_density");
+	myof_cb_number_density = myof["cb_number_density"].GetDouble();
+
+	JSON_functions::check_JSON_member_number(myof, "prop_fibrosis");
+	myof_prop_fibrosis = myof["prop_fibrosis"].GetDouble();
+
+	JSON_functions::check_JSON_member_number(myof, "prop_myofilaments");
+	myof_prop_myofilaments = myof["prop_myofilaments"].GetDouble();
+
+	// Load the myosin structure
+	JSON_functions::check_JSON_member_exists(myof, "myosin");
+	const rapidjson::Value& myos = myof["myosin"];
+
+	JSON_functions::check_JSON_member_number(myos, "k_cb");
+	myof_k_cb = myos["k_cb"].GetDouble();
 }

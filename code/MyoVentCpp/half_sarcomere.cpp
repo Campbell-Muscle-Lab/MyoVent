@@ -10,6 +10,7 @@
 #include "hemi_vent.h"
 #include "cmv_results.h"
 #include "membranes.h"
+#include "myofilaments.h"
 #include "heart_rate.h"
 
 // Constructor
@@ -25,8 +26,9 @@ half_sarcomere::half_sarcomere(hemi_vent* set_p_parent_hemi_vent)
 	p_cmv_model = p_parent_hemi_vent->p_cmv_model;
 
 	// Create the daugher objects
-	p_membranes = new membranes(this);
 	p_heart_rate = new heart_rate(this);
+	p_membranes = new membranes(this);
+	p_myofilaments = new myofilaments(this);	
 
 	// Initialise
 	hs_force = 0.0;
@@ -42,8 +44,9 @@ half_sarcomere::~half_sarcomere(void)
 	printf("half_saromere destructor()\n");
 
 	// Tidy up
-	delete p_membranes;
 	delete p_heart_rate;
+	delete p_membranes;
+	delete p_myofilaments;
 }
 
 // Other functions

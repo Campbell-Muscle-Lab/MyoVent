@@ -69,10 +69,7 @@
             "k_leak": 6e-4,
             "k_active": 8.2e-2,
             "k_serca": 8.0,
-            "t_open": 0.01,
-            "implementation":{
-                "kinetic_scheme": "simple_2_compartment"
-            }
+            "t_open": 0.01
         },
         "energetics":
         {
@@ -87,47 +84,79 @@
             "cb_number_density": 1.15e17,
             "prop_fibrosis": 0.0,
             "prop_myofilaments": 0.6,
-            "k_1": 20,
-            "k_force": 6e-4,
-            "k_2": 500,
-            "k_3": 100,
-            "k_4_0": 200,
-            "k_4_1": 10,
-            "k_5": 1000,
-            "k_6": 0,
-            "k_7_0": 40,
-            "k_7_1": 2,
-            "k_7_2": 10,
-            "k_7_3": 2,
-            "k_8": 0,
-            "k_cb": 0.001,
-            "x_ps": 5,
-            "k_on": 2e8,
-            "k_off": 200,
-            "k_coop": 20,
             "int_passive_exp_sigma": 5,
             "int_passive_exp_L": 30,
             "int_passive_l_slack": 950,
             "ext_passive_exp_sigma": 300,
             "ext_passive_exp_L": 70,
             "ext_passive_l_slack": 950,
-            "implementation":
+            "myosin":
             {
-                "kinetic_scheme": "4_state_with_SRX",
-                "int_passive_mode": "exponential",
-                "ext_passive_mode": "exponential",
-                "max_rate": 2000,
-                "temperature": 310,
-                "bin_min": -10,
-                "bin_max": 10,
-                "bin_width": 1,
-                "filament_compliance_factor": 0.5,
-                "thick_filament_length": 815,
-                "thin_filament_length": 1120,
-                "bare_zone_length": 80,
-                "reference_hsl_0": 1100,
-                "delta_G_ATP": 70000,
-                "thick_wall_approximation": true
+                "k_cb": 0.001,
+                "kinetics":
+                [
+                  {
+                    "no_of_states": 3,
+                    "max_no_of_transitions": 2,
+                    "scheme":
+                    [
+                      {
+                        "number": 1,
+                        "type": "D",
+                        "extension": 0,
+                        "transition":
+                        [
+                          {
+                            "new_state": 2,
+                            "rate_type": "force_dependent",
+                            "rate_parameters": [
+                                10,
+                                1000
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "number": 2,
+                        "type": "D",
+                        "extension": 0,
+                        "transition": [
+                          {
+                            "new_state": 1,
+                            "rate_type": "constant",
+                            "rate_parameters": [
+                                50
+                            ]
+                          },
+                          {
+                            "new_state": 3,
+                            "rate_type": "gaussian",
+                            "rate_parameters": [
+                                50
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "number": 3,
+                        "type": "A",
+                        "extension": 5.0,
+                        "transition": [
+                          {
+                            "new_state": 2,
+                            "rate_type": "poly",
+                            "rate_parameters": [
+                                50,
+                                1,
+                                2,
+                                0
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
             }
         }
     },

@@ -22,6 +22,7 @@
 class half_sarcomere;
 class membranes;
 class heart_rate;
+class kinetic_scheme;
 
 using namespace std;
 
@@ -67,6 +68,25 @@ public:
 												Ca is released from sarcoplasmic reticulum
 												when the release channels are open
 												in M s^-1 */
+
+	// Myofilaments
+	double myof_cb_number_density;		/**< double describing the number of
+												cross-bridges in a half-sarcomere
+												with a cross-sectional area of 1 m^2 */
+
+	double myof_prop_fibrosis;			/**< double describing the proportional
+												cross-sectional area occupied by
+												fibrosis */
+
+	double myof_prop_myofilaments;		/**< double describing the proportional
+												area of myofibrils occupied by
+												myofilaments - the remainder is
+												mitochondria */
+
+	double myof_k_cb;					/**< double describing cross-bridge stiffness
+												in N m^-1 */
+
+
 
 	// Other functions
 

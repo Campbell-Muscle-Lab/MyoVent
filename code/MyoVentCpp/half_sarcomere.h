@@ -18,6 +18,7 @@ class cmv_model;
 class cmv_results;
 class hemi_vent;
 class membranes;
+class myofilaments;
 class heart_rate;
 
 class half_sarcomere
@@ -40,9 +41,13 @@ public:
 
 	cmv_results* p_cmv_results;
 
-	membranes* p_membranes;
+	heart_rate* p_heart_rate;						/**< Pointer to heart-rate object */
 
-	heart_rate* p_heart_rate;
+	membranes* p_membranes;							/**< Pointer to the daughter
+															membranes object */
+
+	myofilaments* p_myofilaments;					/**< Pointer to the daughter
+															myofilaments object */
 
 	double hs_length;
 	double hs_force;

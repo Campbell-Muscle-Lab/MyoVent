@@ -156,6 +156,7 @@
     <ClCompile Include="hemi_vent.cpp" />
     <ClCompile Include="JSON_functions.cpp" />
     <ClCompile Include="membranes.cpp" />
+    <ClCompile Include="myofilaments.cpp" />
     <ClCompile Include="MyoVentCpp.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -170,6 +171,7 @@
     <ClInclude Include="hemi_vent.h" />
     <ClInclude Include="JSON_functions.h" />
     <ClInclude Include="membranes.h" />
+    <ClInclude Include="myofilaments.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
