@@ -20,8 +20,9 @@ half_sarcomere::half_sarcomere(hemi_vent* set_p_parent_hemi_vent)
 	// Code
 	printf("half_sarcomere constructor()\n");
 
-	// Set the pointer to the parent system
+	// Set the pointers to the parent system
 	p_parent_hemi_vent = set_p_parent_hemi_vent;
+	p_cmv_model = p_parent_hemi_vent->p_cmv_model;
 
 	// Create the daugher objects
 	p_membranes = new membranes(this);

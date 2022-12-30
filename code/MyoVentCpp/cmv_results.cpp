@@ -7,12 +7,14 @@
 #include <stdio.h>
 #include <iostream>
 #include <filesystem>
+#include <string>
 
 #include "cmv_results.h"
 
 #include "gsl_vector.h"
 #include "gsl_math.h"
 
+using namespace std;
 using namespace std::filesystem;
 
 // Constructor
@@ -86,7 +88,7 @@ int cmv_results::write_data_to_file(std::string output_file_string)
 	FILE* output_file;
 
 	// Code
-	std::cout << "writing data to: " << output_file_string << "\n";
+	cout << "Writing simulation results to: " << output_file_string << "\n";
 
 	// Make sure results directory exists
 	path output_file_path(output_file_string);
@@ -95,11 +97,11 @@ int cmv_results::write_data_to_file(std::string output_file_string)
 	{
 		if (create_directories(output_file_path.parent_path()))
 		{
-			std::cout << "\nCreating folder: " << output_file_path.string() << "\n";
+			cout << "\nCreating folder: " << output_file_path.string() << "\n";
 		}
 		else
 		{
-			std::cout << "\nError: Results folder could not be created: " <<
+			cout << "\nError: Results folder could not be created: " <<
 				output_file_path.parent_path().string() << "\n";
 			exit(1);
 		}
@@ -109,15 +111,13 @@ int cmv_results::write_data_to_file(std::string output_file_string)
 	errno_t err = fopen_s(&output_file, output_file_string.c_str(), "w");
 	if (err != 0)
 	{
-		std::cout << "Results file: " << output_file_string << " could not be opened\n";
+		cout << "Results file: " << output_file_string << " could not be opened\n";
 		exit(1);
 	}
 
 	// Write header
 	for (int i = 0; i < no_of_defined_results_fields; i++)
 	{
-		printf("%s\n", results_fields[i].c_str());
-
 		fprintf_s(output_file, "%s", results_fields[i].c_str());
 		if (i == (no_of_defined_results_fields - 1))
 			fprintf_s(output_file, "\n");
@@ -138,7 +138,7 @@ int cmv_results::write_data_to_file(std::string output_file_string)
 		}
 	}
 
-	printf("closing output_file: %s\n", output_file_string.c_str());
+	cout << "Closing output_file: " << output_file_string << "\n";
 
 	// Tidy up
 	fclose(output_file);

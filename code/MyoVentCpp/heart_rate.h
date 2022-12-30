@@ -14,9 +14,10 @@
 
 // Forward declararations
 class cmv_system;
+class cmv_model;
+class cmv_results;
 class half_sarcomere;
 
-class cmv_results;
 
 class heart_rate
 {
@@ -35,6 +36,8 @@ public:
 
 	cmv_system* p_parent_cmv_system;		/**< pointer to parent cmv_system */
 
+	cmv_model* p_cmv_model;					/**< pointer to cmv_model object */
+
 	cmv_results* p_cmv_results;				/**< pointer to cmv_results object */
 
 	half_sarcomere* p_parent_hs;			/**< pointer to parent half-sarcomere */
@@ -42,7 +45,7 @@ public:
 	double hr_new_beat;						/**< double, set to 0.0 normally but to
 													1.0 on a new beat */
 
-	double hr_t_RR_s;						/**< double, with t_RR in seconds */
+	double hr_t_RR_interval_s;				/**< double, with RR interval in seconds */
 
 	double hr_t_countdown_s;				/**< double, with t to next heart-beat
 													in s */

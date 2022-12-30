@@ -8,11 +8,13 @@
 
 #include "stdio.h"
 #include <iostream>
-#include <cstring>
+#include <string>
 
 #include "global_definitions.h"
 
 #include "gsl_vector.h"
+
+using namespace std;
 
 class cmv_results
 {
@@ -53,7 +55,7 @@ public:
 
 	void update_results_vectors(int t_index);
 
-	int write_data_to_file(std::string data_file_string);
+	int write_data_to_file(string output_file_string);
 											/**< write data to file */
 
 };

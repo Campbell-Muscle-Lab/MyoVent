@@ -5,6 +5,8 @@
  */
 
 #include <stdio.h>
+#include <string>
+#include <iostream>
 
 // Includes
 #include "cmv_system.h"
@@ -12,13 +14,32 @@
 // Pointers
 cmv_system* p_cmv_system;       /**< pointer to a cmv_system */
 
+using namespace std;
 
-int main()
+int main(int argc, char* argv[])
 {
-    printf("Ken was here\n");
+    /**
+    Main function
+    + the entry point for MyoVentCpp
+    */
+    
+    // Variables
+    string model_file_string;
+    string options_file_string;
+    string protocol_file_string;
+    string results_file_string;
+
+    // Set inputs
+    model_file_string = argv[1];
+    options_file_string = argv[2];
+    protocol_file_string = argv[3];
+    results_file_string = argv[4];
 
     // Initialize
-    p_cmv_system = new cmv_system();
+    p_cmv_system = new cmv_system(model_file_string);
+
+    p_cmv_system->run_simulation(options_file_string,
+        protocol_file_string, results_file_string);
 
     // Tidy up
     delete p_cmv_system;

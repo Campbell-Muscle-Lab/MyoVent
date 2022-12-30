@@ -22,7 +22,10 @@ hemi_vent::hemi_vent(cmv_system* set_p_parent_cmv_system)
 
 	// Set pointers
 	p_parent_cmv_system = set_p_parent_cmv_system;
-	p_cmv_results = p_parent_cmv_system->p_cmv_results;
+	p_cmv_model = p_parent_cmv_system->p_cmv_model;
+
+	// Initialise sim parameters with safe options
+	p_cmv_results = NULL;
 
 	// Initialize variables
 	pressure_ventricle = 0.0;

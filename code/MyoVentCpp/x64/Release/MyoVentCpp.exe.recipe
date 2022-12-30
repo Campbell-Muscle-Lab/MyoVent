@@ -2,7 +2,7 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
-      <FullPath>C:\ken\GitHub\CampbellMuscleLab\models\MyoVent\code\MyoVentCpp\x64\Release\MyoVentCpp.exe</FullPath>
+      <FullPath>C:\ken\GitHub\CampbellMuscleLab\models\MyoVent\code\MyoVentCpp\bin\MyoVentCpp.exe</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles />

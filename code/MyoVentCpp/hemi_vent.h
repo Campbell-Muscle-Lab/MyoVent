@@ -13,6 +13,7 @@
 #include "global_definitions.h"
 
 // Forward declararations
+class cmv_model;
 class cmv_system;
 class half_sarcomere;
 
@@ -34,6 +35,8 @@ public:
 	 // Variables
 
 	cmv_system* p_parent_cmv_system;		/**< pointer to parent cmv_system */
+
+	cmv_model* p_cmv_model;					/**< pointer to cmv_model object */
 
 	cmv_results* p_cmv_results;				/**< pointer to cmv_results object */
 

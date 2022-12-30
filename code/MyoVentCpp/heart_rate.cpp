@@ -8,9 +8,9 @@
 
 #include "heart_rate.h"
 #include "cmv_system.h"
-#include "half_sarcomere.h"
 #include "cmv_results.h"
-
+#include "cmv_model.h"
+#include "half_sarcomere.h"
 
 // Constructor
 heart_rate::heart_rate(half_sarcomere* set_p_parent_hs)
@@ -22,11 +22,12 @@ heart_rate::heart_rate(half_sarcomere* set_p_parent_hs)
 
 	// Set pointers
 	p_parent_hs = set_p_parent_hs;
+	p_cmv_model = p_parent_hs->p_cmv_model;
 
 	// Initialize variables
 	hr_new_beat = 0.0;
-	hr_t_countdown_s = 0.05;
-	hr_t_RR_s = 0.1;
+	hr_t_RR_interval_s = p_cmv_model->hr_t_RR_interval_s;
+	hr_t_countdown_s = hr_t_RR_interval_s;
 }
 
 // Destructor
@@ -70,7 +71,7 @@ bool heart_rate::implement_time_step(double time_step)
 	// Reset
 	if (hr_t_countdown_s <= 0.0)
 	{
-		hr_t_countdown_s = hr_t_RR_s;
+		hr_t_countdown_s = hr_t_RR_interval_s;
 		hr_new_beat = 1.0;
 		new_beat = true;
 	}

@@ -14,6 +14,7 @@
 
 // Forward declararations
 class cmv_system;
+class cmv_model;
 class cmv_results;
 class hemi_vent;
 class membranes;
@@ -35,6 +36,8 @@ public:
 	// Variables
 	hemi_vent* p_parent_hemi_vent;
 	
+	cmv_model* p_cmv_model;							/**< Pointer to the cmv_model object */
+
 	cmv_results* p_cmv_results;
 
 	membranes* p_membranes;

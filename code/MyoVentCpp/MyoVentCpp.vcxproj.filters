@@ -39,6 +39,15 @@
     <ClCompile Include="heart_rate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="cmv_model.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="JSON_functions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cmv_protocol.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cmv_system.h">
@@ -63,6 +72,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="heart_rate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cmv_model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="JSON_functions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cmv_protocol.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

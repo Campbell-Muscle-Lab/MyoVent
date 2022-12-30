@@ -6,21 +6,34 @@
 
 #include "stdio.h"
 
+#include <iostream>
+#include <iomanip>
+
 #include "cmv_system.h"
 #include "circulation.h"
 #include "hemi_vent.h"
 #include "half_sarcomere.h"
 #include "membranes.h"
 #include "cmv_results.h"
+#include "cmv_protocol.h"
+#include "cmv_model.h"
 
+using namespace std;
 
 // Constructor
-cmv_system::cmv_system(void)
+cmv_system::cmv_system(string JSON_model_file_string)
 {
 	// Initialise
 
 	// Code
 	printf("cmv_constructor()\n");
+
+	// Code creates a cmv_model object
+	p_cmv_model = new cmv_model(JSON_model_file_string);
+
+	// Sets other pointers to safety
+	p_cmv_protocol = NULL;
+	p_cmv_results = NULL;
 
 	// Create constituent objects
 	p_circulation = new circulation(this);
@@ -28,10 +41,6 @@ cmv_system::cmv_system(void)
 
 	// Initialise variables
 	cum_time_s = 0.0;
-
-	// Run simulation
-	run_simulation();
-
 }
 
 // Destructor
@@ -45,17 +54,20 @@ cmv_system::~cmv_system(void)
 	// Tidy up
 	delete p_circulation;
 	delete p_hemi_vent;
+	delete p_cmv_model;
 }
 
-void cmv_system::run_simulation(void)
+void cmv_system::run_simulation(string options_file_string,
+									string protocol_file_string,
+									string results_file_string)
 {
 	//! Code runs a simulation
 
-	int no_of_time_points = 100000;
-	double time_step_s = 0.001;
+	// Initialise the protocol object
+	p_cmv_protocol = new cmv_protocol(protocol_file_string);
 
 	// Initialise the results object
-	p_cmv_results = new cmv_results(no_of_time_points);
+	p_cmv_results = new cmv_results(p_cmv_protocol->no_of_time_steps);
 
 	// Add in the results
 	this->prepare_for_cmv_results();
@@ -63,22 +75,21 @@ void cmv_system::run_simulation(void)
 	p_hemi_vent->prepare_for_cmv_results();
 
 	// Simulation
-	for (int i = 0; i < no_of_time_points; i++)
+	for (int i = 0; i < p_cmv_protocol->no_of_time_steps; i++)
 	{
-		/*p_circulation->pressure_aorta = p_circulation->pressure_aorta + 1.0;
-		p_hemi_vent->p_hs->hs_length = p_hemi_vent->p_hs->hs_length + 0.1;
-		p_hemi_vent->p_hs->p_membranes->Ca_myofil_conc =
-			p_hemi_vent->p_hs->p_membranes->Ca_myofil_conc - 0.2;
-			*/
-
-		implement_time_step(time_step_s);
-
+		implement_time_step(p_cmv_protocol->time_step_s);
 
 		p_cmv_results->update_results_vectors(i);
+
+		// Update simulation
+		if (fmod(cum_time_s, 1.0) < p_cmv_protocol->time_step_s)
+		{
+			cout << "Simulation time: " << cum_time_s << " s\n";
+		}
 	}
 
 	// Now save data to file
-	p_cmv_results->write_data_to_file("c:/temp/ken.txt");
+	p_cmv_results->write_data_to_file(results_file_string);
 
 	// Tidying up
 	delete p_cmv_results;
@@ -93,7 +104,7 @@ void cmv_system::prepare_for_cmv_results(void)
 	// Initialize
 
 	// Now add the results fields
-	p_cmv_results->add_results_field("Time_s", &cum_time_s);
+	p_cmv_results->add_results_field("time", &cum_time_s);
 }
 
 void cmv_system::implement_time_step(double time_step_s)
