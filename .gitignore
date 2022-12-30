@@ -507,3 +507,7 @@ static
 # GitHub Pages
 _site/
 Gemfile.lock
+
+# Temporary test files
+**/temp/**/*.txt
+
