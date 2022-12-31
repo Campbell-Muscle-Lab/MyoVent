@@ -43,6 +43,9 @@ public:
 	double bin_width;						/**< double with width of cross-bridge
 													bin */
 
+	double max_rate;						/**< double with maximum rate for a
+													cross-bridge rate in s^-1 */
+
 	/**
 	/* Function initialises protocol object from file
 	*/

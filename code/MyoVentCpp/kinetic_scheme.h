@@ -29,9 +29,7 @@ public:
 
 	// Variables
 
-	myofilaments* p_parent_myofil;			/**< pointer to parent myofilament object */
-
-	cmv_model* p_cmv_model;					/**< pointer to a cmv_model object */
+	cmv_model* p_cmv_model;					/**< pointer to parent model */
 
 	cmv_options* p_cmv_options;				/**< pointer to a cmv_options objects */
 
@@ -48,7 +46,7 @@ public:
 	* Constructor
 	* takes a cmv_model and parses it to give the kinetic scheme
 	*/
-	kinetic_scheme(const rapidjson::Value& m_ks, myofilaments* set_p_parent_myofil);
+	kinetic_scheme(const rapidjson::Value& m_ks, cmv_model* set_p_cmv_model);
 
 	/**
 	* Destructor
@@ -66,6 +64,11 @@ public:
 	void set_transition_types(void);
 
 	/**
+	* updates 
+	*/
+	void update_p_cmv_options(cmv_options* set_pointer);
+
+	/**
 	* void write_kinetic_scheme_to_file(char output_file_string)
 	* writes kinetic_scheme to specified file in JSON format
 	* @return void
@@ -77,7 +80,7 @@ public:
 	* as a tab-delimited file
 	* @return void
 	*/
-	void write_rate_functions_to_file(string output_file_string, char file_write_mode[],
+	void write_rate_functions_to_file(string output_file_string, string file_write_mode,
 										string JSON_append_string);
 
 };

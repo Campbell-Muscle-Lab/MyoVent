@@ -29,6 +29,12 @@ transition::transition(const rapidjson::Value& tr, m_state* set_p_parent_m_state
 	// Set p_parent_m_state
 	p_parent_m_state = set_p_parent_m_state;
 
+	// And the model
+	p_cmv_model = p_parent_m_state->p_cmv_model;
+
+	// Set the p_cmv_options to safety
+	p_cmv_options = NULL;
+
 	// Set transition_type to unknown - will be set later on
 	transition_type = 'x';
 
@@ -71,28 +77,18 @@ transition::~transition(void)
 
 // Functions
 
-double transition::calculate_rate(double x, double x_ext, double force)
-{
-	return 0.0;
-}
-
-/*
-double transition::calculate_rate(double x, double x_ext, double force,
-	int mybpc_state, int mybpc_iso, short int active_neigh, half_sarcomere* p_hs)
+double transition::calculate_rate(double x, double x_ext, double force, double hs_length)
 {
 	//! Returns the rate for a transition with a given x
-	//! 
-	// printf("%s \n ", rate_type);
 
 	// Variables
 	double rate = 0.0;
 
-	cmv_options* p_options;
+	double k_cb = p_cmv_model->myof_k_cb;
+
+	double temperature_K = p_cmv_model->temperature_K;
 
 	// Code
-
-	// Set options
-	p_options = p_parent_m_state->p_parent_scheme->p_cmv_options;
 
 	// Constant
 	if (!strcmp(rate_type, "constant"))
@@ -104,18 +100,15 @@ double transition::calculate_rate(double x, double x_ext, double force,
 	if (!strcmp(rate_type, "force_dependent"))
 	{
 		rate = gsl_vector_get(rate_parameters, 0) *
-			(1.0 + (gsl_max(node_force, 0.0) * gsl_vector_get(rate_parameters, 1)));
+			(1.0 + (gsl_max(force, 0.0) * gsl_vector_get(rate_parameters, 1)));
 	}
 
 	// Gaussian
 	if (!strcmp(rate_type, "gaussian"))
 	{
-		p_model = p_parent_m_state->p_parent_scheme->p_fs_model;
-		double k_cb = p_model->m_k_cb;
-
 		rate = gsl_vector_get(rate_parameters, 0) *
 			exp(-(0.5 * k_cb * gsl_pow_int(x, 2)) /
-				(1e18 * GSL_CONST_MKSA_BOLTZMANN * p_model->temperature));
+				(1e18 * GSL_CONST_MKSA_BOLTZMANN * temperature_K));
 	}
 
 	// Gaussian_hsl
@@ -131,10 +124,6 @@ double transition::calculate_rate(double x, double x_ext, double force,
 		// See PMID 35450825 and first passage in
 		// Mechanics of motor proteins and the cytoskeleton, Joe Howard book
 
-		FiberSim_model* p_model = p_parent_m_state->p_parent_scheme->p_fs_model;
-		double k_cb = p_model->m_k_cb;
-
-		double hs_length;
 		double y_ref;		// distance between filaments at 1100 nm
 		double y_actual;	// distance between filaments at current hsl
 		double r_thick = 7.5;
@@ -142,36 +131,16 @@ double transition::calculate_rate(double x, double x_ext, double force,
 
 		y_ref = ((2.0 / 3.0) * 37.0) - r_thick - r_thin;
 
-		if (p_hs == NULL)
+		if (gsl_isnan(hs_length))
 			hs_length = 1100.0;
-		else
-			hs_length = p_hs->hs_length;
 
 		y_actual = (2.0 / 3.0) * (37.0 / sqrt(hs_length / 1100.0)) - r_thick - r_thin;
 
 		rate = gsl_vector_get(rate_parameters, 0) *
 			exp(-(0.5 * k_cb * gsl_pow_int(x, 2)) /
-				(1e18 * GSL_CONST_MKSA_BOLTZMANN * p_model->temperature));
+				(1e18 * GSL_CONST_MKSA_BOLTZMANN * temperature_K));
 
 		rate = rate * gsl_pow_2(y_ref / y_actual);
-	}
-
-	// Gaussian MyBP-C 
-
-	if (!strcmp(rate_type, "gaussian_pc"))
-	{
-		FiberSim_model* p_model = p_parent_m_state->p_parent_scheme->p_fs_model;
-		double k_pc = p_model->c_k_stiff; // use MyBPC stiffness as default
-
-		double temp = gsl_vector_get(rate_parameters, 1); // optional parameter which sets mybpc stiffness
-
-		if (!gsl_isnan(temp)) { // optional parameter is not specified, use the state extension instead
-			k_pc = temp;
-		}
-
-		rate = gsl_vector_get(rate_parameters, 0) *
-			exp(-(0.5 * k_pc * gsl_pow_int(x, 2)) /
-					(1e18 * GSL_CONST_MKSA_BOLTZMANN * p_model->temperature));
 	}
 
 	// Poly
@@ -208,70 +177,28 @@ double transition::calculate_rate(double x, double x_ext, double force,
 				gsl_pow_int(x + x_center, (int)gsl_vector_get(rate_parameters, 4)));
 	}
 
-	// Decreasing load-dependent exponential
-	if (!strcmp(rate_type, "exp"))
-	{
-		double A = gsl_vector_get(rate_parameters, 0);
-		double B = gsl_vector_get(rate_parameters, 1);
-		double C = gsl_vector_get(rate_parameters, 2);
-		double x_center = gsl_vector_get(rate_parameters, 3);
-		double x_wall = gsl_vector_get(rate_parameters, 4);
-
-		if (x < x_wall)
-			rate = A + B * exp(-C * (x + x_center));
-		else
-			rate = p_options->max_rate;
-	}
-
 	if (!strcmp(rate_type, "exp_wall"))
 	{
 		// Variables
 
-		FiberSim_model* p_model = p_parent_m_state->p_parent_scheme->p_fs_model;
 		double k0 = gsl_vector_get(rate_parameters, 0);
-		double F = p_model->m_k_cb * (x + x_ext);
+		double F = k_cb * (x + x_ext);
 		double d = gsl_vector_get(rate_parameters, 1);
 		double x_wall = gsl_vector_get(rate_parameters, 2);
 		double x_smooth = gsl_vector_get(rate_parameters, 3);
 
 		// Code
 		rate = k0 * exp(-(F * d) /
-				(1e18 * GSL_CONST_MKSA_BOLTZMANN * p_model->temperature));
-
-		rate = rate + p_options->max_rate * (1 /
-			(1 + exp(-x_smooth * (x - x_wall))));
-	}
-
-	if (!strcmp(rate_type, "exp_wall_sweep"))
-	{
-		// Variables
-
-		FiberSim_model* p_model = p_parent_m_state->p_parent_scheme->p_fs_model;
-		double k0 = gsl_vector_get(rate_parameters, 0);
-		double F = p_model->m_k_cb * (x + x_ext);
-		double d = gsl_vector_get(rate_parameters, 1);
-		double x_wall = gsl_vector_get(rate_parameters, 2);
-		double x_smooth = gsl_vector_get(rate_parameters, 3);
-		double sweep = gsl_vector_get(rate_parameters, 4);
-
-		// Code
-		rate = k0 * exp(-(F * d) /
-			(1e18 * GSL_CONST_MKSA_BOLTZMANN * p_model->temperature));
-
-		rate = rate + p_options->max_rate * (1 /
-			(1 + exp(-x_smooth * (x - x_wall))));
-
-		// Add in the sweep, whereby neighboring units in the off state
-		// increase the detachment rate
-		rate = rate + sweep * (2.0 - (double)active_neigh);
-
-		//printf("active_neigh: %g  rate: %f\n", (double)active_neigh, rate);
+				(1e18 * GSL_CONST_MKSA_BOLTZMANN * temperature_K));
 	}
 
 	// Curtail at max rate
-
-	if (rate > (p_options->max_rate))
-		rate = p_options->max_rate;
+	if (p_cmv_options != NULL)
+	{
+		cout << "ken\n";
+		if (rate > p_cmv_options->max_rate)
+			rate = p_cmv_options->max_rate;
+	}
 
 	if (rate < 0.0)
 		rate = 0.0;
@@ -279,4 +206,3 @@ double transition::calculate_rate(double x, double x_ext, double force,
 	// Return
 	return rate;
 }
-*/

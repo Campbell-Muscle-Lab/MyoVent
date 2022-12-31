@@ -24,9 +24,11 @@ myofilaments::myofilaments(half_sarcomere* set_p_parent_hs)
 	// Code
 	cout << "myofilaments constructor()\n";
 
-	// Set the pointer to the parent system
+	// Set the pointers to the appropriate places
 	p_parent_hs = set_p_parent_hs;
 	p_cmv_model = p_parent_hs->p_cmv_model;
+
+	p_m_scheme = p_cmv_model->p_m_scheme;
 
 	// Set other pointers safe
 	p_cmv_results = NULL;

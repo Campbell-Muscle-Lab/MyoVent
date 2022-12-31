@@ -3,6 +3,7 @@
     {
         "bin_min": -10.0,
         "bin_max": 10.0,
-        "bin_width": 1.0
+        "bin_width": 1.0,
+        "max_rate": 1000.0
     }
 }

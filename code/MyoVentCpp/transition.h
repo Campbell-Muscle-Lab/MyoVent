@@ -12,9 +12,12 @@
 #include "JSON_functions.h"
 
 #include "gsl_vector.h"
+#include "gsl_math.h"
 
 // Forward declaration
 class half_sarcomere;
+class cmv_model;
+class cmv_options;
 
 class transition
 {
@@ -23,6 +26,10 @@ public:
 	// Variables
 
 	m_state* p_parent_m_state;		/**< pointer to parent m_state */
+
+	cmv_model* p_cmv_model;			/**< pointer to parent model */
+
+	cmv_options* p_cmv_options;		/**< pointer to cmv_options */
 
 	int new_state;					/**< integer defining the new state */
 
@@ -66,5 +73,5 @@ public:
 							half_sarcomere* p_hs = NULL);
 	*/
 
-	double calculate_rate(double, double, double);
+	double calculate_rate(double, double, double force=0.0, double = GSL_NAN);
 };

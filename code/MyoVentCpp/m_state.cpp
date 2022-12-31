@@ -20,6 +20,7 @@ m_state::m_state(const rapidjson::Value& m_st, kinetic_scheme* set_p_parent_sche
 	char temp_string[_MAX_PATH];
 
 	p_parent_scheme = set_p_parent_scheme;
+	p_cmv_model = p_parent_scheme->p_cmv_model;
 
 	JSON_functions::check_JSON_member_int(m_st, "number");
 	state_number = m_st["number"].GetInt();
@@ -37,7 +38,7 @@ m_state::m_state(const rapidjson::Value& m_st, kinetic_scheme* set_p_parent_sche
 
 	for (int i = 0; i < (int)trans.Size(); i++)
 	{
-		p_transitions[i] = new transition(trans[i],this);
+		p_transitions[i] = new transition(trans[i], this);
 	}
 	// Fill in gaps if not all transitions are set
 	if (trans.Size() < (size_t)(p_parent_scheme->max_no_of_transitions))

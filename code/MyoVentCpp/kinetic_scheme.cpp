@@ -12,7 +12,6 @@
 #include "kinetic_scheme.h"
 #include "cmv_model.h"
 #include "cmv_options.h"
-#include "myofilaments.h"
 #include "m_state.h"
 #include "transition.h"
 
@@ -23,18 +22,17 @@ using namespace std::filesystem;
 using namespace std;
 
 // Constructor
-kinetic_scheme::kinetic_scheme(const rapidjson::Value& m_ks,
-	myofilaments* set_p_parent_myofil)
+kinetic_scheme::kinetic_scheme(const rapidjson::Value& m_ks, cmv_model* set_p_cmv_model)
 {
+	//! Constructor for kinetic scheme
+	
+	// Code
+	cout << "Constructor for kinetic scheme\n";
+	
 	// Initialise
+	p_cmv_model = set_p_cmv_model;
 
-	// Set the pointers
-	p_parent_myofil = set_p_parent_myofil;
-
-	// Set the pointer to the model
-	p_cmv_model = p_parent_myofil->p_cmv_model;
-
-	// Set other pointers to save values
+	// Set other options safely
 	p_cmv_options = NULL;
 
 	// Pull no_of_states
@@ -145,7 +143,37 @@ void kinetic_scheme::set_transition_types(void)
 	}
 }
 
-void kinetic_scheme::write_rate_functions_to_file(string output_file_string, char file_write_mode[],
+void kinetic_scheme::update_p_cmv_options(cmv_options* set_pointer)
+{
+	//! Updates the p_cmv options for all the transitions
+	
+	cout << "xxx\n";
+
+	cout << "no_of_states: " << no_of_states << "\n";
+	
+	// Code
+	for (int state_counter = 0; state_counter < no_of_states; state_counter++)
+	{
+		for (int t_counter = 0; t_counter < max_no_of_transitions; t_counter++)
+		{
+			int new_state = p_m_states[state_counter]->p_transitions[t_counter]->new_state;
+
+			cout << "state counter " << state_counter << "t_counter: " << t_counter << "\n";
+
+			if (new_state == 0)
+			{
+				// Transition is not allowed - skip out
+				continue;
+			}
+
+			printf("kkks\n");
+			p_m_states[state_counter]->p_transitions[t_counter]->p_cmv_options =
+				p_cmv_options;
+		}
+	}
+}
+
+void kinetic_scheme::write_rate_functions_to_file(string output_file_string, string file_write_mode,
 	string JSON_append_string)
 {
 	//! Writes rate functions to output file
@@ -184,7 +212,7 @@ void kinetic_scheme::write_rate_functions_to_file(string output_file_string, cha
 
 	// Check file can be opened, abort if not
 	// file write status should be "w" for new, or "a" for append
-	errno_t err = fopen_s(&output_file, output_file_string.c_str(), file_write_mode);
+	errno_t err = fopen_s(&output_file, output_file_string.c_str(), file_write_mode.c_str());
 
 	if (err != 0)
 	{
@@ -237,7 +265,7 @@ void kinetic_scheme::write_rate_functions_to_file(string output_file_string, cha
 				{
 					// It's a transition
 					double x_ext = p_m_state->extension;
-					double rate = p_trans->calculate_rate(x, x_ext, 0);
+					double rate = p_trans->calculate_rate(x, x_ext, 0, 0);
 
 					fprintf_s(output_file, "\t%8g", rate);
 				}

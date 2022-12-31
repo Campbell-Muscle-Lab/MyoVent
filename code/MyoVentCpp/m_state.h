@@ -15,6 +15,7 @@
 
 class kinetic_scheme;
 class transition;
+class cmv_model;
 
 class m_state
 {
@@ -24,6 +25,8 @@ public:
 
 	kinetic_scheme* p_parent_scheme;
 									/**< pointer to the parent kinetic scheme */
+
+	cmv_model* p_cmv_model;			/**< pointer to the parent model */
 
 	int state_number;				/**< integer defining the state number */
 

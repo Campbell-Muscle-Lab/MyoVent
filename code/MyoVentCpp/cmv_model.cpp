@@ -11,7 +11,11 @@
 #include <string>
 
 #include "cmv_model.h"
+#include "kinetic_scheme.h"
+#include "m_state.h"
+#include "transition.h"
 #include "JSON_functions.h"
+#include "kinetic_scheme.h"
 
 #include "rapidjson\document.h"
 #include "rapidjson\filereadstream.h"
@@ -27,7 +31,16 @@ cmv_model::cmv_model(string JSON_model_file_string)
 	// Code
 	cout << "In cmv_model constructor\n";
 
+	// Set safe options
+	p_m_scheme = NULL;
+
+	// Set some known parameters
+	temperature_K = 315.0;
+
+	// Set rest from file
 	initialise_model_from_JSON_file(JSON_model_file_string);
+
+	cout << "xx no_of_states: " << p_m_scheme->no_of_states << "\n";
 }
 
 // Destructor
@@ -35,6 +48,8 @@ cmv_model::~cmv_model(void)
 {
 	// Code
 	std::cout << "cmv_model destructor\n";
+
+	delete p_m_scheme;
 }
 
 // Other functions
@@ -121,4 +136,7 @@ void cmv_model::initialise_model_from_JSON_file(string JSON_model_file_string)
 
 	JSON_functions::check_JSON_member_exists(myos, "kinetics");
 	const rapidjson::Value& mykin = myos["kinetics"];
+
+	// Now add kinetic scheme
+	p_m_scheme = new kinetic_scheme(mykin, this);
 }

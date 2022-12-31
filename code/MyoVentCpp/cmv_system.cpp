@@ -14,6 +14,8 @@
 #include "hemi_vent.h"
 #include "half_sarcomere.h"
 #include "membranes.h"
+#include "myofilaments.h"
+#include "kinetic_scheme.h"
 #include "cmv_options.h"
 #include "cmv_results.h"
 #include "cmv_protocol.h"
@@ -64,6 +66,8 @@ void cmv_system::run_simulation(string options_file_string,
 									string results_file_string)
 {
 	//! Code runs a simulation
+
+	// Test
 	
 	// Initialises an options object
 	p_cmv_options = new cmv_options(options_file_string);
@@ -78,6 +82,15 @@ void cmv_system::run_simulation(string options_file_string,
 	this->prepare_for_cmv_results();
 	p_circulation->prepare_for_cmv_results();
 	p_hemi_vent->prepare_for_cmv_results();
+
+	// Update the cross-bridge transitions with the simulation objects
+	cout << "hello\n";
+	p_hemi_vent->p_hs->p_myofilaments->p_m_scheme->update_p_cmv_options(p_cmv_options);
+
+	cout << "hello2\n";
+	p_hemi_vent->p_hs->p_myofilaments->p_m_scheme->write_rate_functions_to_file("d:\\temp\\rates.txt", "w", "");
+
+	cout << "\n\nMax_rate: " << p_cmv_options->max_rate << "\n\n";
 
 	// Simulation
 	for (int i = 0; i < p_cmv_protocol->no_of_time_steps; i++)

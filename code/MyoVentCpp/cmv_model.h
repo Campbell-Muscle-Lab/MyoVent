@@ -41,6 +41,8 @@ public:
 
 	// Variables
 
+	double temperature_K;				/**< double with temperature in K */
+
 	// Heart rate
 	double hr_t_RR_interval_s;			/**< double with RR interval in s */
 

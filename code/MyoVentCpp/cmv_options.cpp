@@ -83,4 +83,7 @@ void cmv_options::initialise_options_from_JSON_file(string options_file_string)
 
 	JSON_functions::check_JSON_member_number(impl, "bin_width");
 	bin_width = impl["bin_width"].GetDouble();
+
+	JSON_functions::check_JSON_member_number(impl, "max_rate");
+	max_rate = impl["max_rate"].GetDouble();
 }
