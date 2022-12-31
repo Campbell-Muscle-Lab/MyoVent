@@ -101,7 +101,7 @@
                 "k_cb": 0.001,
                 "kinetics":
                 {
-                "no_of_states": 3,
+                "no_of_states": 4,
                 "max_no_of_transitions": 2,
                 "scheme":
                 [
@@ -145,7 +145,7 @@
                     {
                     "number": 3,
                     "type": "A",
-                    "extension": 5.0,
+                    "extension": 0.0,
                     "transition": [
                         {
                         "new_state": 2,
@@ -156,9 +156,33 @@
                             2,
                             0
                         ]
+                        },
+                        {
+                        "new_state": 4,
+                        "rate_type": "constant",
+                        "rate_parameters": [
+                            100
+                        ]
                         }
                     ]
-                    }
+                    },
+                    {
+                        "number": 4,
+                        "type": "A",
+                        "extension": 5.0,
+                        "transition": [
+                            {
+                            "new_state": 2,
+                            "rate_type": "poly",
+                            "rate_parameters": [
+                                50,
+                                1,
+                                2,
+                                0
+                            ]
+                            }
+                        ]
+                        }
                     ]
                 }
             }

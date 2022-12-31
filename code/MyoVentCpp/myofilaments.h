@@ -82,6 +82,15 @@ public:
 	int a_off_index;						// indices
 	int a_on_index;
 
+	gsl_matrix_int* m_y_indices;			/**< gsl_matrix_int holding the start and
+													stop indices in y for
+													myosin state */
+
+	gsl_vector* m_state_pops;				/**< gsl_vector holding m_state populations */
+
+	double* m_pop_array;					/**< array of doubles holding state populations
+													used to communicate with gsl_results */
+
 	double myof_a_off;						/**< double with proportion of off thin sites */
 
 	double myof_a_on;						/**< double with proportion of on thin sites */
@@ -105,4 +114,8 @@ public:
 	void implement_time_step(double time_step_s);
 
 	void set_k_matrix(void);
+
+	void calculate_m_state_pops(const double y[]);
+
+	void calculate_f_overlap(void);
 };

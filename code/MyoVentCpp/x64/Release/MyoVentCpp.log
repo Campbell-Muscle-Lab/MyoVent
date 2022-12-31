@@ -1,15 +1,12 @@
 ﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(453,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
-  cmv_system.cpp
-  half_sarcomere.cpp
   myofilaments.cpp
-C:\ken\GitHub\CampbellMuscleLab\models\MyoVent\code\MyoVentCpp\myofilaments.cpp(121,26): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-C:\ken\GitHub\CampbellMuscleLab\models\MyoVent\code\MyoVentCpp\myofilaments.cpp(249,57): warning C4838: conversion from 'int' to 'size_t' requires a narrowing conversion
-C:\ken\GitHub\CampbellMuscleLab\models\MyoVent\code\MyoVentCpp\myofilaments.cpp(283,9): warning C4101: 'J_on': unreferenced local variable
-C:\ken\GitHub\CampbellMuscleLab\models\MyoVent\code\MyoVentCpp\myofilaments.cpp(284,9): warning C4101: 'J_off': unreferenced local variable
+C:\ken\GitHub\CampbellMuscleLab\models\MyoVent\code\MyoVentCpp\myofilaments.cpp(142,26): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+C:\ken\GitHub\CampbellMuscleLab\models\MyoVent\code\MyoVentCpp\myofilaments.cpp(182,6): warning C4101: 'state_counter': unreferenced local variable
+C:\ken\GitHub\CampbellMuscleLab\models\MyoVent\code\MyoVentCpp\myofilaments.cpp(311,57): warning C4838: conversion from 'int' to 'size_t' requires a narrowing conversion
 LINK : warning LNK4098: defaultlib 'LIBCMT' conflicts with use of other libs; use /NODEFAULTLIB:library
   Generating code
-  33 of 899 functions ( 3.7%) were compiled, the rest were copied from previous compilation.
+  1 of 916 functions ( 0.1%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    46 functions had inline decision re-evaluated but remain unchanged
+    4 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   MyoVentCpp.vcxproj -> C:\ken\GitHub\CampbellMuscleLab\models\MyoVent\code\MyoVentCpp\bin\MyoVentCpp.exe

@@ -9,6 +9,7 @@
 #include "myofilaments.h"
 #include "half_sarcomere.h"
 #include "kinetic_scheme.h"
+#include "m_state.h"
 #include "membranes.h"
 #include "cmv_model.h"
 #include "cmv_options.h"
@@ -39,6 +40,8 @@ myofilaments::myofilaments(half_sarcomere* set_p_parent_hs)
 	x = NULL;
 	y = NULL;
 	k_matrix = NULL;
+	m_y_indices = NULL;
+	m_state_pops = NULL;
 
 	// Initialize
 	myof_cb_number_density = p_cmv_model->myof_cb_number_density;
@@ -55,6 +58,8 @@ myofilaments::myofilaments(half_sarcomere* set_p_parent_hs)
 
 	myof_m_bound = 0.0;
 	myof_f_overlap = 1.0;
+
+	m_pop_array = (double*)malloc(p_m_scheme->no_of_states * sizeof(double));
 }
 
 // Destructor
@@ -78,6 +83,16 @@ myofilaments::~myofilaments(void)
 	{
 		gsl_matrix_free(k_matrix);
 	}
+	if (m_y_indices != NULL)
+	{
+		gsl_matrix_int_free(m_y_indices);
+	}
+	if (m_state_pops != NULL)
+	{
+		gsl_vector_free(m_state_pops);
+	}
+
+	free(m_pop_array);
 }
 
 // Other functions
@@ -97,6 +112,12 @@ void myofilaments::prepare_for_cmv_results(void)
 	p_cmv_results->add_results_field("myof_a_on", &myof_a_on);
 	p_cmv_results->add_results_field("myof_f_overlap", &myof_f_overlap);
 	p_cmv_results->add_results_field("myof_m_bound", &myof_m_bound);
+
+	for (int i = 0; i < p_m_scheme->no_of_states; i++)
+	{
+		string label = string("myof_m_pop_") + to_string(i);
+		p_cmv_results->add_results_field(label, &m_pop_array[i]);
+	}
 }
 
 void myofilaments::update_p_cmv_options(cmv_options* set_p_cmv_options)
@@ -153,6 +174,39 @@ void myofilaments::initialise_simulation(void)
 	// Initialise the k_matrix
 	k_matrix = gsl_matrix_alloc(y_length, y_length);
 
+	// Initialise and zero the m_bin_indices
+	m_y_indices = gsl_matrix_int_alloc(p_m_scheme->no_of_states, 2);
+	gsl_matrix_int_set_zero(m_y_indices);
+
+	int y_index = 0;
+	int state_counter;
+	for (int state_counter = 0; state_counter < p_m_scheme->no_of_states; state_counter++)
+	{
+		// Check whether state is attached
+		if (p_m_scheme->p_m_states[state_counter]->state_type == 'A')
+		{
+			gsl_matrix_int_set(m_y_indices, state_counter, 0, y_index);
+			y_index = y_index + no_of_bin_positions - 1;
+			gsl_matrix_int_set(m_y_indices, state_counter, 1, y_index);
+		}
+		else
+		{
+			gsl_matrix_int_set(m_y_indices, state_counter, 0, y_index);
+			gsl_matrix_int_set(m_y_indices, state_counter, 1, y_index);
+		}
+
+		y_index = y_index + 1;
+	}
+
+	cout << "bin indices \n";
+	for (int i = 0; i < p_m_scheme->no_of_states; i++)
+	{
+		cout << gsl_matrix_int_get(m_y_indices, i, 0) << "   " << gsl_matrix_int_get(m_y_indices, i, 1) << "\n";
+	}
+
+	// Initialise and set the bin populations
+	m_state_pops = gsl_vector_alloc(p_m_scheme->no_of_states);
+
 	// Update class variables
 	myof_a_off = gsl_vector_get(y, a_off_index);
 	myof_a_on = gsl_vector_get(y, a_on_index);
@@ -172,13 +226,21 @@ int myof_calculate_derivs(double t, const double y[], double f[], void* params)
 
 	myofilaments* p_myof = (myofilaments*)params;
 
-	double f_overlap = p_myof->myof_f_overlap;
-	double m_bound = p_myof->myof_m_bound;
+	double f_overlap;
+	double m_bound;
 
 	double J_on;
 	double J_off;
 	
 	// Code
+
+	// Calculat f_overlap
+	p_myof->calculate_f_overlap();
+	f_overlap = p_myof->myof_f_overlap;
+
+	// Calculate state populations
+	p_myof->calculate_m_state_pops(y);
+	m_bound = p_myof->myof_m_bound;
 	
 	// Calculate f as k_matrix * y for myosin
 	for (int r = 0; r < p_myof->m_length; r++)
@@ -268,6 +330,13 @@ void myofilaments::implement_time_step(double time_step_s)
 	}
 
 	// Update class variables
+	calculate_m_state_pops(y_calc);
+
+	for (int i = 0; i < p_m_scheme->no_of_states; i++)
+	{
+		m_pop_array[i] = gsl_vector_get(m_state_pops, i);
+	}
+
 	myof_a_off = gsl_vector_get(y, a_off_index);
 	myof_a_on = gsl_vector_get(y, a_on_index);
 
@@ -280,11 +349,50 @@ void myofilaments::set_k_matrix(void)
 {
 	//! Function updates the k_matrix
 
-	double J_on;
-	double J_off;
-
 	// Code
 
 	// Start from scratch
 	gsl_matrix_set_zero(k_matrix);
+
+
+}
+
+void myofilaments::calculate_m_state_pops(const double y_calc[])
+{
+	//! Function returns m_bound
+
+	// Variables
+	double holder;
+	double bound_holder;
+
+	// Code
+
+	bound_holder = 0.0;
+
+	for (int state_counter = 0; state_counter < p_m_scheme->no_of_states;
+		state_counter++)
+	{
+		holder = 0.0;
+
+		for (int i = gsl_matrix_int_get(m_y_indices, state_counter, 0);
+			i <= gsl_matrix_int_get(m_y_indices, state_counter, 1); i++)
+		{
+			holder = holder + y_calc[i];
+		}
+		gsl_vector_set(m_state_pops, state_counter, holder);
+
+		if (p_m_scheme->p_m_states[state_counter]->state_type == 'A')
+		{
+			bound_holder = bound_holder + holder;
+		}
+	}
+
+	myof_m_bound = bound_holder;
+}
+
+void myofilaments::calculate_f_overlap(void)
+{
+	//! Calculate f_overlap
+
+	myof_f_overlap = 1.0;
 }

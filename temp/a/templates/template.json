@@ -69,6 +69,26 @@
           }
         ]
       }
+    },
+    {
+      "column": 1,
+      "y_info": {
+        "label": "Thick",
+        "series": [
+          {
+            "field": "myof_m_pop_0"
+          },
+          {
+            "field": "myof_m_pop_1"
+          },
+          {
+            "field": "myof_m_pop_2"
+          },
+          {
+            "field": "myof_m_pop_3"
+          }
+        ]
+      }
     }
    ]
 }
