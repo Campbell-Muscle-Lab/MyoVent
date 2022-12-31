@@ -10,6 +10,7 @@
 #include "half_sarcomere.h"
 #include "kinetic_scheme.h"
 #include "m_state.h"
+#include "transition.h"
 #include "membranes.h"
 #include "cmv_model.h"
 #include "cmv_options.h"
@@ -249,7 +250,7 @@ int myof_calculate_derivs(double t, const double y[], double f[], void* params)
 
 		for (int c = 0; c < p_myof->m_length; c++)
 		{
-			f[r] = f[r] + (gsl_matrix_get(p_myof->k_matrix, r, c) * y[r]);
+			f[r] = f[r] + (gsl_matrix_get(p_myof->k_matrix, r, c) * y[c]);
 		}
 	}
 
@@ -349,11 +350,87 @@ void myofilaments::set_k_matrix(void)
 {
 	//! Function updates the k_matrix
 
+	// Variables
+
+	int current_ind, new_ind;
+
+	double rate;
+
+	double hs_force;
+	double hs_length;
+
 	// Code
+
+	// Set state variables from parent
+	hs_force = p_parent_hs->hs_force;
+	hs_length = p_parent_hs->hs_length;
 
 	// Start from scratch
 	gsl_matrix_set_zero(k_matrix);
 
+	// Work through the states
+	for (int state_counter = 0; state_counter < p_m_scheme->no_of_states;
+		state_counter++)
+	{
+		char current_state_type = p_m_scheme->p_m_states[state_counter]->state_type;
+
+		// Now through the transitions
+		for (int t_counter = 0; t_counter < p_m_scheme->max_no_of_transitions;
+			t_counter++)
+		{
+			int new_state = p_m_scheme->p_m_states[state_counter]->p_transitions[t_counter]->new_state;
+
+			if (new_state == 0)
+			{
+				// Transition is not allowed out - skip out
+				continue;
+			}
+
+			char new_state_type = p_m_scheme->p_m_states[new_state - 1]->state_type;
+
+			if ((current_state_type == 'S') || (current_state_type == 'D'))
+			{
+				// Deatched state
+				if ((new_state_type == 'S') || (new_state_type == 'D'))
+				{
+					// Detached to attached
+					rate = p_m_scheme->p_m_states[state_counter]->p_transitions[t_counter]->
+						calculate_rate(0, 0, hs_force, hs_length);
+
+					// Leaving
+					current_ind = gsl_matrix_int_get(m_y_indices, state_counter, 0);
+
+					gsl_matrix_set(k_matrix, current_ind, current_ind,
+						gsl_matrix_get(k_matrix, current_ind, current_ind) - rate);
+
+					// Arriving
+					new_ind = gsl_matrix_int_get(m_y_indices, new_state - 1, 0);
+					gsl_matrix_set(k_matrix, new_ind, current_ind,
+						gsl_matrix_get(k_matrix, new_ind, current_ind) + rate);
+				}
+				else
+				{
+					// Detached to attached
+				}
+
+			}
+		}
+	}
+
+	/*
+	for (int i = 0; i < y_length; i++)
+	{
+		for (int j = 0; j < y_length; j++)
+		{
+			printf("%.0f", gsl_matrix_get(k_matrix, i, j));
+			if (j == (y_length - 1))
+				printf("\n");
+			else
+				printf("\t");
+		}
+	}
+	*/
+	
 
 }
 
