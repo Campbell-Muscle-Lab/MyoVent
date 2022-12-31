@@ -46,9 +46,24 @@ kinetic_scheme::kinetic_scheme(const rapidjson::Value& m_ks, cmv_model* set_p_cm
 	JSON_functions::check_JSON_member_array(m_ks, "scheme");
 	const rapidjson::Value& scheme = m_ks["scheme"];
 
+	// Set the numbers of detached and attached states as we
+	// are initialising
+
+	no_of_detached_states = 0;
+	no_of_attached_states = 0;
+
 	for (rapidjson::SizeType i = 0; i < scheme.Size(); i++)
 	{
 		p_m_states[i] = new m_state(scheme[i], this);
+
+		if (p_m_states[i]->state_type == 'A')
+		{
+			no_of_attached_states = no_of_attached_states + 1;
+		}
+		else
+		{
+			no_of_detached_states = no_of_detached_states + 1;
+		}
 	}
 
 	// Now that we know the state properties, set the transition types
@@ -220,8 +235,6 @@ void kinetic_scheme::write_rate_functions_to_file(void)
 	// Make sure directory exists
 	output_file_path = absolute(path(output_file_string));
 
-	cout << "output_file_path " << output_file_path.string() << "\n\n";
-
 	if (!(is_directory(output_file_path.parent_path())))
 	{
 		if (create_directories(output_file_path.parent_path()))
@@ -244,6 +257,10 @@ void kinetic_scheme::write_rate_functions_to_file(void)
 		printf("write_rate_functions_to_file(): %s\ncould not be opened\n",
 			output_file_string.c_str());
 		exit(1);
+	}
+	else
+	{
+		cout << "Writing rate functions to: " << output_file_string << "\n";
 	}
 
 	// Write the JSON bracket

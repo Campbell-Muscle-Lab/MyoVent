@@ -35,6 +35,10 @@ public:
 
 	int no_of_states;						/**< int defining the number of different states */
 
+	int no_of_detached_states;				/**< int defining the number of detached states */
+
+	int no_of_attached_states;				/**< int defining the number of attached states */
+
 	int max_no_of_transitions;				/**< int defining the maximum number of transitions from a state */
 
 	m_state* p_m_states[MAX_NO_OF_KINETIC_STATES];

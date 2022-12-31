@@ -91,7 +91,11 @@ public:
 	kinetic_scheme* p_m_scheme;			/**< pointer to the kinetic scheme
 												for myosin */
 
+	double myof_a_k_on;					/**< double describing actin k_on */
 
+	double myof_a_k_off;				/**< double describing actin k_off */
+
+	double myof_a_k_coop;				/**< double describing actin k_coop */
 
 	// Other functions
 

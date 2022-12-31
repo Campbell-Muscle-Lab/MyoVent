@@ -86,9 +86,9 @@ void membranes::prepare_for_cmv_results(void)
 // that calls it, and communicates with the membrane class through a pointer to
 // the class object
 
-int calculate_derivs(double t, const double y[], double f[], void* params)
+int memb_calculate_derivs(double t, const double y[], double f[], void* params)
 {
-	//! Function - returns derivs
+	//! Function sets derivs
 
 	// Variables
 	(void)(t);
@@ -143,11 +143,11 @@ void membranes::implement_time_step(double time_step_s, bool new_beat)
 		memb_activation = 0.0;
 	}
 
-	gsl_odeiv2_system sys = { calculate_derivs, NULL, 2, this };
+	gsl_odeiv2_system sys = { memb_calculate_derivs, NULL, 2, this };
 
 	gsl_odeiv2_driver* d =
 		gsl_odeiv2_driver_alloc_y_new(&sys, gsl_odeiv2_step_rkf45,
-			1e-6, 1e-6, 0.0);
+			0.5*time_step_s, eps_abs, eps_rel);
 
 	status = gsl_odeiv2_driver_apply(d, &t_start_s, t_stop_s, y);
 

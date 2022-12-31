@@ -30,8 +30,6 @@ cmv_options::cmv_options(string set_options_file_string)
 
 	// Now update from file
 	initialise_options_from_JSON_file(options_file_string);
-
-	cout << "\n\nbin_width: " << bin_width << "\n\n";
 }
 
 // Destructor
@@ -109,6 +107,4 @@ void cmv_options::initialise_options_from_JSON_file(string options_file_string)
 		rates_dump_relative_to = "";
 		rates_dump_file_string = "";
 	}
-
-	cout << rates_dump_file_string << "\n";
 }

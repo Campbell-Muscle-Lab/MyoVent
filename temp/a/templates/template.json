@@ -55,6 +55,20 @@
           }
         ]
       }
+    },
+    {
+      "column": 1,
+      "y_info": {
+        "label": "Thin",
+        "series": [
+          {
+            "field": "myof_a_off"
+          },
+          {
+            "field": "myof_a_on"
+          }
+        ]
+      }
     }
    ]
 }

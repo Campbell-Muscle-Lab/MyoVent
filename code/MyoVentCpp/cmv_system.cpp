@@ -78,17 +78,19 @@ void cmv_system::run_simulation(string options_file_string,
 	// Initialise the results object
 	p_cmv_results = new cmv_results(p_cmv_protocol->no_of_time_steps);
 
+	// Update the myofilaments and daughter objects with the simulation objects
+	p_hemi_vent->p_hs->p_myofilaments->update_p_cmv_options(p_cmv_options);
+
+	// Dump rates if required
+	p_hemi_vent->p_hs->p_myofilaments->p_m_scheme->write_rate_functions_to_file();
+
+	// Prepare myofilaments for simulation
+	p_hemi_vent->p_hs->p_myofilaments->initialise_simulation();
+
 	// Add in the results
 	this->prepare_for_cmv_results();
 	p_circulation->prepare_for_cmv_results();
 	p_hemi_vent->prepare_for_cmv_results();
-
-	// Update the myofilaments and daughter objects with theh simulation objects
-	p_hemi_vent->p_hs->p_myofilaments->update_p_cmv_options(p_cmv_options);
-
-	p_hemi_vent->p_hs->p_myofilaments->p_m_scheme->write_rate_functions_to_file();
-
-	cout << "\n\nMax_rate: " << p_cmv_options->max_rate << "\n\n";
 
 	// Simulation
 	for (int i = 0; i < p_cmv_protocol->no_of_time_steps; i++)

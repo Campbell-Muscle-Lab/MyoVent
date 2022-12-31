@@ -39,8 +39,6 @@ cmv_model::cmv_model(string JSON_model_file_string)
 
 	// Set rest from file
 	initialise_model_from_JSON_file(JSON_model_file_string);
-
-	cout << "xx no_of_states: " << p_m_scheme->no_of_states << "\n";
 }
 
 // Destructor
@@ -139,4 +137,17 @@ void cmv_model::initialise_model_from_JSON_file(string JSON_model_file_string)
 
 	// Now add kinetic scheme
 	p_m_scheme = new kinetic_scheme(mykin, this);
+
+	// Load the actin structure
+	JSON_functions::check_JSON_member_exists(myof, "actin");
+	const rapidjson::Value& actin = myof["actin"];
+
+	JSON_functions::check_JSON_member_number(actin, "k_on");
+	myof_a_k_on = actin["k_on"].GetDouble();
+
+	JSON_functions::check_JSON_member_number(actin, "k_off");
+	myof_a_k_off = actin["k_off"].GetDouble();
+
+	JSON_functions::check_JSON_member_number(actin, "k_coop");
+	myof_a_k_coop = actin["k_coop"].GetDouble();
 }

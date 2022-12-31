@@ -90,6 +90,12 @@
             "ext_passive_exp_sigma": 300,
             "ext_passive_exp_L": 70,
             "ext_passive_l_slack": 950,
+            "actin":
+            {
+                "k_on": 1e8,
+                "k_off": 100,
+                "k_coop": 10
+            },
             "myosin":
             {
                 "k_cb": 0.001,

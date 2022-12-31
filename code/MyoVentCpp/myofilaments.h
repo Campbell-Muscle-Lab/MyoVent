@@ -9,6 +9,9 @@
 #include "stdio.h"
 #include <iostream>
 
+#include "gsl_vector.h"
+#include "gsl_matrix.h"
+
 #include "global_definitions.h"
 
 // Forward declararations
@@ -48,7 +51,58 @@ public:
 	double myof_prop_myofilaments;
 	double myof_k_cb;
 
+	double myof_a_k_on;						/**< double with a_k_on, rate constant
+													for thin filament activation
+													M^-1 s^-1 */
+
+	double myof_a_k_off;					/**< double with a_k_off, rate constant
+													for thin filament deactivation
+													s^-1 */
+
+	double myof_a_k_coop;					/**< double for thin filament
+													cooperativity, dimensionless */
+
+	int no_of_bin_positions;				/**< integer with the number of
+													positions cross-bridge
+													distributions are evaluated
+													at */
+
+	gsl_vector* x;							/**< gsl_vector with bin positions */
+
+	int y_length;							/**< integer with the length of the
+													system */
+
+	int m_length;							/**< integer with the length of the
+													myosin system */
+
+	gsl_vector* y;							/**< gsl_vector with the system */
+
+	gsl_matrix* k_matrix;					/**< gsl_matrix with the rate constants */
+
+	int a_off_index;						// indices
+	int a_on_index;
+
+	double myof_a_off;						/**< double with proportion of off thin sites */
+
+	double myof_a_on;						/**< double with proportion of on thin sites */
+
+	double myof_m_bound;					/**< double with proportion of myosins
+													that are bound */
+
+	double myof_f_overlap;					/**< double defining the proportion
+													of filaments that are in overlap */
+
+
+
 	// Functions
 
+	void prepare_for_cmv_results(void);
+
 	void update_p_cmv_options(cmv_options* set_p_cmv_options);
+
+	void initialise_simulation(void);
+
+	void implement_time_step(double time_step_s);
+
+	void set_k_matrix(void);
 };

@@ -68,6 +68,7 @@ void half_sarcomere::prepare_for_cmv_results(void)
 	// Now handle children
 	p_membranes->prepare_for_cmv_results();
 	p_heart_rate->prepare_for_cmv_results();
+	p_myofilaments->prepare_for_cmv_results();
 }
 
 void half_sarcomere::implement_time_step(double time_step_s)
@@ -82,6 +83,6 @@ void half_sarcomere::implement_time_step(double time_step_s)
 	new_beat = p_heart_rate->implement_time_step(time_step_s);
 
 	p_membranes->implement_time_step(time_step_s, new_beat);
-	
-	
+
+	p_myofilaments->implement_time_step(time_step_s);
 }
