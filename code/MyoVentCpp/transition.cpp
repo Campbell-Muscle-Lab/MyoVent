@@ -195,7 +195,6 @@ double transition::calculate_rate(double x, double x_ext, double force, double h
 	// Curtail at max rate
 	if (p_cmv_options != NULL)
 	{
-		cout << "ken\n";
 		if (rate > p_cmv_options->max_rate)
 			rate = p_cmv_options->max_rate;
 	}

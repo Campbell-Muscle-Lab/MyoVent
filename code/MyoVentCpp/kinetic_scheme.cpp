@@ -143,13 +143,13 @@ void kinetic_scheme::set_transition_types(void)
 	}
 }
 
-void kinetic_scheme::update_p_cmv_options(cmv_options* set_pointer)
+void kinetic_scheme::update_p_cmv_options(cmv_options* set_p_cmv_options)
 {
 	//! Updates the p_cmv options for all the transitions
-	
-	cout << "xxx\n";
 
-	cout << "no_of_states: " << no_of_states << "\n";
+	// Code
+
+	p_cmv_options = set_p_cmv_options;
 	
 	// Code
 	for (int state_counter = 0; state_counter < no_of_states; state_counter++)
@@ -158,31 +158,23 @@ void kinetic_scheme::update_p_cmv_options(cmv_options* set_pointer)
 		{
 			int new_state = p_m_states[state_counter]->p_transitions[t_counter]->new_state;
 
-			cout << "state counter " << state_counter << "t_counter: " << t_counter << "\n";
-
 			if (new_state == 0)
 			{
 				// Transition is not allowed - skip out
 				continue;
 			}
-
-			printf("kkks\n");
 			p_m_states[state_counter]->p_transitions[t_counter]->p_cmv_options =
 				p_cmv_options;
 		}
 	}
 }
 
-void kinetic_scheme::write_rate_functions_to_file(string output_file_string, string file_write_mode,
-	string JSON_append_string)
+void kinetic_scheme::write_rate_functions_to_file(void)
 {
-	//! Writes rate functions to output file
+	//! Writes rate functions to output file based on data in p_cmv_options
 
 	// Variables
-	int counter = 0;
-
-	double x_limit = 10;
-	double x_bin = 0.5;
+	int counter = 0;			// integer counter
 
 	m_state* p_m_state;			// pointer to an m_state
 	transition* p_trans;		// pointer to a transition
@@ -191,10 +183,44 @@ void kinetic_scheme::write_rate_functions_to_file(string output_file_string, str
 
 	FILE* output_file;
 
+	path options_file_path;		// path for options file
+	path output_file_path;		// path for output file
+
+	string output_file_string;	// string version of output file
+
 	// Code
 
+	// First, make sure we need to write the file, return if file_string is empty
+	if (p_cmv_options->rates_dump_file_string.empty())
+		return;
+
+	// Now adjust the rates file
+	if (p_cmv_options->rates_dump_relative_to != "")
+	{
+		path base_dir;
+
+		if (p_cmv_options->rates_dump_relative_to == "this_file")
+		{
+			options_file_path = path(p_cmv_options->options_file_string);
+			base_dir = options_file_path.parent_path();
+		}
+		else
+		{
+			base_dir = path(p_cmv_options->rates_dump_relative_to);
+		}
+
+		output_file_path = base_dir / p_cmv_options->rates_dump_file_string;
+		output_file_string = output_file_path.string();
+	}
+	else
+	{
+		output_file_string = p_cmv_options->rates_dump_file_string;
+	}
+
 	// Make sure directory exists
-	path output_file_path(output_file_string);
+	output_file_path = absolute(path(output_file_string));
+
+	cout << "output_file_path " << output_file_path.string() << "\n\n";
 
 	if (!(is_directory(output_file_path.parent_path())))
 	{
@@ -211,8 +237,7 @@ void kinetic_scheme::write_rate_functions_to_file(string output_file_string, str
 	}
 
 	// Check file can be opened, abort if not
-	// file write status should be "w" for new, or "a" for append
-	errno_t err = fopen_s(&output_file, output_file_string.c_str(), file_write_mode.c_str());
+	errno_t err = fopen_s(&output_file, output_file_string.c_str(), "w");
 
 	if (err != 0)
 	{
@@ -222,7 +247,7 @@ void kinetic_scheme::write_rate_functions_to_file(string output_file_string, str
 	}
 
 	// Write the JSON bracket
-	fprintf_s(output_file, "\t\t\t{\n\"scheme\":\n\"\n");
+	fprintf_s(output_file, "{\n\t\"scheme\":\n\"\n");
 
 	// Cycle through transitions and rates writing the column headers
 	for (int state_counter = 0; state_counter < no_of_states; state_counter++)
@@ -248,7 +273,8 @@ void kinetic_scheme::write_rate_functions_to_file(string output_file_string, str
 	fprintf_s(output_file, "\n");
 
 	// Cycle through x values and bins
-	for (double x = -x_limit; x <= x_limit; x = x + x_bin)
+	for (double x = p_cmv_options->bin_min ; x <= p_cmv_options->bin_max ;
+						x = x + p_cmv_options->bin_width)
 	{
 		fprintf_s(output_file, "%8g", x);
 
@@ -275,7 +301,7 @@ void kinetic_scheme::write_rate_functions_to_file(string output_file_string, str
 	}
 
 	// Close the JSON bracket
-	fprintf_s(output_file, "\"\n\t\t\t}%s\n", JSON_append_string.c_str());
+	fprintf_s(output_file, "\"\n}\n");
 
 	fclose(output_file);
 }

@@ -86,4 +86,29 @@ void cmv_options::initialise_options_from_JSON_file(string options_file_string)
 
 	JSON_functions::check_JSON_member_number(impl, "max_rate");
 	max_rate = impl["max_rate"].GetDouble();
+
+	// Check for rates dump
+	if (JSON_functions::check_JSON_member_exists(doc, "rates_dump"))
+	{
+		const rapidjson::Value& rd = doc["rates_dump"];
+
+		if (JSON_functions::check_JSON_member_exists(rd, "relative_to"))
+		{
+			rates_dump_relative_to = rd["relative_to"].GetString();
+		}
+		else
+		{
+			rates_dump_relative_to = "";
+		}
+
+		JSON_functions::check_JSON_member_string(rd, "file_string");
+		rates_dump_file_string = rd["file_string"].GetString();
+	}
+	else
+	{
+		rates_dump_relative_to = "";
+		rates_dump_file_string = "";
+	}
+
+	cout << rates_dump_file_string << "\n";
 }

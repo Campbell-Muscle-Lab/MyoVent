@@ -66,7 +66,7 @@ public:
 	/**
 	* updates 
 	*/
-	void update_p_cmv_options(cmv_options* set_pointer);
+	void update_p_cmv_options(cmv_options* set_p_cmv_options);
 
 	/**
 	* void write_kinetic_scheme_to_file(char output_file_string)
@@ -76,11 +76,10 @@ public:
 	void write_kinetic_scheme_to_file(char output_file_string[]);
 
 	/**
-	* void write_myosin_rate_functions_to_file(char output_file_string)
-	* as a tab-delimited file
+	* void write_rate_functions_to_file()
+	* as a JSON file structure
 	* @return void
 	*/
-	void write_rate_functions_to_file(string output_file_string, string file_write_mode,
-										string JSON_append_string);
+	void write_rate_functions_to_file();
 
 };

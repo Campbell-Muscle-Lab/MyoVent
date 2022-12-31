@@ -14,6 +14,7 @@
 // Forward declararations
 class half_sarcomere;
 class cmv_model;
+class cmv_options;
 class cmv_results;
 
 class kinetic_scheme;
@@ -36,6 +37,8 @@ public:
 
 	cmv_model* p_cmv_model;					/**< Pointer to cmv_model */
 
+	cmv_options* p_cmv_options;				/**< Pointer to cmv_options */
+
 	cmv_results* p_cmv_results;				/**< Pointer to cmv_results */
 
 	kinetic_scheme* p_m_scheme;				/**< Pointer to a kinetic scheme */
@@ -45,4 +48,7 @@ public:
 	double myof_prop_myofilaments;
 	double myof_k_cb;
 
+	// Functions
+
+	void update_p_cmv_options(cmv_options* set_p_cmv_options);
 };

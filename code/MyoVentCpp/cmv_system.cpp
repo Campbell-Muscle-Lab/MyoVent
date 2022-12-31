@@ -83,12 +83,10 @@ void cmv_system::run_simulation(string options_file_string,
 	p_circulation->prepare_for_cmv_results();
 	p_hemi_vent->prepare_for_cmv_results();
 
-	// Update the cross-bridge transitions with the simulation objects
-	cout << "hello\n";
-	p_hemi_vent->p_hs->p_myofilaments->p_m_scheme->update_p_cmv_options(p_cmv_options);
+	// Update the myofilaments and daughter objects with theh simulation objects
+	p_hemi_vent->p_hs->p_myofilaments->update_p_cmv_options(p_cmv_options);
 
-	cout << "hello2\n";
-	p_hemi_vent->p_hs->p_myofilaments->p_m_scheme->write_rate_functions_to_file("d:\\temp\\rates.txt", "w", "");
+	p_hemi_vent->p_hs->p_myofilaments->p_m_scheme->write_rate_functions_to_file();
 
 	cout << "\n\nMax_rate: " << p_cmv_options->max_rate << "\n\n";
 

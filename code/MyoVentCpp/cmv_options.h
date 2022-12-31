@@ -46,6 +46,11 @@ public:
 	double max_rate;						/**< double with maximum rate for a
 													cross-bridge rate in s^-1 */
 
+	string rates_dump_relative_to;			/**< string defining path type
+													for rates_dump file */
+
+	string rates_dump_file_string;			/**< string with rates file */
+
 	/**
 	/* Function initialises protocol object from file
 	*/
