@@ -14,6 +14,7 @@
 #include "hemi_vent.h"
 #include "half_sarcomere.h"
 #include "membranes.h"
+#include "cmv_options.h"
 #include "cmv_results.h"
 #include "cmv_protocol.h"
 #include "cmv_model.h"
@@ -32,6 +33,7 @@ cmv_system::cmv_system(string JSON_model_file_string)
 	p_cmv_model = new cmv_model(JSON_model_file_string);
 
 	// Sets other pointers to safety
+	p_cmv_options = NULL;
 	p_cmv_protocol = NULL;
 	p_cmv_results = NULL;
 
@@ -62,6 +64,9 @@ void cmv_system::run_simulation(string options_file_string,
 									string results_file_string)
 {
 	//! Code runs a simulation
+	
+	// Initialises an options object
+	p_cmv_options = new cmv_options(options_file_string);
 
 	// Initialise the protocol object
 	p_cmv_protocol = new cmv_protocol(protocol_file_string);
@@ -92,6 +97,8 @@ void cmv_system::run_simulation(string options_file_string,
 	p_cmv_results->write_data_to_file(results_file_string);
 
 	// Tidying up
+	delete p_cmv_options;
+	delete p_cmv_protocol;
 	delete p_cmv_results;
 }
 

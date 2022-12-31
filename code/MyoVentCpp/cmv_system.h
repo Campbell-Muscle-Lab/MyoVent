@@ -11,6 +11,7 @@
 
 // Forward declarations
 class cmv_model;
+class cmv_options;
 class cmv_protocol;
 class cmv_results;
 class circulation;
@@ -33,6 +34,8 @@ public:
 
 	// Variables
 	cmv_model* p_cmv_model;					/**< Pointer to cmv_model object */
+
+	cmv_options* p_cmv_options;				/**< Poniter to cmv_options object */
 
 	cmv_protocol* p_cmv_protocol;			/**< Pointer to a cmv_protocol object */
 

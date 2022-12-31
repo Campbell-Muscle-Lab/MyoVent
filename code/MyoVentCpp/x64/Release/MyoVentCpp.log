@@ -1,10 +1,9 @@
-﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(499,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
-  cmv_model.cpp
-  myofilaments.cpp
+﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(499,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
+  cmv_system.cpp
 LINK : warning LNK4098: defaultlib 'LIBCMT' conflicts with use of other libs; use /NODEFAULTLIB:library
   Generating code
-  8 of 840 functions ( 1.0%) were compiled, the rest were copied from previous compilation.
+  2 of 847 functions ( 0.2%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    8 functions had inline decision re-evaluated but remain unchanged
+    24 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
-  MyoVentCpp.vcxproj -> C:\ken\GitHub\CampbellMuscleLab\models\MyoVent\code\MyoVentCpp\bin\MyoVentCpp.exe
+  MyoVentCpp.vcxproj -> D:\Ken\GitHub\CampbellMuscleLab\Models\MyoVent\code\MyoVentCpp\bin\MyoVentCpp.exe

@@ -148,6 +148,7 @@
   <ItemGroup>
     <ClCompile Include="circulation.cpp" />
     <ClCompile Include="cmv_model.cpp" />
+    <ClCompile Include="cmv_options.cpp" />
     <ClCompile Include="cmv_protocol.cpp" />
     <ClCompile Include="cmv_results.cpp" />
     <ClCompile Include="cmv_system.cpp" />
@@ -155,13 +156,17 @@
     <ClCompile Include="heart_rate.cpp" />
     <ClCompile Include="hemi_vent.cpp" />
     <ClCompile Include="JSON_functions.cpp" />
+    <ClCompile Include="kinetic_scheme.cpp" />
     <ClCompile Include="membranes.cpp" />
     <ClCompile Include="myofilaments.cpp" />
     <ClCompile Include="MyoVentCpp.cpp" />
+    <ClCompile Include="m_state.cpp" />
+    <ClCompile Include="transition.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="circulation.h" />
     <ClInclude Include="cmv_model.h" />
+    <ClInclude Include="cmv_options.h" />
     <ClInclude Include="cmv_protocol.h" />
     <ClInclude Include="cmv_results.h" />
     <ClInclude Include="cmv_system.h" />
@@ -170,8 +175,11 @@
     <ClInclude Include="heart_rate.h" />
     <ClInclude Include="hemi_vent.h" />
     <ClInclude Include="JSON_functions.h" />
+    <ClInclude Include="kinetic_scheme.h" />
     <ClInclude Include="membranes.h" />
     <ClInclude Include="myofilaments.h" />
+    <ClInclude Include="m_state.h" />
+    <ClInclude Include="transition.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

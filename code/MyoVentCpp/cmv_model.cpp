@@ -118,4 +118,7 @@ void cmv_model::initialise_model_from_JSON_file(string JSON_model_file_string)
 
 	JSON_functions::check_JSON_member_number(myos, "k_cb");
 	myof_k_cb = myos["k_cb"].GetDouble();
+
+	JSON_functions::check_JSON_member_exists(myos, "kinetics");
+	const rapidjson::Value& mykin = myos["kinetics"];
 }

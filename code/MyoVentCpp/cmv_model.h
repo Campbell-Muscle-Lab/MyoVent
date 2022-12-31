@@ -86,6 +86,9 @@ public:
 	double myof_k_cb;					/**< double describing cross-bridge stiffness
 												in N m^-1 */
 
+	kinetic_scheme* p_m_scheme;			/**< pointer to the kinetic scheme
+												for myosin */
+
 
 
 	// Other functions

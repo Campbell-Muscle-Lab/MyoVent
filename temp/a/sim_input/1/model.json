@@ -94,69 +94,67 @@
             {
                 "k_cb": 0.001,
                 "kinetics":
+                {
+                "no_of_states": 3,
+                "max_no_of_transitions": 2,
+                "scheme":
                 [
-                  {
-                    "no_of_states": 3,
-                    "max_no_of_transitions": 2,
-                    "scheme":
+                    {
+                    "number": 1,
+                    "type": "D",
+                    "extension": 0,
+                    "transition":
                     [
-                      {
-                        "number": 1,
-                        "type": "D",
-                        "extension": 0,
-                        "transition":
-                        [
-                          {
-                            "new_state": 2,
-                            "rate_type": "force_dependent",
-                            "rate_parameters": [
-                                10,
-                                1000
-                            ]
-                          }
+                        {
+                        "new_state": 2,
+                        "rate_type": "force_dependent",
+                        "rate_parameters": [
+                            10,
+                            1000
                         ]
-                      },
-                      {
-                        "number": 2,
-                        "type": "D",
-                        "extension": 0,
-                        "transition": [
-                          {
-                            "new_state": 1,
-                            "rate_type": "constant",
-                            "rate_parameters": [
-                                50
-                            ]
-                          },
-                          {
-                            "new_state": 3,
-                            "rate_type": "gaussian",
-                            "rate_parameters": [
-                                50
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "number": 3,
-                        "type": "A",
-                        "extension": 5.0,
-                        "transition": [
-                          {
-                            "new_state": 2,
-                            "rate_type": "poly",
-                            "rate_parameters": [
-                                50,
-                                1,
-                                2,
-                                0
-                            ]
-                          }
-                        ]
-                      }
+                        }
                     ]
-                  }
-                ]
+                    },
+                    {
+                    "number": 2,
+                    "type": "D",
+                    "extension": 0,
+                    "transition": [
+                        {
+                        "new_state": 1,
+                        "rate_type": "constant",
+                        "rate_parameters": [
+                            50
+                        ]
+                        },
+                        {
+                        "new_state": 3,
+                        "rate_type": "gaussian",
+                        "rate_parameters": [
+                            50
+                        ]
+                        }
+                    ]
+                    },
+                    {
+                    "number": 3,
+                    "type": "A",
+                    "extension": 5.0,
+                    "transition": [
+                        {
+                        "new_state": 2,
+                        "rate_type": "poly",
+                        "rate_parameters": [
+                            50,
+                            1,
+                            2,
+                            0
+                        ]
+                        }
+                    ]
+                    }
+                    ]
+                }
             }
         }
     },

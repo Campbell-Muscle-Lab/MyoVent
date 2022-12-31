@@ -36,8 +36,6 @@ myofilaments::myofilaments(half_sarcomere* set_p_parent_hs)
 	myof_prop_fibrosis = p_cmv_model->myof_prop_fibrosis;
 	myof_prop_myofilaments = p_cmv_model->myof_prop_myofilaments;
 	myof_k_cb = p_cmv_model->myof_k_cb;
-
-	cout << "\n\nk_cb: " << myof_k_cb << "\n\n";
 }
 
 // Destructor
