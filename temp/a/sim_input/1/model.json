@@ -161,7 +161,7 @@
                         "new_state": 4,
                         "rate_type": "constant",
                         "rate_parameters": [
-                            100
+                            10
                         ]
                         }
                     ]

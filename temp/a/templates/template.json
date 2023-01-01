@@ -76,16 +76,20 @@
         "label": "Thick",
         "series": [
           {
-            "field": "myof_m_pop_0"
+            "field": "myof_m_pop_0",
+            "field_label": "M_0"
           },
           {
-            "field": "myof_m_pop_1"
+            "field": "myof_m_pop_1",
+            "field_label": "M_1"
           },
           {
-            "field": "myof_m_pop_2"
+            "field": "myof_m_pop_2",
+            "field_label": "M_2"
           },
           {
-            "field": "myof_m_pop_3"
+            "field": "myof_m_pop_3",
+            "field_label": "M_3"
           }
         ]
       }

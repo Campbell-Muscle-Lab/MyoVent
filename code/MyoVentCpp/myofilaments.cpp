@@ -40,7 +40,6 @@ myofilaments::myofilaments(half_sarcomere* set_p_parent_hs)
 	p_cmv_options = NULL;
 	x = NULL;
 	y = NULL;
-	k_matrix = NULL;
 	m_y_indices = NULL;
 	m_state_pops = NULL;
 
@@ -79,10 +78,6 @@ myofilaments::~myofilaments(void)
 	if (y != NULL)
 	{
 		gsl_vector_free(y);
-	}
-	if (k_matrix != NULL)
-	{
-		gsl_matrix_free(k_matrix);
 	}
 	if (m_y_indices != NULL)
 	{
@@ -172,9 +167,6 @@ void myofilaments::initialise_simulation(void)
 	gsl_vector_set(y, 0, 1.0);
 	gsl_vector_set(y, a_off_index, 1.0);
 
-	// Initialise the k_matrix
-	k_matrix = gsl_matrix_alloc(y_length, y_length);
-
 	// Initialise and zero the m_bin_indices
 	m_y_indices = gsl_matrix_int_alloc(p_m_scheme->no_of_states, 2);
 	gsl_matrix_int_set_zero(m_y_indices);
@@ -227,11 +219,24 @@ int myof_calculate_derivs(double t, const double y[], double f[], void* params)
 
 	myofilaments* p_myof = (myofilaments*)params;
 
+	double rate;
+
+	double hs_force;
+	double hs_length;
+
+	double x_pos;
+	double x_ext;
+
 	double f_overlap;
 	double m_bound;
 
 	double J_on;
 	double J_off;
+
+	double flux;
+
+	int current_ind;
+	int new_ind;
 	
 	// Code
 
@@ -242,15 +247,166 @@ int myof_calculate_derivs(double t, const double y[], double f[], void* params)
 	// Calculate state populations
 	p_myof->calculate_m_state_pops(y);
 	m_bound = p_myof->myof_m_bound;
-	
-	// Calculate f as k_matrix * y for myosin
-	for (int r = 0; r < p_myof->m_length; r++)
-	{
-		f[r] = 0.0;
 
-		for (int c = 0; c < p_myof->m_length; c++)
+	// Set state variables from parent
+	hs_force = p_myof->p_parent_hs->hs_force;
+	hs_length = p_myof->p_parent_hs->hs_length;
+
+	// Initalise derivs
+	for (int i = 0; i < p_myof->y_length; i++)
+	{
+		f[i] = 0.0;
+	}
+
+	// Start with myosin
+
+	// Work through the states
+	for (int state_counter = 0; state_counter < p_myof->p_m_scheme->no_of_states;
+		state_counter++)
+	{
+		char current_state_type = p_myof->p_m_scheme->p_m_states[state_counter]->state_type;
+
+		// Now through the transitions
+		for (int t_counter = 0; t_counter < p_myof->p_m_scheme->max_no_of_transitions;
+			t_counter++)
 		{
-			f[r] = f[r] + (gsl_matrix_get(p_myof->k_matrix, r, c) * y[c]);
+			int new_state = p_myof->p_m_scheme->p_m_states[state_counter]->
+					p_transitions[t_counter]->new_state;
+
+			if (new_state == 0)
+			{
+				// Transition is not allowed out - skip out
+				continue;
+			}
+
+			char new_state_type = p_myof->p_m_scheme->p_m_states[new_state - 1]->state_type;
+
+			if ((current_state_type == 'S') || (current_state_type == 'D'))
+			{
+				// Deatched state
+				if ((new_state_type == 'S') || (new_state_type == 'D'))
+				{
+					// Detached to detached
+					rate = p_myof->p_m_scheme->p_m_states[state_counter]->p_transitions[t_counter]->
+						calculate_rate(0, 0, hs_force, hs_length);
+
+					// Find current index
+					current_ind = gsl_matrix_int_get(p_myof->m_y_indices, state_counter, 0);
+
+					// Find flux
+					flux = rate * y[current_ind];
+
+					// Cross-bridges leaving current state
+					f[current_ind] = f[current_ind] - flux;
+
+					// Cross-bridges arriving at new state
+					new_ind = gsl_matrix_int_get(p_myof->m_y_indices, new_state - 1, 0);
+
+					f[new_ind] = f[new_ind] + flux;
+				}
+				else
+				{
+					// Detached to attached
+					current_ind = gsl_matrix_int_get(p_myof->m_y_indices, state_counter, 0);
+
+					// Cycle through the bins
+					for (int bin_index = 0; bin_index < p_myof->no_of_bin_positions;
+						bin_index++)
+					{
+						// Get x position
+						x_pos = gsl_vector_get(p_myof->x, bin_index);
+						x_ext = p_myof->p_m_scheme->p_m_states[state_counter]->extension;
+
+						// Calculate rate
+						rate = 	p_myof->p_m_scheme->p_m_states[state_counter]->
+							p_transitions[t_counter]->calculate_rate(x_pos, x_ext, hs_force, hs_length);
+
+						flux = p_myof->p_cmv_options->bin_width *
+							rate * y[current_ind] * (y[p_myof->a_on_index] - m_bound);
+
+						new_ind = gsl_matrix_int_get(p_myof->m_y_indices, new_state - 1, 0) +
+							bin_index;
+
+						// Cross-bridges leaving this state
+						f[current_ind] = f[current_ind] - flux;
+
+						// Cross-bridges arriving at new state
+						f[new_ind] = f[new_ind] + flux;
+					}
+				}
+			}
+			else
+			{
+				// We are in an attached state
+				if ((new_state_type == 'S') || (new_state_type == 'D'))
+				{
+					// Attached to detached
+					new_ind = gsl_matrix_int_get(p_myof->m_y_indices, new_state - 1, 0);
+
+					// Cycle through the bins
+					for (int bin_index = 0; bin_index < p_myof->no_of_bin_positions;
+						bin_index++)
+					{
+						// Get x position
+						x_pos = gsl_vector_get(p_myof->x, bin_index);
+						x_ext = p_myof->p_m_scheme->p_m_states[state_counter]->extension;
+
+						current_ind = gsl_matrix_int_get(p_myof->m_y_indices, state_counter, 0) + bin_index;
+
+						// Calculate rate
+						rate = p_myof->p_m_scheme->p_m_states[state_counter]->
+							p_transitions[t_counter]->calculate_rate(x_pos, x_ext, hs_force, hs_length);
+
+						flux =	rate * y[current_ind];
+
+						// Cross-bridges leaving this state
+						f[current_ind] = f[current_ind] - flux;
+
+						// Cross-bridges arriving at new state
+						f[new_ind] = f[new_ind] + flux;
+					}
+				}
+				else
+				{
+					// Cross-bridges transitioning between bound states
+
+					// Cycle through the bins
+					for (int bin_index = 0; bin_index < p_myof->no_of_bin_positions;
+						bin_index++)
+					{
+						// Get x position
+						x_pos = gsl_vector_get(p_myof->x, bin_index);
+						x_ext = p_myof->p_m_scheme->p_m_states[state_counter]->extension;
+
+						current_ind = gsl_matrix_int_get(p_myof->m_y_indices, state_counter, 0) +
+							bin_index;
+
+						// Calculate rate
+						rate = p_myof->p_m_scheme->p_m_states[state_counter]->
+							p_transitions[t_counter]->calculate_rate(x_pos, x_ext, hs_force, hs_length);
+
+						new_ind = gsl_matrix_int_get(p_myof->m_y_indices, new_state - 1, 0) +
+							bin_index;
+
+						flux = rate * y[current_ind];
+
+						// Cross-bridges leaving this state
+						f[current_ind] = f[current_ind] - flux;
+
+						// Cross-bridgse arriving at new state
+						f[new_ind] = f[new_ind] + flux;
+					}
+				}
+			}
+/*
+			printf("flux\n");
+			for (int i = 0; i < p_myof->y_length; i++)
+			{
+				printf("f[%i]: %.3f\t", i, f[i]);
+				if (i == (p_myof->y_length - 1))
+					printf("\n");
+			}
+*/
 		}
 	}
 
@@ -285,7 +441,6 @@ void myofilaments::implement_time_step(double time_step_s)
 	// Variables
 
 	// Code
-	set_k_matrix();
 
 	// Variables
 	double eps_abs = 1e-4;
@@ -336,102 +491,20 @@ void myofilaments::implement_time_step(double time_step_s)
 	for (int i = 0; i < p_m_scheme->no_of_states; i++)
 	{
 		m_pop_array[i] = gsl_vector_get(m_state_pops, i);
+
+		/*
+		printf("\t%.3f", m_pop_array[i]);
+		if (i == (p_m_scheme->no_of_states - 1))
+			printf("\n");
+		*/
 	}
+
 
 	myof_a_off = gsl_vector_get(y, a_off_index);
 	myof_a_on = gsl_vector_get(y, a_on_index);
 
 	// Tidy up
 	free(y_calc);
-}
-
-
-void myofilaments::set_k_matrix(void)
-{
-	//! Function updates the k_matrix
-
-	// Variables
-
-	int current_ind, new_ind;
-
-	double rate;
-
-	double hs_force;
-	double hs_length;
-
-	// Code
-
-	// Set state variables from parent
-	hs_force = p_parent_hs->hs_force;
-	hs_length = p_parent_hs->hs_length;
-
-	// Start from scratch
-	gsl_matrix_set_zero(k_matrix);
-
-	// Work through the states
-	for (int state_counter = 0; state_counter < p_m_scheme->no_of_states;
-		state_counter++)
-	{
-		char current_state_type = p_m_scheme->p_m_states[state_counter]->state_type;
-
-		// Now through the transitions
-		for (int t_counter = 0; t_counter < p_m_scheme->max_no_of_transitions;
-			t_counter++)
-		{
-			int new_state = p_m_scheme->p_m_states[state_counter]->p_transitions[t_counter]->new_state;
-
-			if (new_state == 0)
-			{
-				// Transition is not allowed out - skip out
-				continue;
-			}
-
-			char new_state_type = p_m_scheme->p_m_states[new_state - 1]->state_type;
-
-			if ((current_state_type == 'S') || (current_state_type == 'D'))
-			{
-				// Deatched state
-				if ((new_state_type == 'S') || (new_state_type == 'D'))
-				{
-					// Detached to attached
-					rate = p_m_scheme->p_m_states[state_counter]->p_transitions[t_counter]->
-						calculate_rate(0, 0, hs_force, hs_length);
-
-					// Leaving
-					current_ind = gsl_matrix_int_get(m_y_indices, state_counter, 0);
-
-					gsl_matrix_set(k_matrix, current_ind, current_ind,
-						gsl_matrix_get(k_matrix, current_ind, current_ind) - rate);
-
-					// Arriving
-					new_ind = gsl_matrix_int_get(m_y_indices, new_state - 1, 0);
-					gsl_matrix_set(k_matrix, new_ind, current_ind,
-						gsl_matrix_get(k_matrix, new_ind, current_ind) + rate);
-				}
-				else
-				{
-					// Detached to attached
-				}
-
-			}
-		}
-	}
-
-	/*
-	for (int i = 0; i < y_length; i++)
-	{
-		for (int j = 0; j < y_length; j++)
-		{
-			printf("%.0f", gsl_matrix_get(k_matrix, i, j));
-			if (j == (y_length - 1))
-				printf("\n");
-			else
-				printf("\t");
-		}
-	}
-	*/
-	
-
 }
 
 void myofilaments::calculate_m_state_pops(const double y_calc[])

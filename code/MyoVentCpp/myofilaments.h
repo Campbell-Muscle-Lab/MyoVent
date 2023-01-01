@@ -77,8 +77,6 @@ public:
 
 	gsl_vector* y;							/**< gsl_vector with the system */
 
-	gsl_matrix* k_matrix;					/**< gsl_matrix with the rate constants */
-
 	int a_off_index;						// indices
 	int a_on_index;
 
@@ -112,8 +110,6 @@ public:
 	void initialise_simulation(void);
 
 	void implement_time_step(double time_step_s);
-
-	void set_k_matrix(void);
 
 	void calculate_m_state_pops(const double y[]);
 
