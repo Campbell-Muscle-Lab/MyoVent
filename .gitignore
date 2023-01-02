@@ -508,6 +508,5 @@ static
 _site/
 Gemfile.lock
 
-# Temporary test files
-**/temp/**/*.txt
-
+# Demo files
+temp_back/**/*.*

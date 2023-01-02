@@ -1,2 +1,0 @@
-C:\ken\GitHub\CampbellMuscleLab\models\MyoVent\code\MyoVentCpp\x64\Debug\MyoVentCpp.exe
-C:\ken\GitHub\CampbellMuscleLab\models\MyoVent\code\MyoVentCpp\x64\Debug\MyoVentCpp.pdb
