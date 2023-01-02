@@ -29,7 +29,11 @@ half_sarcomere::half_sarcomere(hemi_vent* set_p_parent_hemi_vent)
 	// Create the daugher objects
 	p_heart_rate = new heart_rate(this);
 	p_membranes = new membranes(this);
-	p_myofilaments = new myofilaments(this);	
+	p_myofilaments = new myofilaments(this);
+
+	// Set safe values
+	p_cmv_options = NULL;
+	p_cmv_results = NULL;
 
 	// Initialise
 	hs_stress = 0.0;
@@ -51,25 +55,28 @@ half_sarcomere::~half_sarcomere(void)
 }
 
 // Other functions
-void half_sarcomere::prepare_for_cmv_results(void)
+void half_sarcomere::initialise_simulation(void)
 {
-	//! Function adds data fields to main results object
+	//! Code initialises simulation
+	
+	// Code
 
-	// Variables
+	// Set options from parent
+	p_cmv_options = p_parent_hemi_vent->p_cmv_options;
 
-	// Initialize
-
-	// Set the pointer to the results object
+	// Set results from parent
 	p_cmv_results = p_parent_hemi_vent->p_cmv_results;
 
 	// Now add the results fields
 	p_cmv_results->add_results_field("hs_length", &hs_length);
 	p_cmv_results->add_results_field("hs_stress", &hs_stress);
 
-	// Now handle children
-	p_membranes->prepare_for_cmv_results();
-	p_heart_rate->prepare_for_cmv_results();
-	p_myofilaments->prepare_for_cmv_results();
+	// Now initialise daughter objects
+	p_heart_rate->initialise_simulation();
+
+	p_membranes->initialise_simulation();
+
+	p_myofilaments->initialise_simulation();
 }
 
 void half_sarcomere::implement_time_step(double time_step_s)
@@ -99,4 +106,17 @@ void half_sarcomere::change_hsl(double delta_hsl)
 
 	// And the cross-bridges
 	p_myofilaments->move_cb_populations(delta_hsl);
+}
+
+double half_sarcomere::return_wall_stress_after_delta_hsl(double delta_hsl)
+{
+	//! Function returns wall stress after given delta_hsl
+	
+	// Variables
+	double wall_stress;
+
+	// Code
+	wall_stress = p_myofilaments->return_stress_after_delta_hsl(delta_hsl);
+
+	return wall_stress;
 }

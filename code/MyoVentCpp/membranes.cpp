@@ -9,6 +9,7 @@
 #include "membranes.h"
 #include "half_sarcomere.h"
 #include "cmv_model.h"
+#include "cmv_options.h"
 #include "cmv_results.h"
 
 #include "gsl_errno.h"
@@ -29,6 +30,7 @@ membranes::membranes(half_sarcomere* set_p_parent_hs)
 
 	// Set other pointers safe
 	p_cmv_results = NULL;
+	p_cmv_options = NULL;
 
 	// Initialize
 	memb_Ca_cytosol = 0.0;
@@ -56,13 +58,16 @@ membranes::~membranes(void)
 }
 
 // Other functions
-void membranes::prepare_for_cmv_results(void)
+void membranes::initialise_simulation(void)
 {
 	//! Function adds data fields to main results object
 
 	// Variables
 
 	// Initialize
+
+	// Set the options
+	p_cmv_options = p_parent_hs->p_cmv_options;
 
 	// Set the pointer to the results object
 	p_cmv_results = p_parent_hs->p_cmv_results;

@@ -51,11 +51,11 @@ public:
 													in s */
 
 	// Other functions
-
+	
 	/**
-	/* function adds data fields and vectors to the results objet
+	/* function prepares for simulation
 	*/
-	void prepare_for_cmv_results(void);
+	void initialise_simulation();
 
 	/**
 	* function manages the hr_activation variable which determines the

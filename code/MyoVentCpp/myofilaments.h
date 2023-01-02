@@ -146,7 +146,7 @@ public:
 
 	void prepare_for_cmv_results(void);
 
-	void update_p_cmv_options(cmv_options* set_p_cmv_options);
+	void update_p_cmv_options(void);
 
 	void initialise_simulation(void);
 
@@ -165,6 +165,8 @@ public:
 	double calculate_int_pas_stress(bool check_only = false, double delta_hsl = 0.0);
 
 	double calculate_ext_pas_stress(bool check_only = false, double delta_hsl = 0.0);
+
+	double return_stress_after_delta_hsl(double delta_hsl);
 
 	void move_cb_populations(double delta_hsl);
 };

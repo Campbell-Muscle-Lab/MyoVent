@@ -16,6 +16,8 @@
 class cmv_system;
 class cmv_model;
 class cmv_results;
+class cmv_options;
+
 class hemi_vent;
 class membranes;
 class myofilaments;
@@ -39,7 +41,9 @@ public:
 	
 	cmv_model* p_cmv_model;							/**< Pointer to the cmv_model object */
 
-	cmv_results* p_cmv_results;
+	cmv_results* p_cmv_results;						/**< Pointer to cmv_results */
+
+	cmv_options* p_cmv_options;						/**< Pointer to cmv_options */
 
 	heart_rate* p_heart_rate;						/**< Pointer to heart-rate object */
 
@@ -55,9 +59,12 @@ public:
 	/**
 	/* function adds data fields and vectors to the results objet
 	*/
-	void prepare_for_cmv_results(void);
-
+	
+	void initialise_simulation(void);
+	
 	void implement_time_step(double time_step_s);
 
 	void change_hsl(double delta_hsl);
+
+	double return_wall_stress_after_delta_hsl(double delta_hsl);
 };

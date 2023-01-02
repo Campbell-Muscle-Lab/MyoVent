@@ -74,6 +74,15 @@ myofilaments::myofilaments(half_sarcomere* set_p_parent_hs)
 
 	m_pops_array = (double*)malloc(p_m_scheme->no_of_states * sizeof(double));
 	m_stresses_array = (double*)malloc(p_m_scheme->no_of_states * sizeof(double));
+
+	myof_stress_cb = 0.0;
+	myof_stress_myof = 0.0;
+	myof_stress_int_pas = 0.0;
+	myof_stress_ext_pas = 0.0;
+	myof_stress_total = 0.0;
+
+	no_of_bin_positions = 0;
+	y_length = 0;
 }
 
 // Destructor
@@ -111,60 +120,21 @@ myofilaments::~myofilaments(void)
 }
 
 // Other functions
-void myofilaments::prepare_for_cmv_results(void)
+void myofilaments::initialise_simulation(void)
 {
 	//! Function adds data fields to main results object
 
 	// Variables
 
-	// Initialize
+	// Code
 
-	// Set the pointer to the results object
-	p_cmv_results = p_parent_hs->p_cmv_results;
-
-	// Now add the results fields
-	p_cmv_results->add_results_field("myof_a_off", &myof_a_off);
-	p_cmv_results->add_results_field("myof_a_on", &myof_a_on);
-	p_cmv_results->add_results_field("myof_f_overlap", &myof_f_overlap);
-	p_cmv_results->add_results_field("myof_m_bound", &myof_m_bound);
-
-	for (int i = 0; i < p_m_scheme->no_of_states; i++)
-	{
-		string label = string("myof_m_pop_") + to_string(i);
-		p_cmv_results->add_results_field(label, &m_pops_array[i]);
-	}
-
-	for (int i = 0; i < p_m_scheme->no_of_states; i++)
-	{
-		string label = string("myof_m_stress_") + to_string(i);
-		p_cmv_results->add_results_field(label, &m_stresses_array[i]);
-	}
-
-	p_cmv_results->add_results_field("myof_stress_cb", &myof_stress_cb);
-	p_cmv_results->add_results_field("myof_stress_int_pas", &myof_stress_int_pas);
-	p_cmv_results->add_results_field("myof_stress_ext_pas", &myof_stress_ext_pas);
-	p_cmv_results->add_results_field("myof_stress_myof", &myof_stress_myof);
-	p_cmv_results->add_results_field("myof_stress_total", &myof_stress_total);
-}
-
-void myofilaments::update_p_cmv_options(cmv_options* set_p_cmv_options)
-{
-	//! Function updates the pointer to the cmv_options
-	//! This is not available when the myofilaments are constructed
-	//! from a model file
-
-	p_cmv_options = set_p_cmv_options;
+	// Set the options
+	p_cmv_options = p_parent_hs->p_cmv_options;
 
 	// Now update the daughter kinetic_scheme
-	p_m_scheme->update_p_cmv_options(p_cmv_options);
-}
+	p_m_scheme->initialise_simulation(this);
 
-void myofilaments::initialise_simulation(void)
-{
-	//! Code initialises simulation
-
-	// Variables
-
+	// Now do lots of stuff specific to this class
 	// Code
 	no_of_bin_positions = 1 + (int)((p_cmv_options->bin_max - p_cmv_options->bin_min) /
 		p_cmv_options->bin_width);
@@ -235,6 +205,33 @@ void myofilaments::initialise_simulation(void)
 	// Update class variables
 	myof_a_off = gsl_vector_get(y, a_off_index);
 	myof_a_on = gsl_vector_get(y, a_on_index);
+
+	// Set the pointer to the results object
+	p_cmv_results = p_parent_hs->p_cmv_results;
+
+	// Now add the results fields
+	p_cmv_results->add_results_field("myof_a_off", &myof_a_off);
+	p_cmv_results->add_results_field("myof_a_on", &myof_a_on);
+	p_cmv_results->add_results_field("myof_f_overlap", &myof_f_overlap);
+	p_cmv_results->add_results_field("myof_m_bound", &myof_m_bound);
+
+	for (int i = 0; i < p_m_scheme->no_of_states; i++)
+	{
+		string label = string("myof_m_pop_") + to_string(i);
+		p_cmv_results->add_results_field(label, &m_pops_array[i]);
+	}
+
+	for (int i = 0; i < p_m_scheme->no_of_states; i++)
+	{
+		string label = string("myof_m_stress_") + to_string(i);
+		p_cmv_results->add_results_field(label, &m_stresses_array[i]);
+	}
+
+	p_cmv_results->add_results_field("myof_stress_cb", &myof_stress_cb);
+	p_cmv_results->add_results_field("myof_stress_int_pas", &myof_stress_int_pas);
+	p_cmv_results->add_results_field("myof_stress_ext_pas", &myof_stress_ext_pas);
+	p_cmv_results->add_results_field("myof_stress_myof", &myof_stress_myof);
+	p_cmv_results->add_results_field("myof_stress_total", &myof_stress_total);
 }
 
 // This function is not a member of the membranes class but is used to interace
@@ -716,6 +713,35 @@ double myofilaments::calculate_ext_pas_stress(bool check_only, double delta_hsl)
 		myof_stress_ext_pas = pas_stress;
 
 	return pas_stress;
+}
+
+double myofilaments::return_stress_after_delta_hsl(double delta_hsl)
+{
+	//! Function returns stress after given delta_hsl
+
+	// Variables
+	double delta_int_pas_stress;
+	double delta_ext_pas_stress;
+	double delta_cb_stress;
+	double new_stress;
+
+	// Code
+	delta_int_pas_stress = calculate_int_pas_stress(true, delta_hsl) -
+		myof_stress_int_pas;
+
+	delta_ext_pas_stress = calculate_ext_pas_stress(true, delta_hsl) -
+		myof_stress_ext_pas;
+
+	delta_cb_stress = (1.0 - myof_prop_fibrosis) * myof_prop_myofilaments *
+		myof_cb_number_density * 1e-9 * myof_k_cb * myof_m_bound *
+		myof_fil_compliance_factor * delta_hsl;
+
+	new_stress = myof_stress_total +
+		delta_int_pas_stress +
+		delta_ext_pas_stress +
+		delta_cb_stress;
+
+	return new_stress;
 }
 
 void myofilaments::move_cb_populations(double delta_hsl)

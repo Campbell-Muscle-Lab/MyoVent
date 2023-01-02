@@ -8,7 +8,10 @@
 
 #include "circulation.h"
 #include "cmv_system.h"
+#include "cmv_model.h"
+#include "cmv_options.h"
 #include "cmv_results.h"
+#include "hemi_vent.h"
 
 // Constructor
 circulation::circulation(cmv_system* set_p_parent_cmv_system=NULL)
@@ -19,10 +22,18 @@ circulation::circulation(cmv_system* set_p_parent_cmv_system=NULL)
 	printf("circulation constructor()\n");
 
 	// Initialise
-	pressure_aorta = 10.0;
 
 	// Set the pointer to the parent system
 	p_parent_cmv_system = set_p_parent_cmv_system;
+	p_cmv_model = p_parent_cmv_system->p_cmv_model;
+
+	// Set pointers to safety
+	p_cmv_options = NULL;
+	p_cmv_results = NULL;
+
+	// Make a hemi-vent object
+	p_hemi_vent = new hemi_vent(this);
+
 }
 
 // Destructor
@@ -32,21 +43,34 @@ circulation::~circulation(void)
 
 	// Code
 	printf("circulation destructor()\n");
+
+	delete p_hemi_vent;
 }
 
 // Other functions
-void circulation::prepare_for_cmv_results(void)
-{
-	//! Function adds data fields to main results object
 
+void circulation::initialise_simulation(void)
+{
+	//! Code initialises simulation
+	
 	// Variables
 
-	// Initialize
+	// Code
 
-	// Set the pointer to the results object
+	// Set the options
+	p_cmv_options = p_parent_cmv_system->p_cmv_options;
+
+	// Set the results
 	p_cmv_results = p_parent_cmv_system->p_cmv_results;
 
-	// Now add the results fields
-	p_cmv_results->add_results_field("presssure_aorta", &pressure_aorta);
+	// Now handle daughter objects
+	p_hemi_vent->initialise_simulation();
+}
+
+void circulation::implement_time_step(double time_step_s)
+{
+	//! Code advances by 1 time-step
+	
+	p_hemi_vent->implement_time_step(time_step_s);
 }
 

@@ -10,6 +10,7 @@
 #include <filesystem>
 
 #include "kinetic_scheme.h"
+#include "myofilaments.h"
 #include "cmv_model.h"
 #include "cmv_options.h"
 #include "m_state.h"
@@ -34,6 +35,7 @@ kinetic_scheme::kinetic_scheme(const rapidjson::Value& m_ks, cmv_model* set_p_cm
 
 	// Set other options safely
 	p_cmv_options = NULL;
+	p_parent_myofilaments = NULL;
 
 	// Pull no_of_states
 	JSON_functions::check_JSON_member_int(m_ks, "no_of_states");
@@ -158,13 +160,17 @@ void kinetic_scheme::set_transition_types(void)
 	}
 }
 
-void kinetic_scheme::update_p_cmv_options(cmv_options* set_p_cmv_options)
+void kinetic_scheme::initialise_simulation(myofilaments* set_p_parent_myofilaments)
 {
-	//! Updates the p_cmv options for all the transitions
+	//! Updates the scheme ready for a simulation
 
 	// Code
 
-	p_cmv_options = set_p_cmv_options;
+	// Updates the parent
+	p_parent_myofilaments = set_p_parent_myofilaments;
+
+	// Update the options
+	p_cmv_options = p_parent_myofilaments->p_cmv_options;
 	
 	// Code
 	for (int state_counter = 0; state_counter < no_of_states; state_counter++)

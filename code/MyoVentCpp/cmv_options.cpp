@@ -69,26 +69,26 @@ void cmv_options::initialise_options_from_JSON_file(string options_file_string)
 	cout << "Parsing options file: " << options_file_string << "\n";
 
 	// Load the protocol object
-	JSON_functions::check_JSON_member_object(doc, "implementation");
-	const rapidjson::Value& impl = doc["implementation"];
+	JSON_functions::check_JSON_member_object(doc, "MyoSim");
+	const rapidjson::Value& myo = doc["MyoSim"];
 
 	// Load protocol variables
-	JSON_functions::check_JSON_member_number(impl, "bin_min");
-	bin_min = impl["bin_min"].GetDouble();
+	JSON_functions::check_JSON_member_number(myo, "bin_min");
+	bin_min = myo["bin_min"].GetDouble();
 
-	JSON_functions::check_JSON_member_number(impl, "bin_max");
-	bin_max = impl["bin_max"].GetDouble();
+	JSON_functions::check_JSON_member_number(myo, "bin_max");
+	bin_max = myo["bin_max"].GetDouble();
 
-	JSON_functions::check_JSON_member_number(impl, "bin_width");
-	bin_width = impl["bin_width"].GetDouble();
+	JSON_functions::check_JSON_member_number(myo, "bin_width");
+	bin_width = myo["bin_width"].GetDouble();
 
-	JSON_functions::check_JSON_member_number(impl, "max_rate");
-	max_rate = impl["max_rate"].GetDouble();
+	JSON_functions::check_JSON_member_number(myo, "max_rate");
+	max_rate = myo["max_rate"].GetDouble();
 
 	// Check for rates dump
-	if (JSON_functions::check_JSON_member_exists(doc, "rates_dump"))
+	if (JSON_functions::check_JSON_member_exists(myo, "rates_dump"))
 	{
-		const rapidjson::Value& rd = doc["rates_dump"];
+		const rapidjson::Value& rd = myo["rates_dump"];
 
 		if (JSON_functions::check_JSON_member_exists(rd, "relative_to"))
 		{
@@ -107,4 +107,11 @@ void cmv_options::initialise_options_from_JSON_file(string options_file_string)
 		rates_dump_relative_to = "";
 		rates_dump_file_string = "";
 	}
+
+	JSON_functions::check_JSON_member_object(doc, "hemi_vent");
+	const rapidjson::Value& hv = doc["hemi_vent"];
+
+	// Load protocol variables
+	JSON_functions::check_JSON_member_string(hv, "thick_wall_approximation");
+	hv_thick_wall_approximation = hv["thick_wall_approximation"].GetString();
 }

@@ -31,7 +31,9 @@ public:
 
 	cmv_model* p_cmv_model;					/**< pointer to parent model */
 
-	cmv_options* p_cmv_options;				/**< pointer to a cmv_options objects */
+	cmv_options* p_cmv_options;				/**< pointer to a cmv_options object */
+
+	myofilaments* p_parent_myofilaments;	/**< pointer to parent myofilaments object */
 
 	int no_of_states;						/**< int defining the number of different states */
 
@@ -70,7 +72,7 @@ public:
 	/**
 	* updates 
 	*/
-	void update_p_cmv_options(cmv_options* set_p_cmv_options);
+	void initialise_simulation(myofilaments* set_p_parent_myofilaments);
 
 	/**
 	* void write_kinetic_scheme_to_file(char output_file_string)

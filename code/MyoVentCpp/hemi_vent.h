@@ -16,8 +16,10 @@
 class cmv_model;
 class cmv_system;
 class half_sarcomere;
+class circulation;
 
 class cmv_results;
+class cmv_options;
 
 class hemi_vent
 {
@@ -25,7 +27,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	hemi_vent(cmv_system* set_p_parent_cmv_system);
+	hemi_vent(circulation* set_p_parent_circulation);
 
 	/**
 	 * Destructor
@@ -40,16 +42,39 @@ public:
 
 	cmv_results* p_cmv_results;				/**< pointer to cmv_results object */
 
+	cmv_options* p_cmv_options;				/**< pointer to cmv_options object */
+
+	circulation* p_parent_circulation;		/**< pointer the parent circulation */
+
 	half_sarcomere* p_hs;					/**< pointer to child half-sarcomere */
 
-	double pressure_ventricle;				/**< double with pressure in the ventricle in mm Hg */
+	double vent_wall_density;				/**< double with wall density in kg m^-3 */
+
+	double vent_wall_volume;				/**< double with wall volume in liters */
+
+	double vent_chamber_volume;				/**< double with chamner volume in liters */
+
+	double vent_chamber_pressure;			/**< double with pressure in the ventricle in mm Hg */
+
+	double vent_wall_thickness;				/**< double with wall thickness in m */
+
+	double vent_n_hs;						/**< double with the number of half-sarcomeres
+													around the ventricular circumference */
+
+	double vent_thick_wall_multiplier;		/**< double with
+													1.0 if using thick wall approximation
+													0.0 if not */
 
 	// Other functions
-
-	/**
-	/* function adds data fields and vectors to the results objet
-	*/
-	void prepare_for_cmv_results(void);
+	void initialise_simulation(void);
 
 	void implement_time_step(double time_step_s);
+
+	double return_wall_thickness_for_chamber_volume(double cv);
+
+	double return_internal_radius_for_chamber_volume(double cv);
+
+	double return_lv_circumference_for_chamber_volume(double cv);
+
+	double return_pressure_for_chamber_volume(double cv);
 };

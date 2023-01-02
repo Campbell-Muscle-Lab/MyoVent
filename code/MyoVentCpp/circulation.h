@@ -14,7 +14,10 @@
 
 // Forward declararations
 class cmv_system;
+class cmv_model;
+class cmv_options;
 class cmv_results;
+class hemi_vent;
 
 class circulation
 {
@@ -30,15 +33,16 @@ public:
 	~circulation(void);
 
 	// Variables
-	double pressure_aorta;
 
-	double* p_data_fields[MAX_NO_OF_RESULT_FIELDS];			/**< array of pointers for data fields */
+	cmv_system* p_parent_cmv_system;					/**< Pointer to the parent_cmv_system */
 
-	std::string data_fields[MAX_NO_OF_RESULT_FIELDS];		/**< array of strings for data fields */
+	cmv_model* p_cmv_model;								/**< Pointer to the cmv_model */
 
-	cmv_system* p_parent_cmv_system;						/**< Pointer to the parent_cmv_system */
+	cmv_options* p_cmv_options;							/**< Pointer to cmv_options */
 
-	cmv_results*  p_cmv_results;							/**< Pointer to cmv_results */
+	cmv_results*  p_cmv_results;						/**< Pointer to cmv_results */
+
+	hemi_vent* p_hemi_vent;								/**< Pointer to a hemi_vent object */
 
 	// Functions
 
@@ -46,4 +50,10 @@ public:
 	/* function adds data fields and vectors to the results objet
 	*/
 	void prepare_for_cmv_results(void);
+
+	void update_p_cmv_options(void);
+
+	void initialise_simulation(void);
+
+	void implement_time_step(double time_step_s);
 };

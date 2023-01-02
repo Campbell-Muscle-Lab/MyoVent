@@ -10,6 +10,7 @@
 #include <filesystem>
 #include <string>
 
+#include "global_definitions.h"
 #include "cmv_model.h"
 #include "kinetic_scheme.h"
 #include "m_state.h"
@@ -37,6 +38,11 @@ cmv_model::cmv_model(string JSON_model_file_string)
 	// Set some known parameters
 	temperature_K = 315.0;
 
+	// Reserve space for compartment variables
+	circ_resistance = (double*)malloc(MAX_NO_OF_COMPARTMENTS * sizeof(double));
+	circ_compliance = (double*)malloc(MAX_NO_OF_COMPARTMENTS * sizeof(double));
+	circ_slack_volume = (double*)malloc(MAX_NO_OF_COMPARTMENTS * sizeof(double));
+
 	// Set rest from file
 	initialise_model_from_JSON_file(JSON_model_file_string);
 }
@@ -48,6 +54,10 @@ cmv_model::~cmv_model(void)
 	std::cout << "cmv_model destructor\n";
 
 	delete p_m_scheme;
+
+	free(circ_resistance);
+	free(circ_compliance);
+	free(circ_slack_volume);
 }
 
 // Other functions
@@ -78,16 +88,61 @@ void cmv_model::initialise_model_from_JSON_file(string JSON_model_file_string)
 	// Now trying to read file
 	cout << "Parse JSON model file: " << JSON_model_file_string << "\n";
 
+	// Load the circulation object
+	JSON_functions::check_JSON_member_object(doc, "circulation");
+	const rapidjson::Value& circ = doc["circulation"];
+
+	JSON_functions::check_JSON_member_number(circ, "blood_volume");
+	circ_blood_volume = circ["blood_volume"].GetDouble();
+
+	JSON_functions::check_JSON_member_object(circ, "compartments");
+	const rapidjson::Value& comp = circ["compartments"];
+
+	// Pull arrays
+	JSON_functions::check_JSON_member_array(comp, "resistance");
+	const rapidjson::Value& r_array = comp["resistance"];
+
+	for (rapidjson::SizeType i = 0; i < r_array.Size(); i++)
+	{
+		circ_resistance[i] = r_array[i].GetDouble();
+	}
+
+	JSON_functions::check_JSON_member_array(comp, "compliance");
+	const rapidjson::Value& c_array = comp["compliance"];
+
+	for (rapidjson::SizeType i = 0; i < c_array.Size(); i++)
+	{
+		circ_compliance[i] = c_array[i].GetDouble();
+	}
+
+	JSON_functions::check_JSON_member_array(comp, "slack_volume");
+	const rapidjson::Value& sv_array = comp["slack_volume"];
+
+	for (rapidjson::SizeType i = 0; i < sv_array.Size(); i++)
+	{
+		circ_slack_volume[i] = sv_array[i].GetDouble();
+	}
+
+	// Load the ventricle object
+	JSON_functions::check_JSON_member_object(doc, "ventricle");
+	const rapidjson::Value& vent = doc["ventricle"];
+
+	JSON_functions::check_JSON_member_number(vent, "wall_density");
+	vent_wall_density = vent["wall_density"].GetDouble();
+
+	JSON_functions::check_JSON_member_number(vent, "wall_volume");
+	vent_wall_volume = vent["wall_volume"].GetDouble();
+
 	// Load the heart_rate object
-	JSON_functions::check_JSON_member_object(doc, "heart_rate");
-	const rapidjson::Value& hr = doc["heart_rate"];
+	JSON_functions::check_JSON_member_object(vent, "heart_rate");
+	const rapidjson::Value& hr = vent["heart_rate"];
 
 	JSON_functions::check_JSON_member_number(hr, "t_RR_interval_s");
 	hr_t_RR_interval_s = hr["t_RR_interval_s"].GetDouble();
 
 	// Load the half-sarcomere structure
-	JSON_functions::check_JSON_member_object(doc, "half_sarcomere");
-	const rapidjson::Value& hs = doc["half_sarcomere"];
+	JSON_functions::check_JSON_member_object(vent, "half_sarcomere");
+	const rapidjson::Value& hs = vent["half_sarcomere"];
 
 	// Load the half_sarcomere parameters
 	JSON_functions::check_JSON_member_number(hs, "initial_hs_length");

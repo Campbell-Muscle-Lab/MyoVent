@@ -41,7 +41,6 @@ cmv_system::cmv_system(string JSON_model_file_string)
 
 	// Create constituent objects
 	p_circulation = new circulation(this);
-	p_hemi_vent = new hemi_vent(this);
 
 	// Initialise variables
 	cum_time_s = 0.0;
@@ -53,11 +52,10 @@ cmv_system::~cmv_system(void)
 	// Initialise
 
 	// Code
-	printf("cmv_system desctructor()\n");
+	printf("cmv_system destructor()\n");
 
 	// Tidy up
 	delete p_circulation;
-	delete p_hemi_vent;
 	delete p_cmv_model;
 }
 
@@ -78,19 +76,11 @@ void cmv_system::run_simulation(string options_file_string,
 	// Initialise the results object
 	p_cmv_results = new cmv_results(p_cmv_protocol->no_of_time_steps);
 
-	// Update the myofilaments and daughter objects with the simulation objects
-	p_hemi_vent->p_hs->p_myofilaments->update_p_cmv_options(p_cmv_options);
-
-	// Dump rates if required
-	p_hemi_vent->p_hs->p_myofilaments->p_m_scheme->write_rate_functions_to_file();
-
-	// Prepare myofilaments for simulation
-	p_hemi_vent->p_hs->p_myofilaments->initialise_simulation();
-
 	// Add in the results
-	this->prepare_for_cmv_results();
-	p_circulation->prepare_for_cmv_results();
-	p_hemi_vent->prepare_for_cmv_results();
+	add_fields_to_cmv_results();
+
+	p_circulation->initialise_simulation();
+
 
 	// Simulation
 	for (int i = 0; i < p_cmv_protocol->no_of_time_steps; i++)
@@ -101,9 +91,9 @@ void cmv_system::run_simulation(string options_file_string,
 
 		if (i > 5000)
 		{
-			double x = 0.1 * sin(3.14 * ((double)(i) / 1000.0));
+			double x = 0.2 * cos(3.14 * ((double)(i) / 1000.0));
 			//cout << "x: " << x << "\n";
-			p_hemi_vent->p_hs->change_hsl(x);
+			p_circulation->p_hemi_vent->p_hs->change_hsl(x);
 		}
 
 		// Update simulation
@@ -122,7 +112,7 @@ void cmv_system::run_simulation(string options_file_string,
 	delete p_cmv_results;
 }
 
-void cmv_system::prepare_for_cmv_results(void)
+void cmv_system::add_fields_to_cmv_results(void)
 {
 	//! Function adds data fields to main results object
 
@@ -139,5 +129,5 @@ void cmv_system::implement_time_step(double time_step_s)
 	// Update system time
 	cum_time_s = cum_time_s + time_step_s;
 
-	p_hemi_vent->implement_time_step(time_step_s);
+	p_circulation->implement_time_step(time_step_s);
 }

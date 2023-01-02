@@ -38,21 +38,16 @@ heart_rate::~heart_rate(void)
 }
 
 // Other functions
-void heart_rate::prepare_for_cmv_results(void)
+void heart_rate::initialise_simulation(void)
 {
-	//! Function adds data fields to main results object
-
-	// Variables
-
-	// Initialize
-
 	// Set the pointer to the results object
 	p_cmv_results = p_parent_hs->p_cmv_results;
 
 	// Now add the results fields
 	p_cmv_results->add_results_field("hr_new_beat", &hr_new_beat);
 
-	std::cout << "finished prepare for heart_rate results\n";
+	std::cout << "heart_rate:: finished initialise simulation\n";
+
 }
 
 bool heart_rate::implement_time_step(double time_step)

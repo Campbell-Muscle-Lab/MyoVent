@@ -43,8 +43,6 @@ public:
 
 	circulation* p_circulation;				/**< Pointer to a circulation */
 
-	hemi_vent* p_hemi_vent;					/**< Pointer to a hemi_vent object */
-
 	double cum_time_s;						/** double, with system time in s */
 
 	// Functions
@@ -55,7 +53,7 @@ public:
 	void run_simulation(string options_file_string, string protocol_file_string,
 		string results_file_string);
 
-	void prepare_for_cmv_results(void);
+	void add_fields_to_cmv_results(void);
 
 	void implement_time_step(double time_step_s);
 };

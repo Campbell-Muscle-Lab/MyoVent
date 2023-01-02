@@ -43,6 +43,23 @@ public:
 
 	double temperature_K;				/**< double with temperature in K */
 
+	// Circulation
+	double circ_blood_volume;			/**< double holding total blood volume */
+
+	double* circ_resistance;			/**< pointer to array of doubles with
+												resistances to individual compartments */
+
+	double* circ_compliance;			/**< pointer to array of doubles with
+												compliance of individual compartments */
+
+	double* circ_slack_volume;			/**< pointer to array of doubles with
+												slack volume of individual compartments */
+
+	// Ventricle
+	double vent_wall_density;			/**< double with wall density in kg m^-3 */
+
+	double vent_wall_volume;			/**< double with wall volume in liters */
+
 	// Heart rate
 	double hr_t_RR_interval_s;			/**< double with RR interval in s */
 

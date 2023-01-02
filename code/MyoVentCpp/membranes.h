@@ -15,6 +15,7 @@
 // Forward declararations
 class half_sarcomere;
 class cmv_model;
+class cmv_options;
 class cmv_results;
 
 class membranes
@@ -35,6 +36,8 @@ public:
 	half_sarcomere* p_parent_hs;		/**< pointer to parent half-sarcomere */
 
 	cmv_model* p_cmv_model;				/**< pointer to cmv_model object */
+
+	cmv_options* p_cmv_options;			/**< pointer to cmv_options object */
 
 	cmv_results* p_cmv_results;			/**< pointer to cmv_results object */
 
@@ -76,7 +79,7 @@ public:
 	/**
 	/* function adds data fields and vectors to the results objet
 	*/
-	void prepare_for_cmv_results(void);
+	void initialise_simulation(void);
 
 	/**
 	/* function updates state variables

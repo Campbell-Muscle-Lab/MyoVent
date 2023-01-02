@@ -51,6 +51,10 @@ public:
 
 	string rates_dump_file_string;			/**< string with rates file */
 
+	string hv_thick_wall_approximation;		/**< string defining thick wall approximation
+													If True, use thick-wall approximation
+													otherwise, use thin-wall */
+
 	/**
 	/* Function initialises protocol object from file
 	*/
