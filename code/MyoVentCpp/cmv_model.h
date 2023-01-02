@@ -44,6 +44,8 @@ public:
 	double temperature_K;				/**< double with temperature in K */
 
 	// Circulation
+	int circ_no_of_compartments;		/**< integer holding number of compartments */
+
 	double circ_blood_volume;			/**< double holding total blood volume */
 
 	double* circ_resistance;			/**< pointer to array of doubles with

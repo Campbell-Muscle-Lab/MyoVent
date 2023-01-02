@@ -102,6 +102,8 @@ void cmv_model::initialise_model_from_JSON_file(string JSON_model_file_string)
 	JSON_functions::check_JSON_member_array(comp, "resistance");
 	const rapidjson::Value& r_array = comp["resistance"];
 
+	circ_no_of_compartments = (int)r_array.Size();
+
 	for (rapidjson::SizeType i = 0; i < r_array.Size(); i++)
 	{
 		circ_resistance[i] = r_array[i].GetDouble();

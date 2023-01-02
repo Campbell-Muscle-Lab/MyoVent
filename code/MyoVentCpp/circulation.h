@@ -44,16 +44,42 @@ public:
 
 	hemi_vent* p_hemi_vent;								/**< Pointer to a hemi_vent object */
 
+	double circ_blood_volume;							/**< double holding total blood volume
+																in liters */
+
+	int circ_no_of_compartments;						/**< integer holding number of
+																compartments */
+
+	double* circ_resistance;							/**< Pointer to array of doubles
+																holding resistances for
+																each compartment */
+
+	double* circ_compliance;							/**< Pointer to array of doubles
+																holding compliances for
+																each compartment */
+
+	double* circ_slack_volume;							/**< Pointer to array of doubles
+																holding slack_volumes for
+																each compartment */
+
+	double* circ_pressure;								/**< Pointer to array of doubles
+																holding pressure in each
+																compartment */
+
+	double* circ_volume;								/**< Pointer to array of doubles
+																holding pressure in each
+																compartment */
+
+	double* circ_flow;									/**< Pinter to array of doubles
+																holding flows between
+																compartments */
+
+
 	// Functions
-
-	/**
-	/* function adds data fields and vectors to the results objet
-	*/
-	void prepare_for_cmv_results(void);
-
-	void update_p_cmv_options(void);
 
 	void initialise_simulation(void);
 
 	void implement_time_step(double time_step_s);
+
+	void calculate_flows(double v[]);
 };
