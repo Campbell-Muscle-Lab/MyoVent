@@ -509,4 +509,5 @@ _site/
 Gemfile.lock
 
 # Demo files
-temp_back/**/*.*
+**/temp_back/**/*.*
+**/temp/**/*.txt
