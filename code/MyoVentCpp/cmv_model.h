@@ -66,9 +66,6 @@ public:
 	double hr_t_RR_interval_s;			/**< double with RR interval in s */
 
 	// Half-sarcomere
-	
-	double hs_initial_hs_length;		/**< double with initial hs_length */
-
 	double hs_reference_hs_length;		/**< double with hs length used for normalization */
 
 	// Membranes

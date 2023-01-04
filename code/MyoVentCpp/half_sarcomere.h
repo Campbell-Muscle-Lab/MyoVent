@@ -64,7 +64,9 @@ public:
 	
 	void implement_time_step(double time_step_s);
 
-	void change_hsl(double delta_hsl);
+	void change_hs_length(double delta_hsl);
 
 	double return_wall_stress_after_delta_hsl(double delta_hsl);
+
+	double return_hs_length_for_stress(double target_stress);
 };

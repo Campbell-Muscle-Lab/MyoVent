@@ -214,6 +214,7 @@ def multi_panel_from_flat_data(
             # Pull off the data
             if 'x_field' not in p_data:
                 p_data['x_field'] = x_display['global_x_field']
+                
             if 'x_ticks' not in p_data:
                 p_data['x_ticks'] = x_display['ticks']
 

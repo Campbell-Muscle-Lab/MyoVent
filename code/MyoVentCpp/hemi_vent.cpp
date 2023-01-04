@@ -9,6 +9,7 @@
 
 #include "hemi_vent.h"
 #include "cmv_system.h"
+#include "cmv_model.h"
 #include "circulation.h"
 #include "half_sarcomere.h"
 #include "cmv_results.h"
@@ -34,8 +35,8 @@ hemi_vent::hemi_vent(circulation* set_p_parent_circulation)
 	p_cmv_results = NULL;
 	p_cmv_options = NULL;
 
-	vent_wall_density = 0.0;
-	vent_wall_volume = 0.0;
+	vent_wall_density = p_cmv_model->vent_wall_density;
+	vent_wall_volume = p_cmv_model->vent_wall_volume;
 
 	// Initialise child half-sarcomere
 	p_hs = new half_sarcomere(this);
@@ -57,6 +58,8 @@ void hemi_vent::initialise_simulation(void)
 {
 	//! Code initialises simulation
 	
+	// Variables
+	
 	// Initialise options
 	p_cmv_options = p_parent_circulation->p_cmv_options;
 
@@ -70,6 +73,22 @@ void hemi_vent::initialise_simulation(void)
 
 	// And now daughter objects
 	p_hs->initialise_simulation();
+
+	// Deduce the slack circumference of the ventricle and
+	// set the number of half-sarcomeres
+	// The p_hs->initialisation set hs_length so that stress was 0
+
+	vent_circumference = return_lv_circumference_for_chamber_volume(
+		p_parent_circulation->circ_slack_volume[0]);
+
+	vent_n_hs = 1e9 * vent_circumference / p_hs->hs_length;
+
+/*
+	cout << "slack_circumference: " << slack_circumference << "\n";
+	cout << "hs_length: " << p_hs->hs_length << "\n";
+	cout << "vent_n_hs: " << vent_n_hs << "\n";
+*/
+
 }
 
 void hemi_vent::implement_time_step(double time_step_s)
@@ -178,11 +197,46 @@ double hemi_vent::return_pressure_for_chamber_volume(double cv)
 
 	P_in_mmHg = P_in_Pascals / (0.001 * GSL_CONST_MKSA_METER_OF_MERCURY);
 
+/*
+ 	cout << "internal_r: " << internal_r << "\n";
+	cout << "new_lv_circumference: " << new_lv_circumference << "\n";
+	cout << "new_hs_length: " << new_hs_length << "\n";
+	cout << "delta_hs_length: " << delta_hs_length << "\n";
+
+	cout << "internal_r: " << internal_r << "\n";
+	cout << "new_stress: " << new_stress << "\n";
+	cout << "wall_thickness: " << wall_thickness << "\n";
+	
+/cout << "P_in_Pascals: " << P_in_Pascals << "\n";
+
 	cout << "P_in_Pa: " << P_in_Pascals << "\n";
 	cout << "P_in_mmHg: " << P_in_mmHg << "\n";
 	cout << "constant: " << GSL_CONST_MKSA_METER_OF_MERCURY << "\n";
-
+*/
 
 	return P_in_mmHg;
+}
 
+void hemi_vent::update_chamber_volume(double new_volume)
+{
+	//! Function updates the chamber volume
+	
+	// Variables
+	double new_circumference;
+	double delta_circumference;
+	double delta_hsl;
+
+	// Code
+
+	new_circumference = return_lv_circumference_for_chamber_volume(new_volume);
+
+	delta_circumference = new_circumference - vent_circumference;
+
+	delta_hsl = 1e9 * delta_circumference / vent_n_hs;
+
+	//cout << "delta_hsl: " << delta_hsl << "\n";
+
+	p_hs->change_hs_length(delta_hsl);
+
+	vent_circumference = new_circumference;
 }

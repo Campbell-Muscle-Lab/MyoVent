@@ -74,6 +74,9 @@ public:
 																holding flows between
 																compartments */
 
+	double circ_total_slack_volume;						/**< double holding total slack
+																volume in liters */
+
 
 	// Functions
 
@@ -81,5 +84,7 @@ public:
 
 	void implement_time_step(double time_step_s);
 
-	void calculate_flows(double v[]);
+	void calculate_pressures(const double v[], double p[]);
+
+	void calculate_flows(const double v[]);
 };

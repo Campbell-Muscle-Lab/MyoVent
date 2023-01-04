@@ -6,8 +6,8 @@
         "blood_volume": 4.5,
         "compartments":
         {
-            "resistance": [10, 20, 20, 800, 150, 50, 1],
-            "compliance": [0, 4e-4, 8e-4, 1e-3, 1e-4, 0.03, 0.08],
+            "resistance": [1, 20, 20, 800, 150, 50, 1],
+            "compliance": [0, 4e-4, 8e-4, 1e-3, 1e-4, 0.03, 0.1],
             "slack_volume": [0.065, 0.3, 0.3, 0.1, 0.25, 0.5, 2.0]
         }
     },
@@ -19,7 +19,6 @@
             "t_RR_interval_s": 1.0
         },
         "half_sarcomere":{
-            "initial_hs_length": 1200,
             "reference_hs_length": 1100,
             "membranes": {
                 "Ca_content": 1e-3,
@@ -50,9 +49,9 @@
                 "fil_compliance_factor": 0.5,
                 "actin":
                 {
-                    "k_on": 1e8,
+                    "k_on": 2e8,
                     "k_off": 100,
-                    "k_coop": 10
+                    "k_coop": 5
                 },
                 "myosin":
                 {
@@ -88,14 +87,14 @@
                             "new_state": 1,
                             "rate_type": "constant",
                             "rate_parameters": [
-                                50
+                                100
                             ]
                             },
                             {
                             "new_state": 3,
                             "rate_type": "gaussian",
                             "rate_parameters": [
-                                150
+                                15
                             ]
                             }
                         ]
@@ -103,13 +102,13 @@
                         {
                         "number": 3,
                         "type": "A",
-                        "extension": 1.0,
+                        "extension": 5.0,
                         "transition": [
                             {
                             "new_state": 2,
                             "rate_type": "poly",
                             "rate_parameters": [
-                                50,
+                                100,
                                 1,
                                 2,
                                 0
@@ -119,7 +118,7 @@
                             "new_state": 4,
                             "rate_type": "constant",
                             "rate_parameters": [
-                                10
+                                0
                             ]
                             }
                         ]
@@ -127,7 +126,7 @@
                         {
                             "number": 4,
                             "type": "A",
-                            "extension": 5.0,
+                            "extension": 0.0,
                             "transition": [
                                 {
                                 "new_state": 2,

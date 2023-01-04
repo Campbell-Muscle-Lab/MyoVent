@@ -81,7 +81,6 @@ void cmv_system::run_simulation(string options_file_string,
 
 	p_circulation->initialise_simulation();
 
-
 	// Simulation
 	for (int i = 0; i < p_cmv_protocol->no_of_time_steps; i++)
 	{
@@ -89,12 +88,12 @@ void cmv_system::run_simulation(string options_file_string,
 
 		p_cmv_results->update_results_vectors(i);
 
-		if (i > 5000)
+		/*/(if (i > 5000)
 		{
 			double x = 0.2 * cos(3.14 * ((double)(i) / 1000.0));
 			//cout << "x: " << x << "\n";
-			p_circulation->p_hemi_vent->p_hs->change_hsl(x);
-		}
+			p_circulation->p_hemi_vent->p_hs->change_hs_length(x);
+		}*/
 
 		// Update simulation
 		if (fmod(cum_time_s, 1.0) < p_cmv_protocol->time_step_s)

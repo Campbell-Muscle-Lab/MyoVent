@@ -234,9 +234,9 @@ void myofilaments::initialise_simulation(void)
 	p_cmv_results->add_results_field("myof_stress_total", &myof_stress_total);
 }
 
-// This function is not a member of the membranes class but is used to interace
-// with the GSL ODE system. It must appear before the membranes class members
-// that calls it, and communicates with the membrane class through a pointer to
+// This function is not a member of the myofilaments class but is used to interace
+// with the GSL ODE system. It must appear before the myofilaments class members
+// that calls it, and communicates with the myofilament class through a pointer to
 // the class object
 
 int myof_calculate_derivs(double t, const double y[], double f[], void* params)

@@ -65,7 +65,6 @@ void cmv_results::add_results_field(std::string field_name, double* p_double)
 	gsl_results_vectors[new_index] = gsl_vector_alloc(no_of_time_points);
 	gsl_vector_set_all(gsl_results_vectors[new_index], GSL_NAN);
 
-
 	// Update the number of defined fields
 	no_of_defined_results_fields = no_of_defined_results_fields + 1;
 }

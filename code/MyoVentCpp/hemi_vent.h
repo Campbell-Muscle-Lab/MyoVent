@@ -61,6 +61,9 @@ public:
 	double vent_n_hs;						/**< double with the number of half-sarcomeres
 													around the ventricular circumference */
 
+	double vent_circumference;				/**< double with circumference of ventricle
+													in m */
+
 	double vent_thick_wall_multiplier;		/**< double with
 													1.0 if using thick wall approximation
 													0.0 if not */
@@ -77,4 +80,6 @@ public:
 	double return_lv_circumference_for_chamber_volume(double cv);
 
 	double return_pressure_for_chamber_volume(double cv);
+
+	void update_chamber_volume(double new_volume);
 };

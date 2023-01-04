@@ -147,8 +147,8 @@ void cmv_model::initialise_model_from_JSON_file(string JSON_model_file_string)
 	const rapidjson::Value& hs = vent["half_sarcomere"];
 
 	// Load the half_sarcomere parameters
-	JSON_functions::check_JSON_member_number(hs, "initial_hs_length");
-	hs_initial_hs_length = hs["initial_hs_length"].GetDouble();
+	JSON_functions::check_JSON_member_number(hs, "reference_hs_length");
+	hs_reference_hs_length = hs["reference_hs_length"].GetDouble();
 		
 	// Load the membranes structure
 	JSON_functions::check_JSON_member_exists(hs, "membranes");
