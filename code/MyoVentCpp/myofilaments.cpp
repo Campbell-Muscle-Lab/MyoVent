@@ -62,6 +62,10 @@ myofilaments::myofilaments(half_sarcomere* set_p_parent_hs)
 
 	myof_fil_compliance_factor = p_cmv_model->myof_fil_compliance_factor;
 
+	myof_thick_fil_length = p_cmv_model->myof_thick_fil_length;
+	myof_bare_zone_length = p_cmv_model->myof_bare_zone_length;
+	myof_thin_fil_length = p_cmv_model->myof_thin_fil_length;
+
 	myof_a_k_on = p_cmv_model->myof_a_k_on;
 	myof_a_k_off = p_cmv_model->myof_a_k_off;
 	myof_a_k_coop = p_cmv_model->myof_a_k_coop;
@@ -472,6 +476,9 @@ void myofilaments::implement_time_step(double time_step_s)
 	double t_stop_s = time_step_s;
 
 	double* y_calc = NULL;
+
+	double holder;
+	double adjustment;
 	
 	// Code
 
@@ -498,11 +505,24 @@ void myofilaments::implement_time_step(double time_step_s)
 	}
 	else
 	{
-		//Unpack
+		//Unpack, noting how many bridges we have
+		holder = 0.0;
 		for (int i = 0; i < y_length; i++)
 		{
 			gsl_vector_set(y, i, y_calc[i]);
+
+			if (i < (y_length - 2))
+			{
+				holder = holder + y_calc[i];
+			}
 		}
+
+		adjustment = 1.0 - holder;
+		// Add back to first DRX state
+		y_calc[1] = y_calc[1] + adjustment;
+		gsl_vector_set(y, 1, y_calc[1]);
+		if (fabs(adjustment) > 0.005)
+			cout << "fast sliding: " << adjustment << "\n";
 	}
 
 	// Update class variables
@@ -566,8 +586,41 @@ void myofilaments::calculate_m_state_pops(const double y_calc[])
 void myofilaments::calculate_f_overlap(void)
 {
 	//! Calculate f_overlap
+	//! 
+	//!     <-- Thin--->
+	//!    |------------         |
+	//!    |                     |
+	//!    |      --------|------|
+	//!           <--Thick------>|
+	//!                    <Bare>|
 
-	myof_f_overlap = 1.0;
+	// Variables
+	double x_no_overlap;
+	double x_overlap;
+	double max_x_overlap;
+	double protrusion;
+
+	// Code
+
+	x_no_overlap = p_parent_hs->hs_length - myof_thick_fil_length;
+	x_overlap = myof_thin_fil_length - x_no_overlap;
+	max_x_overlap = myof_thick_fil_length - myof_bare_zone_length;
+	protrusion = myof_thin_fil_length - p_parent_hs->hs_length;
+
+	if (x_overlap == 0.0)
+		myof_f_overlap = 0.0;
+
+	if ((x_overlap > 0.0) && (x_overlap <= max_x_overlap))
+		myof_f_overlap = x_overlap / max_x_overlap;
+
+	if (x_overlap > max_x_overlap)
+		myof_f_overlap = 1.0;
+
+	if (protrusion > 0.0)
+	{
+		x_overlap = max_x_overlap - protrusion;
+		myof_f_overlap = x_overlap / max_x_overlap;
+	}
 }
 
 void myofilaments::calculate_m_state_stresses(void)

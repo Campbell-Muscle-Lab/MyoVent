@@ -143,6 +143,12 @@ public:
 
 	double myof_a_k_coop;				/**< double describing actin k_coop */
 
+	double myof_thick_fil_length;		/**< double describing thick filament length */
+
+	double myof_bare_zone_length;		/**< double describing bare zone length */
+
+	double myof_thin_fil_length;		/**< double describing thin filament length */
+
 	// Other functions
 
 	/**

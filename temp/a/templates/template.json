@@ -75,10 +75,16 @@
         "label": "Thin",
         "series": [
           {
-            "field": "myof_a_off"
+            "field": "myof_a_off",
+            "field_label": "Off"
           },
           {
-            "field": "myof_a_on"
+            "field": "myof_a_on",
+            "field_label": "On"
+          },
+          {
+            "field": "myof_f_overlap",
+            "field_label": "Overlap"
           }
         ]
       }

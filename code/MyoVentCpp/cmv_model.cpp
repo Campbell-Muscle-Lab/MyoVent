@@ -203,6 +203,15 @@ void cmv_model::initialise_model_from_JSON_file(string JSON_model_file_string)
 	JSON_functions::check_JSON_member_number(myof, "fil_compliance_factor");
 	myof_fil_compliance_factor = myof["fil_compliance_factor"].GetDouble();
 
+	JSON_functions::check_JSON_member_number(myof, "thick_filament_length");
+	myof_thick_fil_length = myof["thick_filament_length"].GetDouble();
+
+	JSON_functions::check_JSON_member_number(myof, "bare_zone_length");
+	myof_bare_zone_length = myof["bare_zone_length"].GetDouble();
+
+	JSON_functions::check_JSON_member_number(myof, "thin_filament_length");
+	myof_thin_fil_length = myof["thin_filament_length"].GetDouble();
+
 	// Load the myosin structure
 	JSON_functions::check_JSON_member_exists(myof, "myosin");
 	const rapidjson::Value& myos = myof["myosin"];

@@ -142,6 +142,12 @@ public:
 													length by x, cross-bridges are displaced
 													by x * this variable */
 
+	double myof_thick_fil_length;		/**< double describing thick filament length */
+
+	double myof_bare_zone_length;		/**< double describing bare zone length */
+
+	double myof_thin_fil_length;		/**< double describing thin filament length */
+
 	// Functions
 
 	void prepare_for_cmv_results(void);
