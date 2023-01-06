@@ -22,6 +22,8 @@ class cmv_results;
 
 class kinetic_scheme;
 
+using namespace std;
+
 class myofilaments
 {
 public:
@@ -148,6 +150,11 @@ public:
 
 	double myof_thin_fil_length;		/**< double describing thin filament length */
 
+	double max_shift;
+
+	string cb_dump_file_string;			/**< string hold cb dump file */
+	bool cb_dump_file_defined;
+
 	// Functions
 
 	void prepare_for_cmv_results(void);
@@ -175,4 +182,6 @@ public:
 	double return_stress_after_delta_hsl(double delta_hsl);
 
 	void move_cb_populations(double delta_hsl);
+
+	void dump_cb_distributions(void);
 };

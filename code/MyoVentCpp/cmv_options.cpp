@@ -108,6 +108,29 @@ void cmv_options::initialise_options_from_JSON_file(string options_file_string)
 		rates_dump_file_string = "";
 	}
 
+	// Check for cb dump
+	if (JSON_functions::check_JSON_member_exists(myo, "cb_dump"))
+	{
+		const rapidjson::Value& cd = myo["cb_dump"];
+
+		if (JSON_functions::check_JSON_member_exists(cd, "relative_to"))
+		{
+			cb_dump_relative_to = cd["relative_to"].GetString();
+		}
+		else
+		{
+			cb_dump_relative_to = "";
+		}
+
+		JSON_functions::check_JSON_member_string(cd, "file_string");
+		cb_dump_file_string = cd["file_string"].GetString();
+	}
+	else
+	{
+		cb_dump_relative_to = "";
+		cb_dump_file_string = "";
+	}
+
 	JSON_functions::check_JSON_member_object(doc, "hemi_vent");
 	const rapidjson::Value& hv = doc["hemi_vent"];
 

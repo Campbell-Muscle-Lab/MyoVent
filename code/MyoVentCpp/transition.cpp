@@ -190,6 +190,9 @@ double transition::calculate_rate(double x, double x_ext, double force, double h
 		// Code
 		rate = k0 * exp(-(F * d) /
 				(1e18 * GSL_CONST_MKSA_BOLTZMANN * temperature_K));
+
+		rate = rate + 10000.0 * (1 /
+			(1 + exp(-x_smooth * (x - x_wall))));
 	}
 
 	// Curtail at max rate

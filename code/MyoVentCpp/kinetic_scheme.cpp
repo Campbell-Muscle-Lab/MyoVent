@@ -54,9 +54,18 @@ kinetic_scheme::kinetic_scheme(const rapidjson::Value& m_ks, cmv_model* set_p_cm
 	no_of_detached_states = 0;
 	no_of_attached_states = 0;
 
+	// Note the first DRX state as we go
+	first_DRX_state = -1;
+
 	for (rapidjson::SizeType i = 0; i < scheme.Size(); i++)
 	{
 		p_m_states[i] = new m_state(scheme[i], this);
+
+		if (first_DRX_state < 0)
+		{
+			if (p_m_states[i]->state_type == 'D')
+				first_DRX_state = (int)(i+1);
+		}
 
 		if (p_m_states[i]->state_type == 'A')
 		{
@@ -188,6 +197,11 @@ void kinetic_scheme::initialise_simulation(myofilaments* set_p_parent_myofilamen
 				p_cmv_options;
 		}
 	}
+
+	if (p_cmv_options->rates_dump_file_string != "")
+	{
+		write_rate_functions_to_file();
+	}
 }
 
 void kinetic_scheme::write_rate_functions_to_file(void)
@@ -314,7 +328,7 @@ void kinetic_scheme::write_rate_functions_to_file(void)
 				{
 					// It's a transition
 					double x_ext = p_m_state->extension;
-					double rate = p_trans->calculate_rate(x, x_ext, 0, 0);
+					double rate = p_trans->calculate_rate(x, x_ext, 0, p_parent_myofilaments->p_parent_hs->hs_length);
 
 					fprintf_s(output_file, "\t%8g", rate);
 				}
@@ -338,7 +352,7 @@ void kinetic_scheme::write_kinetic_scheme_to_file(char output_file_string[])
 
 	// Code
 
-	// Make sure irectory exists
+	// Make sure directory exists
 	path output_file_path(output_file_string);
 
 	if (!(is_directory(output_file_path.parent_path())))

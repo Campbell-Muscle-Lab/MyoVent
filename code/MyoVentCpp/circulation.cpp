@@ -61,10 +61,12 @@ circulation::circulation(cmv_system* set_p_parent_cmv_system = NULL)
 		circ_slack_volume[i] = p_cmv_model->circ_slack_volume[i];
 		circ_pressure[i] = 0.0;
 		circ_volume[i] = circ_slack_volume[i];
+		if (i == 1)
+			circ_volume[i] = 1.0 * circ_slack_volume[i];
 		circ_flow[i] = 0.0;
 
 		circ_total_slack_volume = circ_total_slack_volume +
-			circ_slack_volume[i];
+			circ_volume[i];
 	}
 
 	// Excess blood goes in veins
@@ -173,6 +175,9 @@ int circ_vol_derivs(double t, const double y[], double f[], void* params)
 			f[i] = p_circ->circ_flow[i] - p_circ->circ_flow[0];
 	}
 
+	//cout << "t: " << t << "    t*f[0]: " << (t*f[0]) << "    v[0]: " << p_circ->circ_volume[0] << "    ratio: " << (t*f[0] / p_circ->circ_volume[0]) << "\n";
+	
+
 	// Return
 	return GSL_SUCCESS;
 }
@@ -239,8 +244,30 @@ void circulation::calculate_pressures(const double v[], double p[])
 	//! Function calculates pressures
 	
 	// Code
-
+	
+	/*
+	for (int i = 0; i < circ_no_of_compartments; i++)
+	{
+		cout << "v[" << i << "]: " << v[i] << "\t";
+		if (i == (circ_no_of_compartments - 1))
+			cout << "\n";
+	}
+	*/
+	
 	p[0] = p_hemi_vent->return_pressure_for_chamber_volume(v[0]);
+
+	//cout << "Done\n";
+	if (p[0] == 0.0)
+	{
+		for (int i = 0; i < circ_no_of_compartments; i++)
+		{
+			cout << "v[" << i << "]: " << v[i] << "\t";
+			if (i == (circ_no_of_compartments - 1))
+				cout << "\n";
+		}
+		//exit(1);
+	}
+
 
 	// Calculate the other pressures
 	for (int i = 1; i < circ_no_of_compartments; i++)
@@ -270,15 +297,15 @@ void circulation::calculate_flows(const double v[])
 	// Calculate the flows
 	for (int i = 1; i < circ_no_of_compartments; i++)
 	{
-		circ_flow[i] = (1.0 / circ_resistance[i]) *
-			(circ_pressure[i-1] - circ_pressure[i]);
+		circ_flow[i] = (circ_pressure[i-1] - circ_pressure[i]) /
+							circ_resistance[i];
 	}
 
 	// Special case for flow into the ventricle
 	if (circ_pressure[circ_no_of_compartments - 1] > circ_pressure[0])
 	{
-		circ_flow[0] = (1.0 / circ_resistance[0]) *
-			(circ_pressure[circ_no_of_compartments - 1] - circ_pressure[0]);
+		circ_flow[0] = (circ_pressure[circ_no_of_compartments - 1] - circ_pressure[0]) /
+			circ_resistance[0];
 	}
 	else
 	{
@@ -291,11 +318,12 @@ void circulation::calculate_flows(const double v[])
 		circ_flow[1] = 0.0;
 	}
 
+	// Prevent an ejection that is too big
 	/*
-	for (int i = 0; i < circ_no_of_compartments; i++)
+	if (circ_flow[1] > (10 * circ_volume[0]))
 	{
-		cout << "p[" << i << "]: " << p[i] << "\t";
+		circ_flow[1] = 0.0;
+		cout << "Flow curtailed\n";
 	}
-	cout << "\n";
 	*/
 }

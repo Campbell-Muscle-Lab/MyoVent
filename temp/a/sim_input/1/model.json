@@ -6,8 +6,8 @@
         "blood_volume": 4.5,
         "compartments":
         {
-            "resistance": [1, 20, 40, 1400, 300, 50, 1],
-            "compliance": [0, 4e-4, 8e-4, 1e-3, 1e-4, 0.04, 0.025],
+            "resistance": [15, 40, 40, 1400, 300, 50, 1],
+            "compliance": [0, 4e-4, 8e-4, 1e-3, 1e-4, 0.04, 0.14],
             "slack_volume": [0.065, 0.3, 0.3, 0.1, 0.25, 0.5, 2.0]
         }
     },
@@ -40,12 +40,12 @@
                 "cb_number_density": 1.15e17,
                 "prop_fibrosis": 0.1,
                 "prop_myofilaments": 0.6,
-                "int_pas_sigma": 3,
-                "int_pas_L": 30,
-                "int_pas_slack_hsl": 950,
+                "int_pas_sigma": 100,
+                "int_pas_L": 50,
+                "int_pas_slack_hsl": 1000,
                 "ext_pas_sigma": 100,
-                "ext_pas_L": 70,
-                "ext_pas_slack_hsl": 950,
+                "ext_pas_L": 50,
+                "ext_pas_slack_hsl": 1000,
                 "fil_compliance_factor": 0.5,
                 "thick_filament_length": 815,
                 "bare_zone_length": 80,
@@ -54,7 +54,7 @@
                 {
                     "k_on": 2e8,
                     "k_off": 100,
-                    "k_coop": 5
+                    "k_coop": 50
                 },
                 "myosin":
                 {
@@ -67,7 +67,7 @@
                     [
                         {
                         "number": 1,
-                        "type": "D",
+                        "type": "S",
                         "extension": 0,
                         "transition":
                         [
@@ -97,7 +97,7 @@
                             "new_state": 3,
                             "rate_type": "gaussian_hsl",
                             "rate_parameters": [
-                                40
+                                200
                             ]
                             }
                         ]
@@ -105,23 +105,22 @@
                         {
                         "number": 3,
                         "type": "A",
-                        "extension": 5.0,
+                        "extension": 0.0,
                         "transition": [
                             {
                             "new_state": 2,
                             "rate_type": "poly",
                             "rate_parameters": [
                                 100,
-                                1,
-                                2,
-                                0
+                                0.01,
+                                4
                             ]
                             },
                             {
                             "new_state": 4,
                             "rate_type": "constant",
                             "rate_parameters": [
-                                0
+                                5
                             ]
                             }
                         ]
@@ -129,16 +128,16 @@
                         {
                             "number": 4,
                             "type": "A",
-                            "extension": 0.0,
+                            "extension": 8.0,
                             "transition": [
                                 {
                                 "new_state": 2,
-                                "rate_type": "poly",
+                                "rate_type": "exp_wall",
                                 "rate_parameters": [
                                     50,
-                                    1,
-                                    2,
-                                    0
+                                    0.5,
+                                    7,
+                                    5
                                 ]
                                 }
                             ]

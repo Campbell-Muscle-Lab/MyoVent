@@ -5,9 +5,13 @@
 */
 
 #include <iostream>
+#include <filesystem>
 
 #include "myofilaments.h"
 #include "half_sarcomere.h"
+#include "hemi_vent.h"
+#include "circulation.h"
+#include "cmv_system.h"
 #include "kinetic_scheme.h"
 #include "m_state.h"
 #include "transition.h"
@@ -22,6 +26,7 @@
 #include "gsl_spline.h"
 
 using namespace std;
+using namespace std::filesystem;
 
 // Constructor
 myofilaments::myofilaments(half_sarcomere* set_p_parent_hs)
@@ -87,6 +92,11 @@ myofilaments::myofilaments(half_sarcomere* set_p_parent_hs)
 
 	no_of_bin_positions = 0;
 	y_length = 0;
+
+	max_shift = GSL_NAN;
+
+	cb_dump_file_string;
+	cb_dump_file_defined = false;
 }
 
 // Destructor
@@ -119,8 +129,10 @@ myofilaments::~myofilaments(void)
 		gsl_vector_free(m_state_stresses);
 	}
 
-	free(m_pops_array);
-	free(m_stresses_array);
+	std::free(m_pops_array);
+	std::free(m_stresses_array);
+
+	cout << "max_shift: " << max_shift << "\n";
 }
 
 // Other functions
@@ -501,7 +513,7 @@ void myofilaments::implement_time_step(double time_step_s)
 
 	if (status != GSL_SUCCESS)
 	{
-		std::cout << "Integration problem in membranes::implement_time_step\n";
+		std::cout << "Integration problem in myofilaments::implement_time_step\n";
 	}
 	else
 	{
@@ -518,9 +530,11 @@ void myofilaments::implement_time_step(double time_step_s)
 		}
 
 		adjustment = 1.0 - holder;
+
 		// Add back to first DRX state
-		y_calc[1] = y_calc[1] + adjustment;
-		gsl_vector_set(y, 1, y_calc[1]);
+		int DRX_index = gsl_matrix_int_get(m_y_indices, p_m_scheme->first_DRX_state - 1, 0);
+		y_calc[DRX_index] = y_calc[DRX_index] + adjustment;
+		gsl_vector_set(y, DRX_index, y_calc[DRX_index]);
 		if (fabs(adjustment) > 0.005)
 			cout << "fast sliding: " << adjustment << "\n";
 	}
@@ -806,10 +820,11 @@ void myofilaments::move_cb_populations(double delta_hsl)
 
 	double* x_calc = NULL;
 	double* y_calc = NULL;
-	
-	double x_shift;
-	double y_temp;
+	double* y_temp;
 
+	double x_shift;
+	
+	const gsl_interp_type* interp_type = gsl_interp_linear;
 	gsl_interp_accel* acc = NULL;
 	gsl_spline* spline = NULL;
 
@@ -824,7 +839,7 @@ void myofilaments::move_cb_populations(double delta_hsl)
 	// Allocate memory for y_calc
 	x_calc = (double*)malloc(no_of_bin_positions * sizeof(double));
 	y_calc = (double*)malloc(no_of_bin_positions * sizeof(double));
-
+	y_temp = (double*)malloc(no_of_bin_positions * sizeof(double));
 	
 	// Cycle through states
 	for (size_t state_counter = 0; state_counter < (size_t)(p_m_scheme->no_of_states) ; state_counter++)
@@ -845,7 +860,7 @@ void myofilaments::move_cb_populations(double delta_hsl)
 
 				// Initialise for interpolation
 				acc = gsl_interp_accel_alloc();
-				spline = gsl_spline_alloc(gsl_interp_cspline, no_of_bin_positions);
+				spline = gsl_spline_alloc(interp_type, no_of_bin_positions);
 
 				// Work out the shift
 				x_shift = myof_fil_compliance_factor * delta_hsl;
@@ -854,28 +869,71 @@ void myofilaments::move_cb_populations(double delta_hsl)
 				x_defined = true;
 			}
 
-			for (size_t ind = 0 ; ind < no_of_bin_positions ; ind++)
+			if (gsl_isnan(max_shift))
 			{
-				y_calc[ind] = gsl_vector_get(y, ind + gsl_matrix_int_get(m_y_indices, state_counter, 0));
+				max_shift = x_shift;
 			}
+			if (fabs(x_shift) > fabs(max_shift))
+				max_shift = x_shift;
 
-			gsl_spline_init(spline, x_calc, y_calc, no_of_bin_positions);
+			// Subdivide if necessary
+			int n_sub_steps = 1;
+			double s = x_shift;
+			bool keep_going = true;
 
-			// Calculate at the new positions
-			for (size_t ind = 0; ind < no_of_bin_positions; ind++)
+			while (keep_going)
 			{
-				double new_pos = x_calc[ind] - x_shift;
-
-				if ((new_pos < p_cmv_options->bin_min) || (new_pos > p_cmv_options->bin_max))
-					y_temp = 0.0;
+				if (fabs(s) < 1.0)
+				{
+					keep_going = false;
+				}
 				else
 				{
-					y_temp = gsl_spline_eval(spline, new_pos, acc);
+					n_sub_steps = n_sub_steps + 1;
+					s = x_shift / (double)(n_sub_steps);
+				}
+			}
+
+			for (int repeat = 1 ; repeat <= n_sub_steps ; repeat++)
+			{
+				if (repeat== 2)
+				{
+					cout << "t_step: " << 0.01 << "\n";
+					cout << "n_sub_steps: " << n_sub_steps << "  x_shift: " << x_shift << "   s: " << s << "\n";
+				}
+				for (size_t ind = 0; ind < no_of_bin_positions; ind++)
+				{
+					if (repeat == 1)
+					{
+						y_calc[ind] = gsl_vector_get(y, ind + gsl_matrix_int_get(m_y_indices, state_counter, 0));
+					}
+					else
+					{
+						y_calc[ind] = y_temp[ind];
+					}
 				}
 
-				// Assign
+				gsl_spline_init(spline, x_calc, y_calc, no_of_bin_positions);
+			
+				// Calculate at the new positions
+				for (size_t ind = 0; ind < no_of_bin_positions; ind++)
+				{
+					double new_pos = x_calc[ind] - s;
+
+					if ((new_pos < p_cmv_options->bin_min) || (new_pos > p_cmv_options->bin_max))
+						y_temp[ind] = 0.0;
+					else
+					{
+						y_temp[ind] = gsl_spline_eval(spline, new_pos, acc);
+					}
+				}
+			}
+
+			for (size_t ind = 0; ind < no_of_bin_positions; ind++)
+			{
+				// Assign 
 				gsl_vector_set(y, gsl_matrix_int_get(m_y_indices, state_counter, 0) + ind,
-					y_temp);
+					y_temp[ind]);
 			}
 		}
 	}
@@ -884,6 +942,142 @@ void myofilaments::move_cb_populations(double delta_hsl)
 	gsl_spline_free(spline);
 	gsl_interp_accel_free(acc);
 
-	free(x_calc);
-	free(y_calc);
+	std::free(x_calc);
+	std::free(y_calc);
+	std::free(y_temp);
+}
+
+void myofilaments::dump_cb_distributions(void)
+{
+	//! Code dumps cb distributions
+	
+	// Variables
+
+	FILE* output_file;
+
+	path options_file_path;		// path for options file
+	path output_file_path;		// path for output file
+
+	string open_mode;
+
+	int attached_state_counter;
+
+	// Code
+
+	// Adjust the rates file
+	if (cb_dump_file_defined == false)
+	{
+		// First time through, set the class member value
+		path base_dir;
+
+		if (p_cmv_options->cb_dump_relative_to == "this_file")
+		{
+			options_file_path = path(p_cmv_options->options_file_string);
+			base_dir = options_file_path.parent_path();
+		}
+		else
+		{
+			base_dir = path(p_cmv_options->rates_dump_relative_to);
+		}
+
+		output_file_path = base_dir / p_cmv_options->cb_dump_file_string;
+		cb_dump_file_string = output_file_path.string();
+	}
+	
+	// Make sure directory exists
+	output_file_path = absolute(path(cb_dump_file_string));
+
+	if (!(is_directory(output_file_path.parent_path())))
+	{
+		if (create_directories(output_file_path.parent_path()))
+		{
+			std::cout << "\nCreating folder: " << output_file_path.string() << "\n";
+		}
+		else
+		{
+			std::cout << "\nError: Folder for cb dump file could not be created: " <<
+				output_file_path.parent_path().string() << "\n";
+			exit(1);
+		}
+	}
+
+	if (cb_dump_file_defined == false)
+		open_mode = "w";
+	else
+		open_mode = "a";
+
+	// Check file can be opened, abort if not
+	errno_t err = fopen_s(&output_file, cb_dump_file_string.c_str(), open_mode.c_str());
+
+	if (err != 0)
+	{
+		printf("dump_cb_distributions_to_file(): %s\ncould not be opened\n",
+			cb_dump_file_string.c_str());
+		exit(1);
+	}
+	else
+	{
+		if (cb_dump_file_defined == false)
+			cout << "Writing cb distributions to: " << cb_dump_file_string << "\n";
+	}
+
+	if (cb_dump_file_defined == false)
+	{
+		// Write the header
+		attached_state_counter = 0;
+		for (int state_counter = 0; state_counter < p_m_scheme->no_of_states; state_counter++)
+		{
+			if (p_m_scheme->p_m_states[state_counter]->state_type == 'A')
+			{
+				attached_state_counter = attached_state_counter + 1;
+
+				for (int ind = 0; ind < no_of_bin_positions; ind++)
+				{
+					fprintf(output_file, "M%i_%.0f", attached_state_counter, 10 * gsl_vector_get(x, ind));
+					if ((ind == (no_of_bin_positions - 1)) &&
+						(attached_state_counter == p_m_scheme->no_of_attached_states))
+					{
+						fprintf(output_file, "\n");
+					}
+					else
+					{
+						fprintf(output_file, "\t");
+					}
+				}
+			}
+		}
+	}
+
+	// Now write data
+	// Write the header
+	attached_state_counter = 0;
+	for (int state_counter = 0; state_counter < p_m_scheme->no_of_states; state_counter++)
+	{
+		if (p_m_scheme->p_m_states[state_counter]->state_type == 'A')
+		{
+			attached_state_counter = attached_state_counter + 1;
+
+			for (int ind = 0; ind < no_of_bin_positions; ind++)
+			{
+				fprintf(output_file, "%.3f", gsl_vector_get(y,
+					(gsl_matrix_int_get(m_y_indices, state_counter, 0) + ind)));
+
+				if ((ind == (no_of_bin_positions - 1)) &&
+					(attached_state_counter == p_m_scheme->no_of_attached_states))
+				{
+					fprintf(output_file, "\n");
+				}
+				else
+				{
+					fprintf(output_file, "\t");
+				}
+			}
+		}
+	}
+
+	// Tidy up
+	fclose(output_file);
+
+	// Update
+	cb_dump_file_defined = true;
 }

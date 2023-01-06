@@ -39,11 +39,11 @@ cmv_system::cmv_system(string JSON_model_file_string)
 	p_cmv_protocol = NULL;
 	p_cmv_results = NULL;
 
-	// Create constituent objects
-	p_circulation = new circulation(this);
-
 	// Initialise variables
 	cum_time_s = 0.0;
+
+	// Create constituent objects
+	p_circulation = new circulation(this);
 }
 
 // Destructor
@@ -80,6 +80,8 @@ void cmv_system::run_simulation(string options_file_string,
 	add_fields_to_cmv_results();
 
 	p_circulation->initialise_simulation();
+
+	cout << "kenenn\n";
 
 	// Simulation
 	for (int i = 0; i < p_cmv_protocol->no_of_time_steps; i++)

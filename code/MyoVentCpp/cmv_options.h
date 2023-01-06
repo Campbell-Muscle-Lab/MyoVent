@@ -51,6 +51,11 @@ public:
 
 	string rates_dump_file_string;			/**< string with rates file */
 
+	string cb_dump_relative_to;				/**< string defining path type
+													for cb_dump file */
+
+	string cb_dump_file_string;				/**< string with cb dump file */
+
 	string hv_thick_wall_approximation;		/**< string defining thick wall approximation
 													If True, use thick-wall approximation
 													otherwise, use thin-wall */

@@ -43,6 +43,8 @@ public:
 
 	int max_no_of_transitions;				/**< int defining the maximum number of transitions from a state */
 
+	int first_DRX_state;					/**< int defining first DRX state */
+
 	m_state* p_m_states[MAX_NO_OF_KINETIC_STATES];
 											/**< pointer to an array of m_state objects */
 

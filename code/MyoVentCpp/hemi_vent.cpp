@@ -12,6 +12,7 @@
 #include "cmv_model.h"
 #include "circulation.h"
 #include "half_sarcomere.h"
+#include "myofilaments.h"
 #include "cmv_results.h"
 #include "cmv_options.h"
 
@@ -75,13 +76,13 @@ void hemi_vent::initialise_simulation(void)
 	p_hs->initialise_simulation();
 
 	// Deduce the slack circumference of the ventricle and
-	// set the number of half-sarcomeres
-	// The p_hs->initialisation set hs_length so that stress was 0
+// set the number of half-sarcomeres
+// The p_hs->initialisation set hs_length so that stress was 0
 
-	vent_circumference = return_lv_circumference_for_chamber_volume(
-		p_parent_circulation->circ_slack_volume[0]);
+vent_circumference = return_lv_circumference_for_chamber_volume(
+	p_parent_circulation->circ_slack_volume[0]);
 
-	vent_n_hs = 1e9 * vent_circumference / p_hs->hs_length;
+vent_n_hs = 1e9 * vent_circumference / p_hs->hs_length;
 
 /*
 	cout << "slack_circumference: " << slack_circumference << "\n";
@@ -103,7 +104,7 @@ double hemi_vent::return_wall_thickness_for_chamber_volume(double cv)
 {
 	//! Code sets object value of wall thickness
 	//! Volumes are in liters, dimensions are in m
-	
+
 	// Variables
 	double internal_r;
 	double thickness;
@@ -177,6 +178,8 @@ double hemi_vent::return_pressure_for_chamber_volume(double cv)
 	// Deduce stress for the new hs_length
 	new_stress = p_hs->return_wall_stress_after_delta_hsl(delta_hs_length);
 
+	new_stress = GSL_MAX(-1000.0, new_stress);
+
 	internal_r = return_internal_radius_for_chamber_volume(cv);
 
 	wall_thickness = return_wall_thickness_for_chamber_volume(cv);
@@ -187,6 +190,10 @@ double hemi_vent::return_pressure_for_chamber_volume(double cv)
 	if (internal_r < 1e-6)
 	{
 		P_in_Pascals = 0.0;
+		cout << "Hemi_vent, internal_r ~= 0.0 problem\n";
+		cout << "delta_hs_length: " << delta_hs_length << "\n";
+		cout << "new_stress: " << new_stress << "\n";
+		cout << "wall_thickness: " << wall_thickness << "\n";
 	}
 	else
 	{
@@ -239,4 +246,8 @@ void hemi_vent::update_chamber_volume(double new_volume)
 	p_hs->change_hs_length(delta_hsl);
 
 	vent_circumference = new_circumference;
+
+	// Dump if necessary
+	if (!p_cmv_options->cb_dump_file_string.empty())
+		p_hs->p_myofilaments->dump_cb_distributions();
 }
