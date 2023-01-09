@@ -137,6 +137,7 @@
       "column": 2,
       "y_info": {
         "label": "Thin",
+        "ticks": [0, 1],
         "series": [
           {
             "field": "myof_a_off",
@@ -157,6 +158,7 @@
       "column": 2,
       "y_info": {
         "label": "Thick",
+        "ticks": [0, 1],
         "series": [
           {
             "field": "myof_m_pop_0",

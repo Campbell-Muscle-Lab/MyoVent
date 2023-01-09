@@ -210,8 +210,8 @@ void circulation::implement_time_step(double time_step_s)
 	double t_start_s = 0.0;
 	double t_stop_s = time_step_s;
 	
-	double eps_abs = 1e-2;
-	double eps_rel = 1e-4;
+	double eps_abs = 1e-6;
+	double eps_rel = 1e-6;
 
 	double* vol_calc = (double*)malloc(circ_no_of_compartments * sizeof(double));
 	double* flow_calc = (double*)malloc(circ_no_of_compartments * sizeof(double));
@@ -230,6 +230,9 @@ void circulation::implement_time_step(double time_step_s)
 		gsl_odeiv2_driver_alloc_y_new(&sys, gsl_odeiv2_step_rkf45,
 			0.5 * time_step_s, eps_abs, eps_rel);
 
+	status = gsl_odeiv2_driver_apply(d, &t_start_s, t_stop_s, circ_volume);
+
+	/*
 	// Set the volumes for the calculation
 	for (int i = 0; i < circ_no_of_compartments; i++)
 	{
@@ -249,6 +252,7 @@ void circulation::implement_time_step(double time_step_s)
 	{
 		circ_volume[i] = vol_calc[i];
 	}
+	*/
 	
 	// Update the hemi_vent with the new volume
 	p_hemi_vent->update_chamber_volume(circ_volume[0]);
@@ -365,7 +369,14 @@ void circulation::calculate_flows(const double v[])
 	// Special case for flow out of ventricle
 	p_diff = circ_pressure[0] - circ_pressure[1];
 
-	if (p_diff > 0)
+	if (p_diff > 0.0)
+	{
+		circ_aortic_valve_status = 1.0;
+	}
+	else
+		circ_aortic_valve_status = 0.0;
+
+	if (circ_aortic_valve_status == 1.0)
 		circ_flow[1] = p_diff / circ_resistance[1];
 	else
 		circ_flow[1] = 0.0;

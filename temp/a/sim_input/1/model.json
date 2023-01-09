@@ -112,7 +112,7 @@
                             "new_state": 2,
                             "rate_type": "poly",
                             "rate_parameters": [
-                                500,
+                                250,
                                 0.1,
                                 4
                             ]
@@ -121,7 +121,7 @@
                             "new_state": 4,
                             "rate_type": "constant",
                             "rate_parameters": [
-                                50
+                                5
                             ]
                             }
                         ]
@@ -135,7 +135,7 @@
                                 "new_state": 2,
                                 "rate_type": "exp_wall",
                                 "rate_parameters": [
-                                    100,
+                                    200,
                                     1,
                                     7,
                                     5
