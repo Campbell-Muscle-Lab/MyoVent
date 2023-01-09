@@ -31,6 +31,7 @@ hemi_vent::hemi_vent(circulation* set_p_parent_circulation)
 	// Set pointers
 	p_parent_circulation = set_p_parent_circulation;
 	p_cmv_model = p_parent_circulation->p_cmv_model;
+	p_parent_cmv_system = p_parent_circulation->p_parent_cmv_system;
 
 	// Initialise with safe options
 	p_cmv_results = NULL;
@@ -38,6 +39,12 @@ hemi_vent::hemi_vent(circulation* set_p_parent_circulation)
 
 	vent_wall_density = p_cmv_model->vent_wall_density;
 	vent_wall_volume = p_cmv_model->vent_wall_volume;
+
+	vent_delta_hsl = (double*)malloc(10 * sizeof(double));
+	for (int i = 0; i < 10; i++)
+		vent_delta_hsl[i] = 0;
+
+	vent_appl_dhsl;
 
 	// Initialise child half-sarcomere
 	p_hs = new half_sarcomere(this);
@@ -52,6 +59,8 @@ hemi_vent::~hemi_vent(void)
 
 	// Tidy up
 	delete p_hs;
+
+	free(vent_delta_hsl);
 }
 
 // Other functions
@@ -89,6 +98,7 @@ vent_n_hs = 1e9 * vent_circumference / p_hs->hs_length;
 	cout << "hs_length: " << p_hs->hs_length << "\n";
 	cout << "vent_n_hs: " << vent_n_hs << "\n";
 */
+	p_cmv_results->add_results_field("vent_appl_dhsl", &vent_appl_dhsl);
 
 }
 
@@ -240,8 +250,6 @@ void hemi_vent::update_chamber_volume(double new_volume)
 	delta_circumference = new_circumference - vent_circumference;
 
 	delta_hsl = 1e9 * delta_circumference / vent_n_hs;
-
-	//cout << "delta_hsl: " << delta_hsl << "\n";
 
 	p_hs->change_hs_length(delta_hsl);
 

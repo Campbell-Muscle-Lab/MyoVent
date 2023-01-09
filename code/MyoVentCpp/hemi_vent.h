@@ -68,6 +68,10 @@ public:
 													1.0 if using thick wall approximation
 													0.0 if not */
 
+	double* vent_delta_hsl;
+
+	double vent_appl_dhsl;
+
 	// Other functions
 	void initialise_simulation(void);
 

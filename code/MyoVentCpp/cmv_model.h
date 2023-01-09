@@ -57,6 +57,9 @@ public:
 	double* circ_slack_volume;			/**< pointer to array of doubles with
 												slack volume of individual compartments */
 
+	double* circ_inertance;				/**< pointer to array of doubles holding
+												inertances of individual compartments */
+
 	// Ventricle
 	double vent_wall_density;			/**< double with wall density in kg m^-3 */
 

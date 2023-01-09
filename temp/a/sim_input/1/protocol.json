@@ -1,7 +1,7 @@
 {
     "protocol": {
         "time_step": 0.001,
-        "no_of_time_steps": 3000
+        "no_of_time_steps": 1100
     },
     "baroreflex": {
         "activations": [

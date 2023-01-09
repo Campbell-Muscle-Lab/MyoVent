@@ -54,6 +54,7 @@ class output_handler():
         if ('templated_images' in self.oh_data):
             if ('relative_to' in self.oh_data['templated_images'][0]):
                 user_defined = self.oh_data['templated_images']
+                print(user_defined)
                 for ud in user_defined:
                     if (not ud['relative_to']):
                         template_fs = os.path.abspath(ud['template_file_string'])
@@ -72,14 +73,14 @@ class output_handler():
                         output_fs = os.path.join(base_directory,
                                                  ud['output_file_string'])
     
-            if (not 'output_image_formats' in ud):
-                ud['output_image_formats'] = ['png']
-
-            self.create_image_from_template(
-            sim_data,
-            template_fs,
-            output_fs,
-            ud['output_image_formats'])
+                    if (not 'output_image_formats' in ud):
+                        ud['output_image_formats'] = ['png']
+        
+                    self.create_image_from_template(
+                    sim_data,
+                    template_fs,
+                    output_fs,
+                    ud['output_image_formats'])
 
     def create_image_from_template(self,
                                    sim_data,

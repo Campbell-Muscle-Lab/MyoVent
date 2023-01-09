@@ -73,6 +73,7 @@
         "column": 1,
         "y_info": {
           "label": "Pressure",
+          "ticks": [-5, 10],
           "series": [
             {
               "field": "pressure_0",
@@ -85,9 +86,24 @@
             {
                 "field": "pressure_2",
                 "field_label": "P_2"
-            }
+            },
+            {
+              "reference": 0,
+              "field_label": "zero"
+          }
         ]
         }
+    },
+    {
+      "column": 1,
+      "y_info":{
+        "label": "aortic valve",
+        "series":[
+          {
+            "field": "circ_aortic_valve"
+          }
+        ]
+      }
     },
     {
       "column": 2,
@@ -324,7 +340,7 @@
             }
         ]
         }
-    },
+      },
     {
         "column": 4,
         "y_info": {
@@ -335,7 +351,53 @@
                 "field": "volume_0"
             }
         ]
+      }
+    },
+    {
+      "column": 4,
+      "y_info": {
+        "label": "Flow",
+        "ticks": [-0.3, 0.3],
+        "series": [
+          {
+            "field": "flow_0",
+            "field_label": "F_0"
+          },
+          {
+              "field": "flow_1",
+              "field_label": "F_1"
+          },
+          {
+            "reference": 0,
+            "field_label": "zero"
+        }
+      ]
+      }
+    },
+    {
+      "column": 4,
+      "y_info": {
+        "label": "P",
+        "ticks": [-20, 20],
+        "series": [
+          {
+            "field": "pressure_0",
+            "field_label": "P_0"
+          },
+          {
+              "field": "pressure_1",
+              "field_label": "P_1"
+          },
+          {
+            "field": "pressure_6",
+            "field_label": "P_6"
+          },
+          {
+            "reference": 0,
+            "field_label": "zero"
+          }
+      ]
+      }
     }
-    }
-   ]
+    ]
 }

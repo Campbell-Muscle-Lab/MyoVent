@@ -42,6 +42,7 @@ cmv_model::cmv_model(string JSON_model_file_string)
 	circ_resistance = (double*)malloc(MAX_NO_OF_COMPARTMENTS * sizeof(double));
 	circ_compliance = (double*)malloc(MAX_NO_OF_COMPARTMENTS * sizeof(double));
 	circ_slack_volume = (double*)malloc(MAX_NO_OF_COMPARTMENTS * sizeof(double));
+	circ_inertance = (double*)malloc(MAX_NO_OF_COMPARTMENTS * sizeof(double));
 
 	// Set rest from file
 	initialise_model_from_JSON_file(JSON_model_file_string);
@@ -58,6 +59,7 @@ cmv_model::~cmv_model(void)
 	free(circ_resistance);
 	free(circ_compliance);
 	free(circ_slack_volume);
+	free(circ_inertance);
 }
 
 // Other functions
@@ -123,6 +125,14 @@ void cmv_model::initialise_model_from_JSON_file(string JSON_model_file_string)
 	for (rapidjson::SizeType i = 0; i < sv_array.Size(); i++)
 	{
 		circ_slack_volume[i] = sv_array[i].GetDouble();
+	}
+
+	JSON_functions::check_JSON_member_array(comp, "inertance");
+	const rapidjson::Value& in_array = comp["inertance"];
+
+	for (rapidjson::SizeType i = 0; i < sv_array.Size(); i++)
+	{
+		circ_inertance[i] = in_array[i].GetDouble();
 	}
 
 	// Load the ventricle object

@@ -479,8 +479,8 @@ void myofilaments::implement_time_step(double time_step_s)
 	// Code
 
 	// Variables
-	double eps_abs = 1e-4;
-	double eps_rel = 1e-4;
+	double eps_abs = 1e-6;
+	double eps_rel = 1e-6;
 
 	int status;
 
@@ -514,6 +514,7 @@ void myofilaments::implement_time_step(double time_step_s)
 	if (status != GSL_SUCCESS)
 	{
 		std::cout << "Integration problem in myofilaments::implement_time_step\n";
+		exit(1);
 	}
 	else
 	{
@@ -1059,7 +1060,7 @@ void myofilaments::dump_cb_distributions(void)
 
 			for (int ind = 0; ind < no_of_bin_positions; ind++)
 			{
-				fprintf(output_file, "%.3f", gsl_vector_get(y,
+				fprintf(output_file, "%.5f", gsl_vector_get(y,
 					(gsl_matrix_int_get(m_y_indices, state_counter, 0) + ind)));
 
 				if ((ind == (no_of_bin_positions - 1)) &&

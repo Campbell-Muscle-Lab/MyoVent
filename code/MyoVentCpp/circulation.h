@@ -62,6 +62,10 @@ public:
 																holding slack_volumes for
 																each compartment */
 
+	double* circ_inertance;								/**< Pointer to array of doubles
+																holding inertances for
+																each compartment */
+
 	double* circ_pressure;								/**< Pointer to array of doubles
 																holding pressure in each
 																compartment */
@@ -70,12 +74,29 @@ public:
 																holding pressure in each
 																compartment */
 
-	double* circ_flow;									/**< Pinter to array of doubles
+	double* circ_flow;									/**< Pointer to array of doubles
 																holding flows between
 																compartments */
 
 	double circ_total_slack_volume;						/**< double holding total slack
 																volume in liters */
+
+	double* circ_last_flow;								/**< Pointer to array of doubles
+																holding last flows between
+																compartments */
+
+	double* circ_last_pressure;							/**< Pointer to array of doubles
+																holding last pressures in
+																compartments */
+
+	double circ_aortic_valve_status;					/**< Double holding status of
+																aortic valve
+																0 = closed
+																1 = open */
+
+	double circ_last_aortic_valve_status;
+
+	double circ_pd;
 
 
 	// Functions

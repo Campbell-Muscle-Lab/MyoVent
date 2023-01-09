@@ -107,26 +107,25 @@ def multi_panel_from_flat_data(
     if 'global_x_field' not in x_display:
         x_display['global_x_field'] = pandas_data.columns[0]
 
-    if (('ticks' not in x_display) or ('ticks_rel_to_end' not in x_display)):
-        if ('ticks_rel_to_end' not in x_display):
-            # Set ticks to beginning and end of record
-            x_lim = (pandas_data[x_display['global_x_field']].iloc[0],
-                     pandas_data[x_display['global_x_field']].iloc[-1])
-            x_display['ticks'] = \
-                np.asarray(deduce_axis_limits(x_lim, 'autoscaling'))
-            x_ticks_defined = False
-        else:
-            # Set ticks relative to end
-            x = pandas_data[x_display['global_x_field']].to_numpy()
-            x_end = x[-1]
-            x_lim = [x[x < (x_end + x_display['ticks_rel_to_end'][0])][-1],
-                     x[x < (x_end + x_display['ticks_rel_to_end'][-1])][-1]]
-            x_display['ticks'] = x_lim
-            print(x_display['ticks'])
-            x_ticks_defined = True
-
-    else:
+    x_ticks_defined = False
+    if ('ticks' in x_display):
         x_ticks_defined = True
+    
+    if ('ticks_rel_to_end' in x_display):
+        # Set ticks relative to end
+        x = pandas_data[x_display['global_x_field']].to_numpy()
+        x_end = x[-1]
+        x_lim = [x[x < (x_end + x_display['ticks_rel_to_end'][0])][-1],
+                 x[x < (x_end + x_display['ticks_rel_to_end'][-1])][-1]]
+        x_display['ticks'] = x_lim
+        print(x_display['ticks'])
+        x_ticks_defined = True
+        
+    if (x_ticks_defined == False):
+        # Set to plausible values
+        x = pandas_data[x_display['global_x_field']].to_numpy()
+        x_lim = [x[0], x[-1]]
+        x_display['ticks'] = x_lim
 
     if 'label' not in x_display:
         x_display['label'] = x_display['global_x_field']
@@ -223,17 +222,22 @@ def multi_panel_from_flat_data(
                             (x <= p_data['x_ticks'][-1]))
             x = x[vi]
             
-            # Pull y data, handling NaNs
-            y = pandas_data[y_d['field']]
-            y = pd.to_numeric(y, errors='coerce')
-            y = y.values[vi]
-
-            if 'scaling_factor' in y_d:
-                y = y * y_d['scaling_factor']
-
-            if 'log_display' in y_d:
-                if y_d['log_display'] == 'on':
-                    y = np.log10(y)
+            if ('field' in y_d):
+                # Pull y data, handling NaNs
+                y = pandas_data[y_d['field']]
+                y = pd.to_numeric(y, errors='coerce')
+                y = y.values[vi]
+    
+                if 'scaling_factor' in y_d:
+                    y = y * y_d['scaling_factor']
+    
+                if 'log_display' in y_d:
+                    if y_d['log_display'] == 'on':
+                        y = np.log10(y)
+                        
+            if ('reference' in y_d):
+                # Set y to reference value
+                y = y_d['reference'] * np.ones(len(x))
 
             # Track min and max y
             if (j == 0):
@@ -320,8 +324,13 @@ def multi_panel_from_flat_data(
         xlim = (min_x, max_x)
         if x_ticks_defined is False:
             xlim = deduce_axis_limits(xlim, 'autoscaled')
+        else:
+            xlim = x_display['ticks']
         ax[i].set_xlim(xlim)
         ax[i].set_xticks(x_display['ticks'])
+        
+        print(x_display['ticks'])
+        
         # Set y limits
         if ('ticks' in p_data['y_info']):
             ylim = tuple(p_data['y_info']['ticks'])
@@ -418,12 +427,17 @@ def handle_annotations(template_data, ax, panel_index, formatting):
 
     annotation_data = template_data['annotations']
     for an in annotation_data['annotation']:
-        if ((an['panel'] == 'all') or (an['panel'] == panel_index)):
+        if ((an['panel'] == 'all') or (panel_index in list([an['panel']]))):
             if (an['type'] == 'v_line'):
                 ax.plot(an['x_value']*np.array([1, 1]),
                         ax.get_ylim(),
                         an['line_style'],
-                        linewidth=an['linewidth'])
+                        linewidth=an['line_width'])
+
+            if (an['type'] == 'h_line'):
+                ax.plot(ax.get_xlim(), an['y_value']*np.array([1, 1]),
+                        an['line_style'],
+                        linewidth=an['line_width'])
 
             if (an['type'] == 'box'):
                 xc = an['x_coords']

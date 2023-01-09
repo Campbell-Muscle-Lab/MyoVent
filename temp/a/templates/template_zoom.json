@@ -1,0 +1,403 @@
+{
+    "layout":
+    {
+        "fig_width": 20,
+        "top_margin": 0,
+        "left_margin": 0,
+        "right_margin": 0,
+        "panel_height": 2,
+        "grid_wspace": 2,
+        "grid_hspace": 0.5
+    },
+    "x_display":{
+        "global_x_field": "time",
+        "label": "Time (s)",
+        "ticks": [0.95, 1.1]
+    },
+    "formatting":
+    {
+        "x_label_fontsize": 12,
+        "y_label_fontsize": 12,
+        "tick_fontsize": 12,
+        "legend_fontsize": 12,
+        "y_label_pad": 25,
+        "legend_bbox_to_anchor": [1.0, 1],
+        "patch_alpha": 0.3
+    },
+    "annotations":
+    {
+      "annotation":
+      [
+        {
+          "panel": "all",
+          "type": "v_line",
+          "x_value": 0.999,
+          "line_style": "k--",
+          "line_width": 1
+        },
+        {
+          "panel": 4,
+          "type": "h_line",
+          "y_value": 0,
+          "line_style":"k--",
+          "line_width": 1
+        }
+      ]
+    },
+    "panels": [
+    {
+        "column": 1,
+        "y_info": {
+          "label": "memb_activation",
+          "series": [
+            {
+              "field": "memb_activation"
+            }
+          ]
+        }
+    },
+    {
+      "column": 1,
+      "y_info": {
+        "label": "memb_Ca_cytosol",
+        "series": [
+          {
+            "field": "memb_Ca_cytosol"
+          }
+        ]
+      }
+    },
+    {
+      "column": 1,
+      "y_info": {
+        "label": "memb_Ca_sr",
+        "series": [
+          {
+            "field": "memb_Ca_sr"
+          }
+        ]
+      }
+    },
+    {
+      "column": 1,
+      "y_info": {
+        "label": "hsl",
+        "scaling_type": "close_fit",
+        "series": [
+          {
+            "field": "hs_length"
+          }
+        ]
+      }
+    },
+    {
+      "column": 1,
+      "y_info": {
+        "label": "delta_hsl",
+        "series": [
+          {
+            "field": "vent_appl_dhsl"
+          }
+        ]
+      }
+    },
+    {
+        "column": 1,
+        "y_info": {
+          "label": "Pressure",
+          "y_ticks": [-5, 10],
+          "series": [
+            {
+              "field": "pressure_0",
+              "field_label": "P_0"
+            },
+            {
+                "field": "pressure_1",
+                "field_label": "P_1"
+            },
+            {
+                "field": "pressure_2",
+                "field_label": "P_2"
+            }
+        ]
+        }
+    },
+    {
+      "column": 1,
+      "y_info":{
+        "label": "aortic valve",
+        "series":[
+          {
+            "field": "circ_aortic_valve"
+          }
+        ]
+      }
+    },
+    {
+      "column": 2,
+      "y_info": {
+        "label": "Thin",
+        "series": [
+          {
+            "field": "myof_a_off",
+            "field_label": "Off"
+          },
+          {
+            "field": "myof_a_on",
+            "field_label": "On"
+          },
+          {
+            "field": "myof_f_overlap",
+            "field_label": "Overlap"
+          }
+        ]
+      }
+    },
+    {
+      "column": 2,
+      "y_info": {
+        "label": "Thick",
+        "series": [
+          {
+            "field": "myof_m_pop_0",
+            "field_label": "M_0"
+          },
+          {
+            "field": "myof_m_pop_1",
+            "field_label": "M_1"
+          },
+          {
+            "field": "myof_m_pop_2",
+            "field_label": "M_2"
+          },
+          {
+            "field": "myof_m_pop_3",
+            "field_label": "M_3"
+          }
+        ]
+      }
+    },
+    {
+      "column": 2,
+      "y_info": {
+        "label": "M stress",
+        "series": [
+          {
+            "field": "myof_m_stress_0",
+            "field_label": "M_0"
+          },
+          {
+            "field": "myof_m_stress_1",
+            "field_label": "M_1"
+          },
+          {
+            "field": "myof_m_stress_2",
+            "field_label": "M_2"
+          },
+          {
+            "field": "myof_m_stress_3",
+            "field_label": "M_3"
+          }
+        ]
+      }
+    },
+    {
+      "column": 2,
+      "y_info": {
+        "label": "M stress",
+        "series": [
+          {
+            "field": "myof_stress_cb",
+            "field_label": "cb"
+          },
+          {
+            "field": "myof_stress_int_pas",
+            "field_label": "int_pas"
+          },
+          {
+            "field": "myof_stress_ext_pas",
+            "field_label": "ext_pas"
+          },
+          {
+            "field": "myof_stress_myof",
+            "field_label": "myof"
+          },
+          {
+            "reference": 0,
+            "field_label": "Zero"
+          }
+        ]
+      }
+    },
+    {
+      "column": 2,
+      "y_info": {
+        "label": "circ_pd",
+        "series": [
+          {
+            "field": "circ_pd"
+          },
+          {
+            "reference": 0
+          }
+        ]
+      }
+    },
+    {
+      "column": 2,
+      "y_info": {
+        "label": "flow_1",
+        "series": [
+          {
+            "field": "flow_1"
+          }
+        ]
+      }
+    },
+
+    {
+        "column": 3,
+        "y_info": {
+          "label": "Pressure",
+          "series": [
+            {
+              "field": "pressure_0",
+              "field_label": "P_0"
+            },
+            {
+                "field": "pressure_1",
+                "field_label": "P_1"
+            },
+            {
+                "field": "pressure_2",
+                "field_label": "P_2"
+            }
+        ]
+        }
+    },
+    {
+        "column": 3,
+        "y_info": {
+          "label": "Pressure",
+          "series": [
+            {
+                "field": "pressure_3",
+                "field_label": "P_3"
+            },
+            {
+                "field": "pressure_4",
+                "field_label": "P_4"
+            },
+            {
+                "field": "pressure_5",
+                "field_label": "P_5"
+            },
+            {
+                "field": "pressure_6",
+                "field_label": "P_6"
+            }
+        ]
+        }
+    },
+    {
+        "column": 3,
+        "y_info": {
+          "label": "Flow",
+          "series": [
+            {
+              "field": "flow_0",
+              "field_label": "F_0"
+            },
+            {
+                "field": "flow_1",
+                "field_label": "F_1"
+            },
+            {
+                "field": "flow_2",
+                "field_label": "F_2"
+            }
+        ]
+        }
+    },
+    {
+        "column": 3,
+        "y_info": {
+          "label": "Flow",
+          "series": [
+            {
+                "field": "flow_3",
+                "field_label": "F_3"
+            },
+            {
+                "field": "flow_4",
+                "field_label": "F_4"
+            },
+            {
+                "field": "flow_5",
+                "field_label": "F_5"
+            },
+            {
+                "field": "flow_6",
+                "field_label": "F_6"
+            }
+        ]
+        }
+    },
+    {
+        "column": 3,
+        "y_info": {
+          "label": "volume",
+          "series": [
+            {
+                "field": "volume_0",
+                "field_label": "V_0"
+            },
+            {
+                "field": "volume_1",
+                "field_label": "V_1"
+            },
+            {
+                "field": "volume_2",
+                "field_label": "V_2"
+            }
+        ]
+        }
+    },
+    {
+        "column": 3,
+        "y_info": {
+          "label": "volume",
+          "series": [
+            {
+                "field": "volume_3",
+                "field_label": "V_3"
+            },
+            {
+                "field": "volume_4",
+                "field_label": "V_4"
+            },
+            {
+                "field": "volume_5",
+                "field_label": "V_5"
+            },
+            {
+                "field": "volume_6",
+                "field_label": "V_6"
+            }
+        ]
+        }
+    },
+    {
+        "column": 4,
+        "y_info": {
+          "label": "volume",
+          "series": [
+            {
+                
+                "field": "volume_0"
+            }
+        ]
+    }
+    }
+   ]
+}
