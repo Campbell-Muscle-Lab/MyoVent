@@ -372,6 +372,10 @@
               "field_label": "F_1"
           },
           {
+            "field": "flow_2",
+            "field_label": "F_2"
+        },
+          {
             "reference": 0,
             "field_label": "zero"
         }
