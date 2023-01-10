@@ -18,6 +18,7 @@ class cmv_model;
 class cmv_options;
 class cmv_results;
 class hemi_vent;
+class valve;
 
 class circulation
 {
@@ -43,6 +44,8 @@ public:
 	cmv_results*  p_cmv_results;						/**< Pointer to cmv_results */
 
 	hemi_vent* p_hemi_vent;								/**< Pointer to a hemi_vent object */
+
+	valve* p_av;										/**< Pointer to the aortic valve */
 
 	double circ_blood_volume;							/**< double holding total blood volume
 																in liters */
@@ -80,24 +83,6 @@ public:
 
 	double circ_total_slack_volume;						/**< double holding total slack
 																volume in liters */
-
-	double* circ_last_flow;								/**< Pointer to array of doubles
-																holding last flows between
-																compartments */
-
-	double* circ_last_pressure;							/**< Pointer to array of doubles
-																holding last pressures in
-																compartments */
-
-	double circ_aortic_valve_status;					/**< Double holding status of
-																aortic valve
-																0 = closed
-																1 = open */
-
-	double circ_last_aortic_valve_status;
-
-	double circ_pd;
-
 
 	// Functions
 

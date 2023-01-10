@@ -12,6 +12,7 @@
 #include "cmv_options.h"
 #include "cmv_results.h"
 #include "hemi_vent.h"
+#include "valve.h"
 #include "half_sarcomere.h"
 
 #include "gsl_math.h"
@@ -51,8 +52,6 @@ circulation::circulation(cmv_system* set_p_parent_cmv_system = NULL)
 	circ_pressure = (double*)malloc(circ_no_of_compartments * sizeof(double));
 	circ_volume = (double*)malloc(circ_no_of_compartments * sizeof(double));
 	circ_flow = (double*)malloc(circ_no_of_compartments * sizeof(double));
-	circ_last_pressure = (double*)malloc(circ_no_of_compartments * sizeof(double));
-	circ_last_flow = (double*)malloc(circ_no_of_compartments * sizeof(double));
 
 	// Initialise, noting total slack_volume as we go
 	// Start with the compartments at slack volume
@@ -67,10 +66,8 @@ circulation::circulation(cmv_system* set_p_parent_cmv_system = NULL)
 		circ_pressure[i] = 0.0;
 		circ_volume[i] = circ_slack_volume[i];
 		if (i == 1)
-			circ_volume[i] = 1.3 * circ_slack_volume[i];
+			circ_volume[i] = 1.0 * circ_slack_volume[i];
 		circ_flow[i] = 0.0;
-		circ_last_pressure[i] = 0.0;
-		circ_last_flow[i] = 0.0;
 
 		circ_total_slack_volume = circ_total_slack_volume +
 			circ_volume[i];
@@ -88,13 +85,11 @@ circulation::circulation(cmv_system* set_p_parent_cmv_system = NULL)
 	circ_volume[circ_no_of_compartments - 1] = circ_volume[circ_no_of_compartments - 1] +
 		(circ_blood_volume - circ_total_slack_volume);
 
-	// Set the aortic valve
-	circ_aortic_valve_status = 0.0;
-	circ_last_aortic_valve_status = 0.0;
-	circ_pd = 0.0;
-
 	// Make a hemi-vent object
 	p_hemi_vent = new hemi_vent(this);
+
+	// Set the pointer to the aortic valve
+	p_av = p_hemi_vent->p_av;
 }
 
 // Destructor
@@ -114,8 +109,6 @@ circulation::~circulation(void)
 	free(circ_pressure);
 	free(circ_volume);
 	free(circ_flow);
-	free(circ_last_pressure);
-	free(circ_last_flow);
 }
 
 // Other functions
@@ -155,9 +148,6 @@ void circulation::initialise_simulation(void)
 		string label = string("flow_") + to_string(i);
 		p_cmv_results->add_results_field(label, &circ_flow[i]);
 	}
-
-	p_cmv_results->add_results_field("circ_aortic_valve", &circ_aortic_valve_status);
-	p_cmv_results->add_results_field("circ_pd", &circ_pd);
 }
 
 // This function is not a member of the circulation class but is used to interace
@@ -174,7 +164,6 @@ int circ_vol_derivs(double t, const double y[], double f[], void* params)
 
 	circulation* p_circ = (circulation*)params;
 									// Pointer to circulation
-
 	// Code
 	
 	// Calculate the flows between the compartments
@@ -192,9 +181,6 @@ int circ_vol_derivs(double t, const double y[], double f[], void* params)
 		else
 			f[i] = p_circ->circ_flow[i] - p_circ->circ_flow[0];
 	}
-
-	//cout << "t: " << t << "    t*f[0]: " << (t*f[0]) << "    v[0]: " << p_circ->circ_volume[0] << "    ratio: " << (t*f[0] / p_circ->circ_volume[0]) << "\n";
-	
 
 	// Return
 	return GSL_SUCCESS;
@@ -231,43 +217,9 @@ void circulation::implement_time_step(double time_step_s)
 			0.5 * time_step_s, eps_abs, eps_rel);
 
 	status = gsl_odeiv2_driver_apply(d, &t_start_s, t_stop_s, circ_volume);
-
-	/*
-	// Set the volumes for the calculation
-	for (int i = 0; i < circ_no_of_compartments; i++)
-	{
-		vol_calc[i] = circ_volume[i];
-	}
-
-	status = gsl_odeiv2_driver_apply(d, &t_start_s, t_stop_s, vol_calc);
-
-	if (status != GSL_SUCCESS)
-	{
-		cout << "circulation::implement_time_step problem with ODEs\n";
-		exit(1);
-	}
-
-	// Unpack
-	for (int i = 0; i < circ_no_of_compartments; i++)
-	{
-		circ_volume[i] = vol_calc[i];
-	}
-	*/
 	
 	// Update the hemi_vent with the new volume
 	p_hemi_vent->update_chamber_volume(circ_volume[0]);
-
-	/*
-	double b = 0.1;
-	if (p_parent_cmv_system->cum_time_s > 1.0)
-	{
-		double dt = p_parent_cmv_system->cum_time_s - 1.0;
-		b = b - (0.3 * dt);
-	}
-	circ_volume[0] = b;
-	p_hemi_vent->update_chamber_volume(circ_volume[0]);
-
-	*/
 
 	// Make sure total volume remains constant
 	double holder = 0.0;
@@ -286,18 +238,7 @@ void circulation::implement_time_step(double time_step_s)
 		cout << "Blood volume mismatch\n";
 		exit(1);
 	}
-/*
-	// Hold the last flow and the last pressure
-	for (int i = 0; i < circ_no_of_compartments; i++)
-	{
-		circ_last_flow[i] = circ_flow[i];
-		circ_last_pressure[i] = circ_pressure[i];
-	}
 
-	circ_last_aortic_valve_status = circ_aortic_valve_status;
-
-	circ_pressure[0] = p_hemi_vent->return_pressure_for_chamber_volume(circ_volume[0]);
-*/
 	// Tidy up
 	free(vol_calc);
 	free(flow_calc);
@@ -312,7 +253,6 @@ void circulation::calculate_pressures(const double v[], double p[])
 	p[0] = p_hemi_vent->return_pressure_for_chamber_volume(v[0]);
 
 	// Section is for debugging
-	//cout << "Done\n";
 	if (p[0] == 0.0)
 	{
 		for (int i = 0; i < circ_no_of_compartments; i++)
@@ -321,7 +261,7 @@ void circulation::calculate_pressures(const double v[], double p[])
 			if (i == (circ_no_of_compartments - 1))
 				cout << "\n";
 		}
-		//exit(1);
+		exit(1);
 	}
 
 	// Calculate the other pressures
@@ -366,49 +306,18 @@ void circulation::calculate_flows(const double v[])
 		circ_flow[0] = 0.0;
 	}
 
+	// Special case for flow out of the ventricle
+	p_diff = (circ_pressure[0] - circ_pressure[1]);
+
+	circ_flow[1] = p_av->valve_pos * p_diff / circ_resistance[1];
+
+	/*
 	// Special case for flow out of ventricle
 	p_diff = circ_pressure[0] - circ_pressure[1];
 
 	if (p_diff > 0.0)
-	{
-		circ_aortic_valve_status = 1.0;
-	}
-	else
-		circ_aortic_valve_status = 0.0;
-
-	if (circ_aortic_valve_status == 1.0)
 		circ_flow[1] = p_diff / circ_resistance[1];
 	else
 		circ_flow[1] = 0.0;
-
-	circ_pd = p_diff;
-	/*
-	double k = 10;
-	double k2 = 10;
-
-	double time_step = 0.001;
-
-	circ_aortic_valve_status = circ_last_aortic_valve_status +
-		time_step * (
-			(GSL_MAX(0.0, p_diff) * k * (1.0 - circ_last_aortic_valve_status)) -
-		(k2 * circ_last_aortic_valve_status));
-	
-	//cout << "cum_time_s: " << p_parent_cmv_system->cum_time_s << "   p_diff: " << p_diff << "\n";
-
-
-	circ_aortic_valve_status = GSL_MIN(circ_aortic_valve_status, 1.0);
-	circ_aortic_valve_status = GSL_MAX(circ_aortic_valve_status, 0.0);
-
-	//cout << "aortic_valve: " << circ_aortic_valve_status << "\n";
-
-	if (circ_aortic_valve_status > 0.0)
-	{
-		circ_flow[1] = p_diff * circ_aortic_valve_status / circ_resistance[1];
-	}
-	else
-	{
-		circ_flow[1] = 0.0;
-	}
-
-	*/
+		*/
 }

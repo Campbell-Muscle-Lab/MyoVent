@@ -6,8 +6,8 @@
         "blood_volume": 4.5,
         "compartments":
         {
-            "resistance": [1, 20, 40, 1400, 300, 50, 10],
-            "compliance": [0, 4e-3, 8e-3, 1e-3, 1e-4, 0.04, 0.14],
+            "resistance": [10, 50, 150, 1400, 500, 50, 50],
+            "compliance": [0, 4e-3, 8e-3, 1e-2, 1e-4, 0.04, 0.1],
             "slack_volume": [0.065, 0.3, 0.3, 0.1, 0.25, 0.5, 2.0],
             "inertance": [100, 100, 100, 100, 100, 100, 100]
         }
@@ -18,9 +18,9 @@
         "wall_volume": 0.1,
         "aortic_valve":
         {
-            "mass": 0.001,
-            "eta": 0.01,
-            "k": 0.1
+            "mass": 0.0001,
+            "eta": 0.001,
+            "k": 0.01
         },
         "heart_rate": {
             "t_RR_interval_s": 1.0
@@ -97,7 +97,7 @@
                             "new_state": 1,
                             "rate_type": "constant",
                             "rate_parameters": [
-                                100
+                                200
                             ]
                             },
                             {
@@ -127,7 +127,7 @@
                             "new_state": 4,
                             "rate_type": "constant",
                             "rate_parameters": [
-                                5
+                                30
                             ]
                             }
                         ]
@@ -141,9 +141,9 @@
                                 "new_state": 2,
                                 "rate_type": "exp_wall",
                                 "rate_parameters": [
-                                    200,
+                                    400,
                                     1,
-                                    7,
+                                    5,
                                     5
                                 ]
                                 }
