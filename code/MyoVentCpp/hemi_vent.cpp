@@ -45,7 +45,10 @@ hemi_vent::hemi_vent(circulation* set_p_parent_circulation)
 	p_hs = new half_sarcomere(this);
 
 	// Initialise aortic valve
-	p_av = new valve(this);
+	p_av = new valve(this, p_cmv_model->p_av);
+
+	// Initialise mitral valve
+	p_mv = new valve(this, p_cmv_model->p_mv);
 }
 
 // Destructor
@@ -57,6 +60,7 @@ hemi_vent::~hemi_vent(void)
 	// Tidy up
 	delete p_hs;
 	delete p_av;
+	delete p_mv;
 }
 
 // Other functions
@@ -80,6 +84,7 @@ void hemi_vent::initialise_simulation(void)
 	// And now daughter objects
 
 	p_av->initialise_simulation();
+	p_mv->initialise_simulation();
 
 	p_hs->initialise_simulation();
 
@@ -98,7 +103,7 @@ void hemi_vent::implement_time_step(double time_step_s)
 	//! Implements time-step
 
 	p_av->implement_time_step(time_step_s);
-
+	p_mv->implement_time_step(time_step_s);
 
 	p_hs->implement_time_step(time_step_s);
 

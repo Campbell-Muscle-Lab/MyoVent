@@ -20,13 +20,15 @@ class cmv_options;
 
 class hemi_vent;
 
+struct cmv_model_valve_structure;
+
 class valve
 {
 public:
 	/**
 	* Constructor
 	*/
-	valve(hemi_vent* set_p_parent_hemi_vent);
+	valve(hemi_vent* set_p_parent_hemi_vent, cmv_model_valve_structure* set_p_structure);
 
 	/**
 	* Destructor
@@ -42,11 +44,16 @@ public:
 
 	cmv_options* p_cmv_options;						/**< Pointer to cmv_options */
 
+	cmv_model_valve_structure* p_cmv_model_valve;	/**< Pointer to the structure in the
+															model for the valve */
+
 	double valve_pos;								/**< Double holding valve status
 															1.0 = open
 															0.0 = closed */
 	
 	double valve_vel;								/**< Double holding valve velocity */
+
+	string valve_name;								/**< string holding valve name */
 
 	double valve_mass;								/**< Double holding the valve mass */
 

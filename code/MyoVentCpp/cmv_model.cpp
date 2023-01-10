@@ -24,6 +24,14 @@
 using namespace std::filesystem;
 using namespace std;
 
+// Valve structure
+struct cmv_model_valve_structure {
+	string name;
+	double mass;
+	double eta;
+	double k;
+};
+
 // Constructor
 cmv_model::cmv_model(string JSON_model_file_string)
 {
@@ -44,6 +52,10 @@ cmv_model::cmv_model(string JSON_model_file_string)
 	circ_slack_volume = (double*)malloc(MAX_NO_OF_COMPARTMENTS * sizeof(double));
 	circ_inertance = (double*)malloc(MAX_NO_OF_COMPARTMENTS * sizeof(double));
 
+	// Create pointers
+	p_av = new cmv_model_valve_structure;
+	p_mv = new cmv_model_valve_structure;
+
 	// Set rest from file
 	initialise_model_from_JSON_file(JSON_model_file_string);
 }
@@ -55,6 +67,9 @@ cmv_model::~cmv_model(void)
 	std::cout << "cmv_model destructor\n";
 
 	delete p_m_scheme;
+
+	delete p_av;
+	delete p_mv;
 
 	free(circ_resistance);
 	free(circ_compliance);
@@ -105,6 +120,7 @@ void cmv_model::initialise_model_from_JSON_file(string JSON_model_file_string)
 	const rapidjson::Value& r_array = comp["resistance"];
 
 	circ_no_of_compartments = (int)r_array.Size();
+	cout << "circ_no_of_compartments: " << circ_no_of_compartments << "\n";
 
 	for (rapidjson::SizeType i = 0; i < r_array.Size(); i++)
 	{
@@ -145,18 +161,39 @@ void cmv_model::initialise_model_from_JSON_file(string JSON_model_file_string)
 	JSON_functions::check_JSON_member_number(vent, "wall_volume");
 	vent_wall_volume = vent["wall_volume"].GetDouble();
 
-	// Load the aortic valve
-	JSON_functions::check_JSON_member_object(vent, "aortic_valve");
-	const rapidjson::Value& av = vent["aortic_valve"];
+	// Load the valves
+	JSON_functions::check_JSON_member_object(vent, "valves");
+	const rapidjson::Value& valves = vent["valves"];
+
+	JSON_functions::check_JSON_member_object(valves, "aortic");
+	const rapidjson::Value& av = valves["aortic"];
+
+	JSON_functions::check_JSON_member_string(av, "name");
+	p_av->name = av["name"].GetString();
 
 	JSON_functions::check_JSON_member_number(av, "mass");
-	av_mass = av["mass"].GetDouble();
+	p_av->mass = av["mass"].GetDouble();
 
 	JSON_functions::check_JSON_member_number(av, "eta");
-	av_eta = av["eta"].GetDouble();
+	p_av->eta = av["eta"].GetDouble();
 
 	JSON_functions::check_JSON_member_number(av, "k");
-	av_k = av["k"].GetDouble();
+	p_av->k = av["k"].GetDouble();
+
+	JSON_functions::check_JSON_member_object(valves, "mitral");
+	const rapidjson::Value& mv = valves["mitral"];
+
+	JSON_functions::check_JSON_member_string(mv, "name");
+	p_mv->name = mv["name"].GetString();
+
+	JSON_functions::check_JSON_member_number(mv, "mass");
+	p_mv->mass = mv["mass"].GetDouble();
+
+	JSON_functions::check_JSON_member_number(mv, "eta");
+	p_mv->eta = mv["eta"].GetDouble();
+
+	JSON_functions::check_JSON_member_number(mv, "k");
+	p_mv->k = mv["k"].GetDouble();
 
 	// Load the heart_rate object
 	JSON_functions::check_JSON_member_object(vent, "heart_rate");

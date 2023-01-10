@@ -49,6 +49,8 @@ public:
 
 	valve* p_av;							/**< pointer to the aortic valve */
 
+	valve* p_mv;							/**< pointer to the mitral valve */
+
 	half_sarcomere* p_hs;					/**< pointer to child half-sarcomere */
 
 	double vent_wall_density;				/**< double with wall density in kg m^-3 */

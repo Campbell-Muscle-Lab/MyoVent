@@ -5,6 +5,7 @@
 */
 
 #include "stdio.h"
+#include <iostream>
 
 #include "cmv_model.h"
 #include "valve.h"
@@ -20,8 +21,15 @@
 #include "gsl_math.h"
 #include "gsl_roots.h"
 
+struct cmv_model_valve_structure {
+	string name;
+	double mass;
+	double eta;
+	double k;
+};
+
 // Constructor
-valve::valve(hemi_vent* set_p_parent_hemi_vent)
+valve::valve(hemi_vent* set_p_parent_hemi_vent, cmv_model_valve_structure* set_p_cmv_model_structure)
 {
 	//! Constructor
 
@@ -37,9 +45,14 @@ valve::valve(hemi_vent* set_p_parent_hemi_vent)
 	p_cmv_results = NULL;
 
 	// Update from cmv_model
-	valve_mass = p_cmv_model->av_mass;
-	valve_eta = p_cmv_model->av_eta;
-	valve_k = p_cmv_model->av_k;
+	p_cmv_model_valve = set_p_cmv_model_structure;
+
+	valve_name = p_cmv_model_valve->name;
+	valve_mass = p_cmv_model_valve->mass;
+	valve_eta = p_cmv_model_valve->eta;
+	valve_k = p_cmv_model_valve->k;
+
+	cout << "valve_name: " << valve_name << "\n";
 
 	// Initialise
 	valve_pos = 0.0;
@@ -63,6 +76,7 @@ void valve::initialise_simulation(void)
 	//! Code initialises simulation
 	
 	// Variables
+	string label_string;
 	
 	// Code
 
@@ -73,7 +87,11 @@ void valve::initialise_simulation(void)
 	p_cmv_results = p_parent_hemi_vent->p_cmv_results;
 
 	// Now add the results fields
-	p_cmv_results->add_results_field("valve_pos", &valve_pos);
+	label_string = valve_name + "_valve_pos";
+	
+	cout << "label_string: " << label_string << "\n";
+
+	p_cmv_results->add_results_field(label_string, &valve_pos);
 }
 
 // This function is not a member of the valve class but is used to interace
@@ -92,14 +110,24 @@ int valve_derivs(double t, const double y[], double f[], void* params)
 
 	circulation* p_circ = p_valve->p_parent_hemi_vent->p_parent_circulation;
 
-	double pressure_difference;
+	double pressure_difference = GSL_NAN;
 
 	// Code
 
 	// y[0] is the position of the valve
 	// y[1] is the velocity
 
-	pressure_difference = p_circ->circ_pressure[0] - p_circ->circ_pressure[1];
+	if (p_valve->valve_name == "aortic")
+		pressure_difference = p_circ->circ_pressure[0] - p_circ->circ_pressure[1];
+
+	if (p_valve->valve_name == "mitral")
+		pressure_difference = p_circ->circ_pressure[p_circ->circ_no_of_compartments-1] - p_circ->circ_pressure[0];
+
+	if (gsl_isnan(pressure_difference))
+	{
+		cout << "Pressure difference not defined for valve\n";
+		exit(1);
+	}
 
 	f[0] = y[1];
 	f[1] = (1.0 / p_valve->valve_mass) *

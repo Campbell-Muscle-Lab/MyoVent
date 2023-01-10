@@ -329,8 +329,6 @@ def multi_panel_from_flat_data(
         ax[i].set_xlim(xlim)
         ax[i].set_xticks(x_display['ticks'])
         
-        print(x_display['ticks'])
-        
         # Set y limits
         if ('ticks' in p_data['y_info']):
             ylim = tuple(p_data['y_info']['ticks'])

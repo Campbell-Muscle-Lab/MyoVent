@@ -24,6 +24,8 @@ class membranes;
 class heart_rate;
 class kinetic_scheme;
 
+struct cmv_model_valve_structure;
+
 using namespace std;
 
 class cmv_model
@@ -65,12 +67,9 @@ public:
 
 	double vent_wall_volume;			/**< double with wall volume in liters */
 
-	// Aortic valve
-	double av_mass;						/**< double with valve mass */
+	cmv_model_valve_structure* p_av;	/**< pointer to aortic valve structure */
 
-	double av_eta;						/**< double with valve viscosity */
-
-	double av_k;						/**< double with valve spring */
+	cmv_model_valve_structure* p_mv;	/**< pointer to mitral valve structure */
 
 	// Heart rate
 	double hr_t_RR_interval_s;			/**< double with RR interval in s */

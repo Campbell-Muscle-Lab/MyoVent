@@ -6,8 +6,8 @@
         "blood_volume": 4.5,
         "compartments":
         {
-            "resistance": [10, 50, 150, 1400, 500, 50, 50],
-            "compliance": [0, 4e-3, 8e-3, 1e-2, 1e-4, 0.04, 0.1],
+            "resistance": [1, 20, 20, 800, 300, 60, 60],
+            "compliance": [0, 2e-3, 2e-3, 1e-3, 0.01, 0.05, 0.05],
             "slack_volume": [0.065, 0.3, 0.3, 0.1, 0.25, 0.5, 2.0],
             "inertance": [100, 100, 100, 100, 100, 100, 100]
         }
@@ -16,11 +16,22 @@
     {
         "wall_density": 1055,
         "wall_volume": 0.1,
-        "aortic_valve":
+        "valves":
         {
-            "mass": 0.0001,
-            "eta": 0.001,
-            "k": 0.01
+            "aortic":
+            {
+                "name": "aortic",
+                "mass": 0.0001,
+                "eta": 0.1,
+                "k": 0.1
+            },
+            "mitral":
+            {
+                "name": "mitral",
+                "mass": 0.01,
+                "eta": 0.01,
+                "k": 0.01
+            }
         },
         "heart_rate": {
             "t_RR_interval_s": 1.0
@@ -47,10 +58,10 @@
                 "cb_number_density": 1.15e17,
                 "prop_fibrosis": 0.1,
                 "prop_myofilaments": 0.6,
-                "int_pas_sigma": 100,
+                "int_pas_sigma": 25,
                 "int_pas_L": 50,
                 "int_pas_slack_hsl": 1000,
-                "ext_pas_sigma": 100,
+                "ext_pas_sigma": 50,
                 "ext_pas_L": 50,
                 "ext_pas_slack_hsl": 1000,
                 "fil_compliance_factor": 0.5,
@@ -61,7 +72,7 @@
                 {
                     "k_on": 2e8,
                     "k_off": 100,
-                    "k_coop": 5
+                    "k_coop": 10
                 },
                 "myosin":
                 {
@@ -82,7 +93,7 @@
                             "new_state": 2,
                             "rate_type": "force_dependent",
                             "rate_parameters": [
-                                10,
+                                15,
                                 1e-4
                             ]
                             }
@@ -97,14 +108,14 @@
                             "new_state": 1,
                             "rate_type": "constant",
                             "rate_parameters": [
-                                200
+                                500
                             ]
                             },
                             {
                             "new_state": 3,
                             "rate_type": "gaussian_hsl",
                             "rate_parameters": [
-                                200
+                                400
                             ]
                             }
                         ]
@@ -127,7 +138,7 @@
                             "new_state": 4,
                             "rate_type": "constant",
                             "rate_parameters": [
-                                30
+                                1000
                             ]
                             }
                         ]
@@ -135,16 +146,16 @@
                         {
                             "number": 4,
                             "type": "A",
-                            "extension": 8.0,
+                            "extension": 5.0,
                             "transition": [
                                 {
                                 "new_state": 2,
                                 "rate_type": "exp_wall",
                                 "rate_parameters": [
                                     400,
-                                    1,
+                                    0.5,
                                     5,
-                                    5
+                                    3
                                 ]
                                 }
                             ]

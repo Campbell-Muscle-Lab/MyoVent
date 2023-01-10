@@ -90,6 +90,7 @@ circulation::circulation(cmv_system* set_p_parent_cmv_system = NULL)
 
 	// Set the pointer to the aortic valve
 	p_av = p_hemi_vent->p_av;
+	p_mv = p_hemi_vent->p_mv;
 }
 
 // Destructor
@@ -295,29 +296,10 @@ void circulation::calculate_flows(const double v[])
 	}
 
 	// Special case for flow into the ventricle
-	if (circ_pressure[circ_no_of_compartments - 1] > circ_pressure[0])
-	{
-		
-		circ_flow[0] = (circ_pressure[circ_no_of_compartments - 1] - circ_pressure[0]) /
-			circ_resistance[0];
-	}
-	else
-	{
-		circ_flow[0] = 0.0;
-	}
+	p_diff = (circ_pressure[circ_no_of_compartments - 1] > circ_pressure[0]);
+	circ_flow[0] = p_mv->valve_pos * p_diff / circ_resistance[0];
 
 	// Special case for flow out of the ventricle
 	p_diff = (circ_pressure[0] - circ_pressure[1]);
-
 	circ_flow[1] = p_av->valve_pos * p_diff / circ_resistance[1];
-
-	/*
-	// Special case for flow out of ventricle
-	p_diff = circ_pressure[0] - circ_pressure[1];
-
-	if (p_diff > 0.0)
-		circ_flow[1] = p_diff / circ_resistance[1];
-	else
-		circ_flow[1] = 0.0;
-		*/
 }

@@ -47,6 +47,8 @@ public:
 
 	valve* p_av;										/**< Pointer to the aortic valve */
 
+	valve* p_mv;										/**< Pointer to the mitral valve */
+
 	double circ_blood_volume;							/**< double holding total blood volume
 																in liters */
 

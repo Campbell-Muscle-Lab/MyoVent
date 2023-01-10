@@ -99,7 +99,12 @@
           "label": "valve_pos",
           "series":[
             {
-              "field": "valve_pos"
+              "field": "aortic_valve_pos",
+              "field_label": "aortic"
+            },
+            {
+                "field": "mitral_valve_pos",
+                "field_label": "mitral"
             }
           ]
         }
