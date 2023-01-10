@@ -145,6 +145,19 @@ void cmv_model::initialise_model_from_JSON_file(string JSON_model_file_string)
 	JSON_functions::check_JSON_member_number(vent, "wall_volume");
 	vent_wall_volume = vent["wall_volume"].GetDouble();
 
+	// Load the aortic valve
+	JSON_functions::check_JSON_member_object(vent, "aortic_valve");
+	const rapidjson::Value& av = vent["aortic_valve"];
+
+	JSON_functions::check_JSON_member_number(av, "mass");
+	av_mass = av["mass"].GetDouble();
+
+	JSON_functions::check_JSON_member_number(av, "eta");
+	av_eta = av["eta"].GetDouble();
+
+	JSON_functions::check_JSON_member_number(av, "k");
+	av_k = av["k"].GetDouble();
+
 	// Load the heart_rate object
 	JSON_functions::check_JSON_member_object(vent, "heart_rate");
 	const rapidjson::Value& hr = vent["heart_rate"];

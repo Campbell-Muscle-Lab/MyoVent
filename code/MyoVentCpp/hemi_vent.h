@@ -15,6 +15,7 @@
 // Forward declararations
 class cmv_model;
 class cmv_system;
+class valve;
 class half_sarcomere;
 class circulation;
 
@@ -46,6 +47,8 @@ public:
 
 	circulation* p_parent_circulation;		/**< pointer the parent circulation */
 
+	valve* p_av;							/**< pointer to the aortic valve */
+
 	half_sarcomere* p_hs;					/**< pointer to child half-sarcomere */
 
 	double vent_wall_density;				/**< double with wall density in kg m^-3 */
@@ -67,10 +70,6 @@ public:
 	double vent_thick_wall_multiplier;		/**< double with
 													1.0 if using thick wall approximation
 													0.0 if not */
-
-	double* vent_delta_hsl;
-
-	double vent_appl_dhsl;
 
 	// Other functions
 	void initialise_simulation(void);

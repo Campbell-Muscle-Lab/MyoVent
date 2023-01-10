@@ -162,6 +162,7 @@
     <ClCompile Include="MyoVentCpp.cpp" />
     <ClCompile Include="m_state.cpp" />
     <ClCompile Include="transition.cpp" />
+    <ClCompile Include="valve.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="circulation.h" />
@@ -180,6 +181,7 @@
     <ClInclude Include="myofilaments.h" />
     <ClInclude Include="m_state.h" />
     <ClInclude Include="transition.h" />
+    <ClInclude Include="valve.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

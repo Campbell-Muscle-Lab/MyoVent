@@ -11,6 +11,7 @@
 #include "cmv_system.h"
 #include "cmv_model.h"
 #include "circulation.h"
+#include "valve.h"
 #include "half_sarcomere.h"
 #include "myofilaments.h"
 #include "cmv_results.h"
@@ -40,15 +41,11 @@ hemi_vent::hemi_vent(circulation* set_p_parent_circulation)
 	vent_wall_density = p_cmv_model->vent_wall_density;
 	vent_wall_volume = p_cmv_model->vent_wall_volume;
 
-	vent_delta_hsl = (double*)malloc(10 * sizeof(double));
-	for (int i = 0; i < 10; i++)
-		vent_delta_hsl[i] = 0;
-
-	vent_appl_dhsl;
-
 	// Initialise child half-sarcomere
 	p_hs = new half_sarcomere(this);
 
+	// Initialise aortic valve
+	p_av = new valve(this);
 }
 
 // Destructor
@@ -59,8 +56,7 @@ hemi_vent::~hemi_vent(void)
 
 	// Tidy up
 	delete p_hs;
-
-	free(vent_delta_hsl);
+	delete p_av;
 }
 
 // Other functions
@@ -82,6 +78,9 @@ void hemi_vent::initialise_simulation(void)
 	p_cmv_results = p_parent_circulation->p_cmv_results;
 
 	// And now daughter objects
+
+	p_av->initialise_simulation();
+
 	p_hs->initialise_simulation();
 
 	// Deduce the slack circumference of the ventricle and
@@ -92,19 +91,14 @@ vent_circumference = return_lv_circumference_for_chamber_volume(
 	p_parent_circulation->circ_slack_volume[0]);
 
 vent_n_hs = 1e9 * vent_circumference / p_hs->hs_length;
-
-/*
-	cout << "slack_circumference: " << slack_circumference << "\n";
-	cout << "hs_length: " << p_hs->hs_length << "\n";
-	cout << "vent_n_hs: " << vent_n_hs << "\n";
-*/
-	p_cmv_results->add_results_field("vent_appl_dhsl", &vent_appl_dhsl);
-
 }
 
 void hemi_vent::implement_time_step(double time_step_s)
 {
 	//! Implements time-step
+
+	p_av->implement_time_step(time_step_s);
+
 
 	p_hs->implement_time_step(time_step_s);
 

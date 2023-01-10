@@ -16,6 +16,12 @@
     {
         "wall_density": 1055,
         "wall_volume": 0.1,
+        "aortic_valve":
+        {
+            "mass": 0.001,
+            "eta": 0.01,
+            "k": 0.1
+        },
         "heart_rate": {
             "t_RR_interval_s": 1.0
         },

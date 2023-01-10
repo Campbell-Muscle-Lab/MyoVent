@@ -63,6 +63,9 @@
     <ClCompile Include="cmv_options.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="valve.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cmv_system.h">
@@ -111,6 +114,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="cmv_options.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="valve.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

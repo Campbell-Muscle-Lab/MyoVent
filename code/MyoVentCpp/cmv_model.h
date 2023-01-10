@@ -65,6 +65,13 @@ public:
 
 	double vent_wall_volume;			/**< double with wall volume in liters */
 
+	// Aortic valve
+	double av_mass;						/**< double with valve mass */
+
+	double av_eta;						/**< double with valve viscosity */
+
+	double av_k;						/**< double with valve spring */
+
 	// Heart rate
 	double hr_t_RR_interval_s;			/**< double with RR interval in s */
 

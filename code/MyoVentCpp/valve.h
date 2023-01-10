@@ -1,0 +1,60 @@
+#pragma once
+
+/**
+/* @file		half_sarcomere.h
+/* @brief		Header file for a half_sarcomere object
+/* @author		Ken Campbell
+*/
+
+#include "stdio.h"
+
+#include <iostream>
+
+#include "global_definitions.h"
+
+// Forward declararations
+class cmv_system;
+class cmv_model;
+class cmv_results;
+class cmv_options;
+
+class hemi_vent;
+
+class valve
+{
+public:
+	/**
+	* Constructor
+	*/
+	valve(hemi_vent* set_p_parent_hemi_vent);
+
+	/**
+	* Destructor
+	*/
+	~valve(void);
+
+	// Variables
+	hemi_vent* p_parent_hemi_vent;
+	
+	cmv_model* p_cmv_model;							/**< Pointer to the cmv_model object */
+
+	cmv_results* p_cmv_results;						/**< Pointer to cmv_results */
+
+	cmv_options* p_cmv_options;						/**< Pointer to cmv_options */
+
+	double valve_pos;								/**< Double holding valve status
+															1.0 = open
+															0.0 = closed */
+	
+	double valve_vel;								/**< Double holding valve velocity */
+
+	double valve_mass;								/**< Double holding the valve mass */
+
+	double valve_eta;								/**< Double holding the valve resistance */
+
+	double valve_k;									/**< Double holding the valve stiffness */
+
+	void initialise_simulation(void);
+	
+	void implement_time_step(double time_step_s);
+};

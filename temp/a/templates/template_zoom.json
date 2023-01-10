@@ -91,17 +91,6 @@
       }
     },
     {
-      "column": 1,
-      "y_info": {
-        "label": "delta_hsl",
-        "series": [
-          {
-            "field": "vent_appl_dhsl"
-          }
-        ]
-      }
-    },
-    {
         "column": 1,
         "y_info": {
           "label": "Pressure",

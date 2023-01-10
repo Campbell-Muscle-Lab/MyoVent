@@ -1,0 +1,165 @@
+/**
+/* @file		half_sarcomere.cpp
+/* @brief		Source file for a half_sarcomere object
+/* @author		Ken Campbell
+*/
+
+#include "stdio.h"
+
+#include "cmv_model.h"
+#include "valve.h"
+#include "hemi_vent.h"
+#include "circulation.h"
+#include "cmv_results.h"
+#include "membranes.h"
+#include "myofilaments.h"
+#include "heart_rate.h"
+
+#include "gsl_errno.h"
+#include "gsl_odeiv2.h"
+#include "gsl_math.h"
+#include "gsl_roots.h"
+
+// Constructor
+valve::valve(hemi_vent* set_p_parent_hemi_vent)
+{
+	//! Constructor
+
+	// Code
+	printf("valve constructor()\n");
+
+	// Set the pointers to the parent system
+	p_parent_hemi_vent = set_p_parent_hemi_vent;
+	p_cmv_model = p_parent_hemi_vent->p_cmv_model;
+
+	// Set safe values
+	p_cmv_options = NULL;
+	p_cmv_results = NULL;
+
+	// Update from cmv_model
+	valve_mass = p_cmv_model->av_mass;
+	valve_eta = p_cmv_model->av_eta;
+	valve_k = p_cmv_model->av_k;
+
+	// Initialise
+	valve_pos = 0.0;
+	valve_vel = 0.0;
+}
+
+// Destructor
+valve::~valve(void)
+{
+	//! Destructor
+
+	// Code
+	printf("valve destructor()\n");
+
+	// Tidy up
+}
+
+// Other functions
+void valve::initialise_simulation(void)
+{
+	//! Code initialises simulation
+	
+	// Variables
+	
+	// Code
+
+	// Set options from parent
+	p_cmv_options = p_parent_hemi_vent->p_cmv_options;
+
+	// Set results from parent
+	p_cmv_results = p_parent_hemi_vent->p_cmv_results;
+
+	// Now add the results fields
+	p_cmv_results->add_results_field("valve_pos", &valve_pos);
+}
+
+// This function is not a member of the valve class but is used to interace
+// with the GSL ODE system. It must appear before the class members
+// that calls it, and communicates with the valve class through a pointer to
+// the class object
+
+int valve_derivs(double t, const double y[], double f[], void* params)
+{
+	// Function sets dV/dt for the compartments
+
+	// Variables
+	(void)(t);							// Prevents warning for unused variable
+
+	valve* p_valve = (valve*)params;	// Pointer to valve
+
+	circulation* p_circ = p_valve->p_parent_hemi_vent->p_parent_circulation;
+
+	double pressure_difference;
+
+	// Code
+
+	// y[0] is the position of the valve
+	// y[1] is the velocity
+
+	pressure_difference = p_circ->circ_pressure[0] - p_circ->circ_pressure[1];
+
+	f[0] = y[1];
+	f[1] = (1.0 / p_valve->valve_mass) *
+		((-p_valve->valve_eta * y[1]) - (p_valve->valve_k * y[0]) +
+			pressure_difference);
+
+	// Return
+	return GSL_SUCCESS;
+}
+
+void valve::implement_time_step(double time_step_s)
+{
+	//! Implements time-step
+	
+	// Variables
+
+	double eps_abs = 1e-6;
+	double eps_rel = 1e-6;
+
+	int status;
+
+	double t_start_s = 0.0;
+	double t_stop_s = time_step_s;
+
+	double* y_calc = NULL;
+
+	// Code
+
+	// Allocate memory for y
+	y_calc = (double*)malloc(2 * sizeof(double));
+
+	// Fill y_calc
+	y_calc[0] = valve_pos;
+	y_calc[1] = valve_vel;
+
+	gsl_odeiv2_system sys = { valve_derivs, NULL, 2, this };
+
+	gsl_odeiv2_driver* d =
+		gsl_odeiv2_driver_alloc_y_new(&sys, gsl_odeiv2_step_rkf45,
+			0.5 * time_step_s, eps_abs, eps_rel);
+
+	status = gsl_odeiv2_driver_apply(d, &t_start_s, t_stop_s, y_calc);
+
+	// Unpack
+	valve_pos = y_calc[0];
+	valve_vel = y_calc[1];
+
+	// Bounds
+	if (valve_pos > 1.0)
+	{
+		valve_pos = 1.0;
+		valve_vel = 0.0;
+	}
+
+	if (valve_pos < 0.0)
+	{
+		valve_pos = 0.0;
+		valve_vel = 0.0;
+	}
+
+	// Tidy up
+	free(y_calc);
+}

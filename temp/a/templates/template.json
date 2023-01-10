@@ -106,6 +106,17 @@
       }
     },
     {
+        "column": 1,
+        "y_info":{
+          "label": "valve_pos",
+          "series":[
+            {
+              "field": "valve_pos"
+            }
+          ]
+        }
+      },
+    {
       "column": 2,
       "y_info": {
         "label": "Thin",

@@ -475,10 +475,6 @@ void myofilaments::implement_time_step(double time_step_s)
 	//! Code advances the simulation by time_step
 
 	// Variables
-
-	// Code
-
-	// Variables
 	double eps_abs = 1e-6;
 	double eps_rel = 1e-6;
 

@@ -13,6 +13,7 @@ classDiagram
     circulation <|-- Baroreflex
     circulation <|-- Growth
     hemi_vent <|-- half_sarcomere
+    hemi_vent <|-- valve 
     half_sarcomere <|-- membranes
     half_sarcomere <|-- heart_rate
     half_sarcomere <|-- myofilaments
