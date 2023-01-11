@@ -13,7 +13,7 @@
         },
         "compartments":
         {
-            "resistance": [10, 20, 20, 800, 150, 50, 20],
+            "resistance": [5, 20, 20, 1200, 600, 50, 20],
             "compliance": [0, 4e-4, 8e-4, 1e-3, 1e-3, 0.03, 0.08],
             "slack_volume": [0.065, 0.3, 0.3, 0.1, 0.25, 0.5, 2.0],
             "inertance": [100, 100, 100, 100, 100, 100, 100]
@@ -65,10 +65,10 @@
                 "cb_number_density": 1.15e17,
                 "prop_fibrosis": 0.1,
                 "prop_myofilaments": 0.6,
-                "int_pas_sigma": 60,
+                "int_pas_sigma": 15,
                 "int_pas_L": 90,
                 "int_pas_slack_hsl": 1000,
-                "ext_pas_sigma": 10,
+                "ext_pas_sigma": 2.5,
                 "ext_pas_L": 30,
                 "ext_pas_slack_hsl": 1000,
                 "fil_compliance_factor": 0.5,
@@ -79,7 +79,7 @@
                 {
                     "k_on": 2e8,
                     "k_off": 100,
-                    "k_coop": 10
+                    "k_coop": 20
                 },
                 "myosin":
                 {
@@ -122,7 +122,7 @@
                             "new_state": 3,
                             "rate_type": "gaussian_hsl",
                             "rate_parameters": [
-                                200
+                                250
                             ]
                             }
                         ]
@@ -159,7 +159,7 @@
                                 "new_state": 2,
                                 "rate_type": "exp_wall",
                                 "rate_parameters": [
-                                    200,
+                                    100,
                                     0.5,
                                     5,
                                     3

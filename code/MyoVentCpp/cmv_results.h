@@ -47,6 +47,15 @@ public:
 	int no_of_time_points;					/**< integer defining the number of
 													time-points in a result file */
 
+	int no_of_beats;						/**< integer counting number of beats
+													written to record */
+
+	int last_beat_t_index;					/**< integer holding the t_index of the
+													last new beat */
+
+	int new_beat_field_index;				/**< integer holding the index for the
+													new_beat field */
+
 	// Functions
 
 	void add_results_field(std::string field_name, double* p_double);
@@ -57,5 +66,9 @@ public:
 
 	int write_data_to_file(string output_file_string);
 											/**< write data to file */
+
+	void calculate_beat_metrics(int t_beat_index);
+
+	void return_sub_vector_statistics(gsl_vector* gsl_v, int start_index, int stop_index);
 
 };

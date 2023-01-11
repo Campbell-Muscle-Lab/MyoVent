@@ -28,6 +28,9 @@ cmv_results::cmv_results(int set_no_of_time_points)
 	no_of_defined_results_fields = 0;
 
 	no_of_time_points = set_no_of_time_points;
+
+	no_of_beats = 0;
+	last_beat_t_index = -1;
 }
 
 // Destructor
@@ -65,6 +68,13 @@ void cmv_results::add_results_field(std::string field_name, double* p_double)
 	gsl_results_vectors[new_index] = gsl_vector_alloc(no_of_time_points);
 	gsl_vector_set_all(gsl_results_vectors[new_index], GSL_NAN);
 
+	// Check for new_beat index
+	if (field_name == "hr_new_beat")
+	{
+
+		new_beat_field_index = new_index;
+	}
+
 	// Update the number of defined fields
 	no_of_defined_results_fields = no_of_defined_results_fields + 1;
 }
@@ -77,6 +87,60 @@ void cmv_results::update_results_vectors(int t_index)
 	{
 		gsl_vector_set(gsl_results_vectors[i], t_index, *p_data_sources[i]);
 	}
+
+	if (new_beat_field_index >= 0)
+	{
+		if (*p_data_sources[new_beat_field_index] == 1.0)
+			calculate_beat_metrics(t_index);
+	}
+}
+
+void cmv_results::calculate_beat_metrics(int t_index)
+{
+	//! Function calculates metrics for the beat
+	
+	// Variables
+
+	// Code
+
+	// Handle first beat
+	if (last_beat_t_index < 0)
+	{
+		last_beat_t_index = t_index;
+		return;
+	}
+
+	return_sub_vector_statistics(gsl_results_vectors[0], last_beat_t_index, t_index);
+
+	// Prepare for next beat
+	last_beat_t_index = t_index;
+}
+
+void cmv_results::return_sub_vector_statistics(gsl_vector* gsl_v, int start_index, int stop_index)
+{
+	//! Function calculates stats
+	
+	// Variables
+	int index;
+	double value;
+	double holder = 0;
+	double mean_value;
+	double min_value = GSL_POSINF;
+	double max_value = -GSL_POSINF;
+
+	// Code
+	for (index = start_index; index <= stop_index; index++)
+	{
+		value = gsl_vector_get(gsl_v, index);
+		holder = holder + value;
+		min_value = GSL_MIN(value, min_value);
+		max_value = GSL_MAX(value, max_value);
+	}
+	mean_value = holder / (double)(stop_index - start_index + 1);
+
+	cout << "mean: " << mean_value << "\n";
+	cout << "min: " << min_value << "\n";
+	cout << "max: " << max_value << "\n";
 }
 
 int cmv_results::write_data_to_file(std::string output_file_string)
