@@ -38,6 +38,17 @@ transition::transition(const rapidjson::Value& tr, m_state* set_p_parent_m_state
 	// Set transition_type to unknown - will be set later on
 	transition_type = 'x';
 
+	// Set ATP required
+	if (JSON_functions::check_JSON_member_exists(tr, "ATP_required"))
+	{
+		string temp_string = tr["ATP_required"].GetString();
+		ATP_required = temp_string[0];
+	}
+	else
+	{
+		ATP_required = 'n';
+	}
+
 	JSON_functions::check_JSON_member_int(tr, "new_state");
 	new_state = tr["new_state"].GetInt();
 

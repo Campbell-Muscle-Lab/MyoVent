@@ -45,6 +45,9 @@ public:
 
 	int first_DRX_state;					/**< int defining first DRX state */
 
+	int last_ATP_requiring_transition;		/**< int with the index of the last transition
+													that needs ATP */
+
 	m_state* p_m_states[MAX_NO_OF_KINETIC_STATES];
 											/**< pointer to an array of m_state objects */
 

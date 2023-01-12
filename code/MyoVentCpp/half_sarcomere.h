@@ -62,7 +62,7 @@ public:
 	
 	void initialise_simulation(void);
 	
-	void implement_time_step(double time_step_s);
+	bool implement_time_step(double time_step_s);
 
 	void change_hs_length(double delta_hsl);
 

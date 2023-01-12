@@ -94,7 +94,7 @@ void half_sarcomere::initialise_simulation(void)
 	hs_stress = p_myofilaments->myof_stress_total;
 }
 
-void half_sarcomere::implement_time_step(double time_step_s)
+bool half_sarcomere::implement_time_step(double time_step_s)
 {
 	//! Implements time-step
 
@@ -108,6 +108,9 @@ void half_sarcomere::implement_time_step(double time_step_s)
 	p_membranes->implement_time_step(time_step_s, new_beat);
 
 	p_myofilaments->implement_time_step(time_step_s);
+
+	// Return new beat status
+	return (new_beat);
 }
 
 void half_sarcomere::change_hs_length(double delta_hsl)

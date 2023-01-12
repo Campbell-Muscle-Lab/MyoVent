@@ -187,11 +187,13 @@ int circ_vol_derivs(double t, const double y[], double f[], void* params)
 	return GSL_SUCCESS;
 }
 
-void circulation::implement_time_step(double time_step_s)
+bool circulation::implement_time_step(double time_step_s)
 {
 	//! Code advances by 1 time-step
 	
 	// Variables
+	bool new_beat;
+
 	int status;
 
 	double t_start_s = 0.0;
@@ -207,7 +209,7 @@ void circulation::implement_time_step(double time_step_s)
 
 	// Update the hemi_vent object, which includes
 	// updating the daughter objects
-	p_hemi_vent->implement_time_step(time_step_s);
+	new_beat = p_hemi_vent->implement_time_step(time_step_s);
 
 	// Now adjust the compartment volumes by integrating flows.
 	gsl_odeiv2_system sys =
@@ -243,6 +245,9 @@ void circulation::implement_time_step(double time_step_s)
 	// Tidy up
 	free(vol_calc);
 	free(flow_calc);
+
+	// Return
+	return (new_beat);
 }
 
 void circulation::calculate_pressures(const double v[], double p[])
@@ -302,4 +307,11 @@ void circulation::calculate_flows(const double v[])
 	// Special case for flow out of the ventricle
 	p_diff = (circ_pressure[0] - circ_pressure[1]);
 	circ_flow[1] = p_av->valve_pos * p_diff / circ_resistance[1];
+}
+
+void circulation::update_beat_metrics(void)
+{
+	//! Update beat metrics in daughter objects
+	
+	p_hemi_vent->update_beat_metrics();
 }

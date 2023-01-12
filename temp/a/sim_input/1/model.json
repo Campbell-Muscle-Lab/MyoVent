@@ -157,6 +157,7 @@
                             "transition": [
                                 {
                                 "new_state": 2,
+                                "ATP_required": "y",
                                 "rate_type": "exp_wall",
                                 "rate_parameters": [
                                     100,

@@ -243,18 +243,21 @@ def multi_panel_from_flat_data(
             if (j == 0):
                 min_x = x[0]
                 max_x = x[0]
-                min_y = y[0]
-                max_y = y[0]
+
             min_x = np.amin([min_x, np.amin(x)])
             max_x = np.amax([max_x, np.amax(x)])
             
             y_finite = y[~np.isnan(y)]
-            if (len(y_finite) == 0):
-                min_y = 0
-                max_y = 0
-            else:
-                min_y = np.amin([min_y, np.amin(y_finite)])
-                max_y = np.amax([max_y, np.amax(y_finite)])
+            if (j==0):
+                if (len(y_finite) == 0):
+                    min_y = 0
+                    max_y = 0
+                else:
+                    min_y = y_finite[0]
+                    max_y = y_finite[0]
+                
+            min_y = np.amin([min_y, np.amin(y_finite)])
+            max_y = np.amax([max_y, np.amax(y_finite)])
 
             # Down sample line if required
             if (x.size > processing['max_points_per_trace']):

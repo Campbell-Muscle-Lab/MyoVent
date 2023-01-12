@@ -10,27 +10,56 @@
 #include <string>
 
 #include "cmv_results.h"
+#include "cmv_system.h"
+#include "cmv_model.h"
+
+#include "circulation.h"
+#include "hemi_vent.h"
 
 #include "gsl_vector.h"
 #include "gsl_math.h"
+#include "gsl_const_mksa.h"
+#include "gsl_const_num.h"
 
 using namespace std;
 using namespace std::filesystem;
 
+struct stats_structure {
+	double mean_value;
+	double min_value;
+	double max_value;
+};
+
 // Constructor
-cmv_results::cmv_results(int set_no_of_time_points)
+cmv_results::cmv_results(cmv_system* set_p_parent_cmv_system, int set_no_of_time_points)
 {
 	// Initialise
 
 	// Code
 	printf("cmv_results constructor()\n");
 
+	p_parent_cmv_system = set_p_parent_cmv_system;
+
 	no_of_defined_results_fields = 0;
 
 	no_of_time_points = set_no_of_time_points;
 
 	no_of_beats = 0;
+
 	last_beat_t_index = -1;
+
+	time_field_index = -1;
+	new_beat_field_index = -1;
+	pressure_vent_field_index = -1;
+	pressure_veins_field_index = -1;
+	volume_vent_field_index = -1;
+	hs_length_field_index = -1;
+	myof_stress_int_pas_field_index = -1;
+	myof_ATP_flux_field_index = -1;
+	vent_stroke_work_field_index = -1;
+	vent_energy_used_field_index = -1;
+	vent_efficiency_field_index = -1;
+	vent_ejection_fraction_field_index = -1;
 }
 
 // Destructor
@@ -68,12 +97,44 @@ void cmv_results::add_results_field(std::string field_name, double* p_double)
 	gsl_results_vectors[new_index] = gsl_vector_alloc(no_of_time_points);
 	gsl_vector_set_all(gsl_results_vectors[new_index], GSL_NAN);
 
-	// Check for new_beat index
-	if (field_name == "hr_new_beat")
-	{
+	// Check for specific indices
+	if (field_name == "time")
+		time_field_index = new_index;
 
+	if (field_name == "hr_new_beat")
 		new_beat_field_index = new_index;
-	}
+
+	if (field_name == "pressure_0")
+		pressure_vent_field_index = new_index;
+
+	if (field_name == "volume_0")
+		volume_vent_field_index = new_index;
+
+	string venous_pressure = "pressure_" +
+		to_string(p_parent_cmv_system->p_cmv_model->circ_no_of_compartments - 1);
+	if (field_name == venous_pressure)
+		pressure_veins_field_index = new_index;
+
+	if (field_name == "hs_length")
+		hs_length_field_index = new_index;
+
+	if (field_name == "myof_stress_int_pas")
+		myof_stress_int_pas_field_index = new_index;
+
+	if (field_name == "myof_ATP_flux")
+		myof_ATP_flux_field_index = new_index;
+
+	if (field_name == "vent_stroke_work_J")
+		vent_stroke_work_field_index = new_index;
+
+	if (field_name == "vent_energy_used_J")
+		vent_energy_used_field_index = new_index;
+
+	if (field_name == "vent_efficiency")
+		vent_efficiency_field_index = new_index;
+
+	if (field_name == "vent_ejection_fraction")
+		vent_ejection_fraction_field_index = new_index;
 
 	// Update the number of defined fields
 	no_of_defined_results_fields = no_of_defined_results_fields + 1;
@@ -87,12 +148,6 @@ void cmv_results::update_results_vectors(int t_index)
 	{
 		gsl_vector_set(gsl_results_vectors[i], t_index, *p_data_sources[i]);
 	}
-
-	if (new_beat_field_index >= 0)
-	{
-		if (*p_data_sources[new_beat_field_index] == 1.0)
-			calculate_beat_metrics(t_index);
-	}
 }
 
 void cmv_results::calculate_beat_metrics(int t_index)
@@ -100,6 +155,8 @@ void cmv_results::calculate_beat_metrics(int t_index)
 	//! Function calculates metrics for the beat
 	
 	// Variables
+
+	stats_structure* p_stats;			// Pointer to a stats structure
 
 	// Code
 
@@ -110,13 +167,40 @@ void cmv_results::calculate_beat_metrics(int t_index)
 		return;
 	}
 
-	return_sub_vector_statistics(gsl_results_vectors[0], last_beat_t_index, t_index);
+	p_stats = new stats_structure;
+
+	// Time
+	calculate_sub_vector_statistics(gsl_results_vectors[time_field_index],
+		last_beat_t_index, t_index, p_stats);
+	cout << "New beat time: " << p_stats->max_value << "\n";
+
+	calculate_sub_vector_statistics(gsl_results_vectors[pressure_vent_field_index],
+		last_beat_t_index, t_index, p_stats);
+	cout << "Arterial pressure (mmHg): " << p_stats->max_value << " / " << p_stats->min_value << "\n";
+
+	calculate_sub_vector_statistics(gsl_results_vectors[volume_vent_field_index],
+		last_beat_t_index, t_index, p_stats);
+	cout << "Max ventricular volume (liters): " << p_stats->max_value << "\n";
+	cout << "Ejection fraction: " << 
+		100.0 * (p_stats->max_value - p_stats->min_value) / (p_stats->max_value) << "\n";
+
+	calculate_sub_vector_statistics(gsl_results_vectors[hs_length_field_index],
+		last_beat_t_index, t_index, p_stats);
+	cout << "hs_length range (nm): " << p_stats->max_value << " / " << p_stats->min_value << "\n";
+
+	calculate_sub_vector_statistics(gsl_results_vectors[myof_stress_int_pas_field_index],
+		last_beat_t_index, t_index, p_stats);
+	cout << "myof_stress_int_pas, mean (N m^-2): " << p_stats->mean_value << "\n";
 
 	// Prepare for next beat
 	last_beat_t_index = t_index;
+
+	// Tidy up
+	delete p_stats;
 }
 
-void cmv_results::return_sub_vector_statistics(gsl_vector* gsl_v, int start_index, int stop_index)
+void cmv_results::calculate_sub_vector_statistics(gsl_vector* gsl_v, int start_index, int stop_index,
+	stats_structure* p_stats)
 {
 	//! Function calculates stats
 	
@@ -124,23 +208,24 @@ void cmv_results::return_sub_vector_statistics(gsl_vector* gsl_v, int start_inde
 	int index;
 	double value;
 	double holder = 0;
-	double mean_value;
-	double min_value = GSL_POSINF;
-	double max_value = -GSL_POSINF;
-
+	
 	// Code
+
+	p_stats->min_value = GSL_POSINF;
+	p_stats->max_value = -GSL_POSINF;
+	p_stats->mean_value = GSL_NAN;
+
+	if (start_index < 0)
+		return;
+
 	for (index = start_index; index <= stop_index; index++)
 	{
 		value = gsl_vector_get(gsl_v, index);
 		holder = holder + value;
-		min_value = GSL_MIN(value, min_value);
-		max_value = GSL_MAX(value, max_value);
+		p_stats->min_value = GSL_MIN(value, p_stats->min_value);
+		p_stats->max_value = GSL_MAX(value, p_stats->max_value);
 	}
-	mean_value = holder / (double)(stop_index - start_index + 1);
-
-	cout << "mean: " << mean_value << "\n";
-	cout << "min: " << min_value << "\n";
-	cout << "max: " << max_value << "\n";
+	p_stats->mean_value = holder / (double)(stop_index - start_index + 1);
 }
 
 int cmv_results::write_data_to_file(std::string output_file_string)
@@ -207,4 +292,117 @@ int cmv_results::write_data_to_file(std::string output_file_string)
 	fclose(output_file);
 
 	return(1);
+}
+
+double cmv_results::return_stroke_work(int stop_t_index)
+{
+	//! Calculate stroke work via Shoelace formula
+	
+	// Variables
+	double holder;
+
+	// Code
+
+	holder = 0.0;
+
+	// Check whether there is a valid last_beat index
+	if (last_beat_t_index < 0)
+		return (GSL_NAN);
+
+	// Implement Shoelace
+	for (int i = last_beat_t_index; i <= stop_t_index; i++)
+	{
+		int j = i + 1;
+		if (j > stop_t_index)
+			j = last_beat_t_index;
+
+		holder = holder +
+			(gsl_vector_get(gsl_results_vectors[pressure_vent_field_index], i) +
+				gsl_vector_get(gsl_results_vectors[pressure_vent_field_index], j)) *
+			(gsl_vector_get(gsl_results_vectors[volume_vent_field_index], i) -
+				gsl_vector_get(gsl_results_vectors[volume_vent_field_index], j));
+	}
+
+	holder = 0.5 * holder;
+
+	// Now convert volumes to m^3
+	holder = holder * 0.001;
+
+	// Now convert pressure to Pa
+	holder = holder * (0.001 * GSL_CONST_MKSA_METER_OF_MERCURY);
+
+	return holder;
+}
+
+double cmv_results::return_energy_used(int stop_t_index)
+{
+	//! Returns energy used as product of flux through ATPase cycle(mol ^ -1 s ^ -1) and
+	//! the number of heads corrected for Avogadro's number
+	//! 	Number of heads per m ^ 3 is(1 - fibrosis) * prop_myofilaments *
+//! 		cb_number_density / l_0[reference length]
+
+	//! 	Delta_G_ATP is set in model file as Joules / mole, 45000
+	//! 	https://equilibrator.weizmann.ac.il/static/classic_rxns/classic_reactions/atp.html
+
+	// Variables
+
+	double delta_t;
+	double d_heads;
+	double v_myocardium;
+	double holder;
+	double energy_used;
+	double delta_G_ATP = 45000.0;		// Energy in Joules per mole of ATP
+
+	// Code
+
+	// Check whether there is a valid last_beat index
+	if (last_beat_t_index < 0)
+		return (GSL_NAN);
+
+	holder = 0.0;
+
+	// Integrate energy used over time
+
+	// Calculate the time-step
+	delta_t = gsl_vector_get(gsl_results_vectors[time_field_index], stop_t_index) -
+		gsl_vector_get(gsl_results_vectors[time_field_index], stop_t_index - 1);
+
+	for (int i = last_beat_t_index; i <= stop_t_index; i++)
+	{
+		holder = holder +
+			delta_t * gsl_vector_get(gsl_results_vectors[myof_ATP_flux_field_index], i);
+	}
+
+	// Calculate the density of heads per m^3
+	d_heads = (1.0 - p_parent_cmv_system->p_cmv_model->myof_prop_fibrosis) *
+		p_parent_cmv_system->p_cmv_model->myof_prop_myofilaments *
+		p_parent_cmv_system->p_cmv_model->myof_cb_number_density *
+		(1.0 / (1e-9 * p_parent_cmv_system->p_cmv_model->hs_reference_hs_length));
+
+	// Volume of myocardium
+	v_myocardium = 0.001 * p_parent_cmv_system->p_circulation->p_hemi_vent->vent_wall_volume;
+
+	// Calculate energy per second
+	energy_used = -d_heads * v_myocardium * holder * delta_G_ATP /
+		GSL_CONST_NUM_AVOGADRO;
+
+	return energy_used;
+}
+
+void cmv_results::backfill_beat_data(gsl_vector* gsl_v, double value, int stop_t_index)
+{
+	//! Backfills data for a cardiac cycle
+	
+	// Variables
+
+	// Code
+	
+	// Check whether there is a valid last_beat index
+		if (last_beat_t_index < 0)
+			return;
+
+		for (int i = last_beat_t_index; i <= stop_t_index; i++)
+		{
+			gsl_vector_set(gsl_v, i, value);
+		}
 }

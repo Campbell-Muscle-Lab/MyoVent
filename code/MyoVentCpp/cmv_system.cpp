@@ -41,6 +41,7 @@ cmv_system::cmv_system(string JSON_model_file_string)
 
 	// Initialise variables
 	cum_time_s = 0.0;
+	sim_t_index = 0;
 
 	// Create constituent objects
 	p_circulation = new circulation(this);
@@ -65,7 +66,10 @@ void cmv_system::run_simulation(string options_file_string,
 {
 	//! Code runs a simulation
 
-	// Test
+	// Variables
+	bool new_beat;
+
+	// Code
 	
 	// Initialises an options object
 	p_cmv_options = new cmv_options(options_file_string);
@@ -74,7 +78,7 @@ void cmv_system::run_simulation(string options_file_string,
 	p_cmv_protocol = new cmv_protocol(protocol_file_string);
 
 	// Initialise the results object
-	p_cmv_results = new cmv_results(p_cmv_protocol->no_of_time_steps);
+	p_cmv_results = new cmv_results(this, p_cmv_protocol->no_of_time_steps);
 
 	// Add in the results
 	add_fields_to_cmv_results();
@@ -82,11 +86,17 @@ void cmv_system::run_simulation(string options_file_string,
 	p_circulation->initialise_simulation();
 
 	// Simulation
-	for (int i = 0; i < p_cmv_protocol->no_of_time_steps; i++)
+	for (sim_t_index = 0; sim_t_index < p_cmv_protocol->no_of_time_steps; sim_t_index++)
 	{
-		implement_time_step(p_cmv_protocol->time_step_s);
+		new_beat = implement_time_step(p_cmv_protocol->time_step_s);
 
-		p_cmv_results->update_results_vectors(i);
+		p_cmv_results->update_results_vectors(sim_t_index);
+
+		if (new_beat)
+		{
+			// Update beat metrics
+			update_beat_metrics();
+		}
 
 		// Update simulation
 		if (fmod(cum_time_s, 1.0) < p_cmv_protocol->time_step_s)
@@ -116,10 +126,24 @@ void cmv_system::add_fields_to_cmv_results(void)
 	p_cmv_results->add_results_field("time", &cum_time_s);
 }
 
-void cmv_system::implement_time_step(double time_step_s)
+bool cmv_system::implement_time_step(double time_step_s)
 {
+	// Variable
+	bool new_beat;
+
 	// Update system time
 	cum_time_s = cum_time_s + time_step_s;
 
-	p_circulation->implement_time_step(time_step_s);
+	new_beat = p_circulation->implement_time_step(time_step_s);
+
+	return new_beat;
+}
+
+void cmv_system::update_beat_metrics(void)
+{
+	//! Updates beat metrics in daughter objects
+	
+	p_circulation->update_beat_metrics();
+
+	p_cmv_results->last_beat_t_index = sim_t_index;
 }

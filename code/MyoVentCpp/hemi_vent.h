@@ -73,10 +73,18 @@ public:
 													1.0 if using thick wall approximation
 													0.0 if not */
 
+	double vent_stroke_work_J;				/**< double with stroke work in J for a cardiac cycle */
+
+	double vent_energy_used_J;				/**< double with energy_used in J for a cardiac cycle */
+
+	double vent_efficiency;					/**< double efficiency for a cardiac cycle */
+
+	double vent_ejection_fraction;			/**< double with ejection fraction for a cardiac cycle */
+
 	// Other functions
 	void initialise_simulation(void);
 
-	void implement_time_step(double time_step_s);
+	bool implement_time_step(double time_step_s);
 
 	double return_wall_thickness_for_chamber_volume(double cv);
 
@@ -87,4 +95,6 @@ public:
 	double return_pressure_for_chamber_volume(double cv);
 
 	void update_chamber_volume(double new_volume);
+
+	void update_beat_metrics();
 };

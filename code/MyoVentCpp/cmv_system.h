@@ -43,7 +43,9 @@ public:
 
 	circulation* p_circulation;				/**< Pointer to a circulation */
 
-	double cum_time_s;						/** double, with system time in s */
+	int sim_t_index;						/**< integer holding index in the simulation */
+
+	double cum_time_s;						/**< double, with system time in s */
 
 	// Functions
 
@@ -55,5 +57,7 @@ public:
 
 	void add_fields_to_cmv_results(void);
 
-	void implement_time_step(double time_step_s);
+	bool implement_time_step(double time_step_s);
+
+	void update_beat_metrics();
 };

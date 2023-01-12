@@ -37,6 +37,8 @@ public:
 
 	char transition_type;			/**< char defining 'a' attachment, 'd' detachment, 'n' neutral */
 
+	char ATP_required;				/**< char with 'y' if ATP is required for the transition */
+
 	gsl_vector* rate_parameters;	/**< gsl_vector holding parameter variables */
 
 	// Functions

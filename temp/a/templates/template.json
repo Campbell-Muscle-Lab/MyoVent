@@ -406,6 +406,40 @@
           }
       ]
       }
+    },
+    {
+      "column": 4,
+      "y_info": {
+        "label": "ATP_flux",
+        "series": [
+          {
+            "field": "myof_ATP_flux"
+          }
+      ]
+      }
+    },
+    {
+      "column": 5,
+      "y_info": {
+        "label": "ejection_fraction",
+        "series": [
+          {
+            "field": "vent_ejection_fraction"
+          }
+      ]
+      }
+    },
+    {
+      "column": 5,
+      "y_info": {
+        "label": "Efficiency",
+        "series": [
+          {
+            "field": "vent_efficiency"
+          }
+      ]
+      }
     }
+ 
     ]
 }

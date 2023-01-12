@@ -90,9 +90,11 @@ public:
 
 	void initialise_simulation(void);
 
-	void implement_time_step(double time_step_s);
+	bool implement_time_step(double time_step_s);
 
 	void calculate_pressures(const double v[], double p[]);
 
 	void calculate_flows(const double v[]);
+
+	void update_beat_metrics(void);
 };

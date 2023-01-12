@@ -20,6 +20,11 @@
 #include "gsl_math.h"
 #include "gsl_const_mksa.h"
 
+struct stats_structure {
+	double mean_value;
+	double min_value;
+	double max_value;
+};
 
 // Constructor
 hemi_vent::hemi_vent(circulation* set_p_parent_circulation)
@@ -40,6 +45,11 @@ hemi_vent::hemi_vent(circulation* set_p_parent_circulation)
 
 	vent_wall_density = p_cmv_model->vent_wall_density;
 	vent_wall_volume = p_cmv_model->vent_wall_volume;
+
+	vent_stroke_work_J = GSL_NAN;
+	vent_energy_used_J = GSL_NAN;
+	vent_efficiency = GSL_NAN;
+	vent_ejection_fraction = GSL_NAN;
 
 	// Initialise child half-sarcomere
 	p_hs = new half_sarcomere(this);
@@ -89,24 +99,37 @@ void hemi_vent::initialise_simulation(void)
 	p_hs->initialise_simulation();
 
 	// Deduce the slack circumference of the ventricle and
-// set the number of half-sarcomeres
-// The p_hs->initialisation set hs_length so that stress was 0
+	// set the number of half-sarcomeres
+	// The p_hs->initialisation set hs_length so that stress was 0
 
-vent_circumference = return_lv_circumference_for_chamber_volume(
-	p_parent_circulation->circ_slack_volume[0]);
+	vent_circumference = return_lv_circumference_for_chamber_volume(
+		p_parent_circulation->circ_slack_volume[0]);
 
-vent_n_hs = 1e9 * vent_circumference / p_hs->hs_length;
+	vent_n_hs = 1e9 * vent_circumference / p_hs->hs_length;
+
+	// Add fields
+	p_cmv_results->add_results_field("vent_stroke_work_J", &vent_stroke_work_J);
+	p_cmv_results->add_results_field("vent_energy_used_J", &vent_energy_used_J);
+	p_cmv_results->add_results_field("vent_efficiency", &vent_efficiency);
+	p_cmv_results->add_results_field("vent_ejection_fraction", &vent_ejection_fraction);
 }
 
-void hemi_vent::implement_time_step(double time_step_s)
+bool hemi_vent::implement_time_step(double time_step_s)
 {
 	//! Implements time-step
+	
+	// Variables
+	bool new_beat;
+
+	// Code
 
 	p_av->implement_time_step(time_step_s);
 	p_mv->implement_time_step(time_step_s);
 
-	p_hs->implement_time_step(time_step_s);
+	new_beat = p_hs->implement_time_step(time_step_s);
 
+	// Return
+	return (new_beat);
 }
 
 double hemi_vent::return_wall_thickness_for_chamber_volume(double cv)
@@ -213,23 +236,6 @@ double hemi_vent::return_pressure_for_chamber_volume(double cv)
 
 	P_in_mmHg = P_in_Pascals / (0.001 * GSL_CONST_MKSA_METER_OF_MERCURY);
 
-/*
- 	cout << "internal_r: " << internal_r << "\n";
-	cout << "new_lv_circumference: " << new_lv_circumference << "\n";
-	cout << "new_hs_length: " << new_hs_length << "\n";
-	cout << "delta_hs_length: " << delta_hs_length << "\n";
-
-	cout << "internal_r: " << internal_r << "\n";
-	cout << "new_stress: " << new_stress << "\n";
-	cout << "wall_thickness: " << wall_thickness << "\n";
-	
-/cout << "P_in_Pascals: " << P_in_Pascals << "\n";
-
-	cout << "P_in_Pa: " << P_in_Pascals << "\n";
-	cout << "P_in_mmHg: " << P_in_mmHg << "\n";
-	cout << "constant: " << GSL_CONST_MKSA_METER_OF_MERCURY << "\n";
-*/
-
 	return P_in_mmHg;
 }
 
@@ -257,4 +263,40 @@ void hemi_vent::update_chamber_volume(double new_volume)
 	// Dump if necessary
 	if (!p_cmv_options->cb_dump_file_string.empty())
 		p_hs->p_myofilaments->dump_cb_distributions();
+}
+
+void hemi_vent::update_beat_metrics()
+{
+	//! Code updates beat metrics
+
+	// Update beat values
+	vent_stroke_work_J = p_cmv_results->return_stroke_work(p_parent_cmv_system->sim_t_index);
+	vent_energy_used_J = p_cmv_results->return_energy_used(p_parent_cmv_system->sim_t_index);
+	vent_efficiency = -vent_stroke_work_J / vent_energy_used_J;
+
+	// Calculate the ejection fraction
+	stats_structure* p_v_stats = new stats_structure;
+
+	p_cmv_results->calculate_sub_vector_statistics(
+	p_cmv_results->gsl_results_vectors[p_cmv_results->volume_vent_field_index],
+	p_cmv_results->last_beat_t_index, p_parent_cmv_system->sim_t_index, p_v_stats);
+
+	vent_ejection_fraction = (p_v_stats->max_value - p_v_stats->min_value) / p_v_stats->max_value;
+
+	// Backfill results
+	p_cmv_results->backfill_beat_data(
+		p_cmv_results->gsl_results_vectors[p_cmv_results->vent_stroke_work_field_index],
+		vent_stroke_work_J, p_parent_cmv_system->sim_t_index);
+
+	p_cmv_results->backfill_beat_data(
+		p_cmv_results->gsl_results_vectors[p_cmv_results->vent_energy_used_field_index],
+		vent_energy_used_J, p_parent_cmv_system->sim_t_index);
+
+	p_cmv_results->backfill_beat_data(
+		p_cmv_results->gsl_results_vectors[p_cmv_results->vent_efficiency_field_index],
+		vent_efficiency, p_parent_cmv_system->sim_t_index);
+
+	p_cmv_results->backfill_beat_data(
+		p_cmv_results->gsl_results_vectors[p_cmv_results->vent_ejection_fraction_field_index],
+		vent_ejection_fraction, p_parent_cmv_system->sim_t_index);
 }

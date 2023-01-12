@@ -11,10 +11,15 @@
 #include <string>
 
 #include "global_definitions.h"
+#include "cmv_system.h"
 
 #include "gsl_vector.h"
 
 using namespace std;
+
+struct stats_structure;
+
+class cmv_system;
 
 class cmv_results
 {
@@ -22,7 +27,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	cmv_results(int set_no_of_time_points);
+	cmv_results(cmv_system* set_p_parent_cmv_system, int set_no_of_time_points);
 
 	/**
 	* Destructor
@@ -30,6 +35,8 @@ public:
 	~cmv_results(void);
 
 	// Variables
+	cmv_system* p_parent_cmv_system;		/**< pointer to parent cmv_system */
+
 	std::string results_fields[MAX_NO_OF_RESULT_FIELDS];
 											/**< array of strings defining the
 													data fields in a results object */
@@ -53,8 +60,42 @@ public:
 	int last_beat_t_index;					/**< integer holding the t_index of the
 													last new beat */
 
+	int time_field_index;					/**< integer holding the index for the
+													time field */
+
 	int new_beat_field_index;				/**< integer holding the index for the
 													new_beat field */
+
+	int pressure_vent_field_index;			/**< integer holding the index for the
+													ventricular pressure */
+
+	int volume_vent_field_index;			/**< integer holding the index for the
+													ventricular volume */
+
+	int pressure_veins_field_index;			/**< integer holding the index for the
+													venous pressure */
+
+	int hs_length_field_index;				/**< integer holding the index for the
+													hs length */
+
+	int myof_stress_int_pas_field_index;	/**< integer holding the index for the
+													myofilament int pass stress */
+
+	int myof_ATP_flux_field_index;			/**< integer holding the index for the
+													myofilament ATPase field */
+
+	int vent_stroke_work_field_index;		/**< integer holding the index for the
+													vent stroke work field */
+
+	int vent_energy_used_field_index;		/**< integer holding the index for the
+													vent energy used field */
+
+	int vent_efficiency_field_index;		/**< integer holding the index for the
+													vent efficiency field */
+
+	int vent_ejection_fraction_field_index;	/**< integer holding the index for the
+													vent ejection fraction field */
+
 
 	// Functions
 
@@ -69,6 +110,13 @@ public:
 
 	void calculate_beat_metrics(int t_beat_index);
 
-	void return_sub_vector_statistics(gsl_vector* gsl_v, int start_index, int stop_index);
+	void calculate_sub_vector_statistics(gsl_vector* gsl_v, int start_index, int stop_index,
+		stats_structure* p_stats_structure);
+
+	double return_stroke_work(int stop_t_index);
+
+	double return_energy_used(int stop_t_index);
+
+	void backfill_beat_data(gsl_vector* gsl_v, double value, int stop_t_index);
 
 };

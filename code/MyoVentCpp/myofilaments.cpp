@@ -97,6 +97,8 @@ myofilaments::myofilaments(half_sarcomere* set_p_parent_hs)
 
 	cb_dump_file_string;
 	cb_dump_file_defined = false;
+
+	myof_ATP_flux = 0.0;
 }
 
 // Destructor
@@ -230,6 +232,7 @@ void myofilaments::initialise_simulation(void)
 	p_cmv_results->add_results_field("myof_a_on", &myof_a_on);
 	p_cmv_results->add_results_field("myof_f_overlap", &myof_f_overlap);
 	p_cmv_results->add_results_field("myof_m_bound", &myof_m_bound);
+	p_cmv_results->add_results_field("myof_ATP_flux", &myof_ATP_flux);
 
 	for (int i = 0; i < p_m_scheme->no_of_states; i++)
 	{
@@ -248,6 +251,8 @@ void myofilaments::initialise_simulation(void)
 	p_cmv_results->add_results_field("myof_stress_ext_pas", &myof_stress_ext_pas);
 	p_cmv_results->add_results_field("myof_stress_myof", &myof_stress_myof);
 	p_cmv_results->add_results_field("myof_stress_total", &myof_stress_total);
+	p_cmv_results->add_results_field("myof_ATP_flux", &myof_ATP_flux);
+
 }
 
 // This function is not a member of the myofilaments class but is used to interace
@@ -302,6 +307,9 @@ int myof_calculate_derivs(double t, const double y[], double f[], void* params)
 	{
 		f[i] = 0.0;
 	}
+
+	// Zero the flux
+	p_myof->myof_ATP_flux = 0.0;
 
 	// Start with myosin
 
@@ -409,6 +417,12 @@ int myof_calculate_derivs(double t, const double y[], double f[], void* params)
 
 						// Cross-bridges arriving at new state
 						f[new_ind] = f[new_ind] + flux;
+
+						// Check for ATP
+						if (p_myof->p_m_scheme->p_m_states[state_counter]->p_transitions[t_counter]->ATP_required == 'y')
+						{
+							p_myof->myof_ATP_flux = p_myof->myof_ATP_flux + flux;
+						}
 					}
 				}
 				else

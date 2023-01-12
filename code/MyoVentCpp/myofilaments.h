@@ -150,6 +150,9 @@ public:
 
 	double myof_thin_fil_length;		/**< double describing thin filament length */
 
+	double myof_ATP_flux;				/**< double decribing flux of ATP requiring
+												transitions */
+
 	double max_shift;
 
 	string cb_dump_file_string;			/**< string hold cb dump file */

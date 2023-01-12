@@ -26,10 +26,10 @@ using namespace std;
 kinetic_scheme::kinetic_scheme(const rapidjson::Value& m_ks, cmv_model* set_p_cmv_model)
 {
 	//! Constructor for kinetic scheme
-	
+
 	// Code
 	cout << "Constructor for kinetic scheme\n";
-	
+
 	// Initialise
 	p_cmv_model = set_p_cmv_model;
 
@@ -64,7 +64,7 @@ kinetic_scheme::kinetic_scheme(const rapidjson::Value& m_ks, cmv_model* set_p_cm
 		if (first_DRX_state < 0)
 		{
 			if (p_m_states[i]->state_type == 'D')
-				first_DRX_state = (int)(i+1);
+				first_DRX_state = (int)(i + 1);
 		}
 
 		if (p_m_states[i]->state_type == 'A')
@@ -100,6 +100,9 @@ kinetic_scheme::~kinetic_scheme(void)
 void kinetic_scheme::set_transition_types(void)
 {
 	//! Cycle through the states, identifying the transition type for each one
+	
+	// Variables
+	int t_index = 0;
 
 	// Code
 	for (int state_counter = 0; state_counter < no_of_states; state_counter++)
@@ -165,6 +168,9 @@ void kinetic_scheme::set_transition_types(void)
 					p_m_states[state_counter]->p_transitions[t_counter]->transition_type = 'n';
 				}
 			}
+		
+			// Prepare for next transition
+			t_index = t_index + 1;
 		}
 	}
 }
