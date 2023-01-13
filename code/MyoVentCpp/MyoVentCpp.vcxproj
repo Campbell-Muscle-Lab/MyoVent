@@ -146,15 +146,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="activation.cpp" />
     <ClCompile Include="baroreflex.cpp" />
-    <ClCompile Include="baro_activation.cpp" />
     <ClCompile Include="circulation.cpp" />
     <ClCompile Include="cmv_model.cpp" />
     <ClCompile Include="cmv_options.cpp" />
     <ClCompile Include="cmv_protocol.cpp" />
     <ClCompile Include="cmv_results.cpp" />
     <ClCompile Include="cmv_system.cpp" />
-    <ClCompile Include="growth_activation.cpp" />
     <ClCompile Include="half_sarcomere.cpp" />
     <ClCompile Include="heart_rate.cpp" />
     <ClCompile Include="hemi_vent.cpp" />
@@ -169,8 +168,8 @@
     <ClCompile Include="valve.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="activation.h" />
     <ClInclude Include="baroreflex.h" />
-    <ClInclude Include="baro_activation.h" />
     <ClInclude Include="circulation.h" />
     <ClInclude Include="cmv_model.h" />
     <ClInclude Include="cmv_options.h" />
@@ -178,7 +177,6 @@
     <ClInclude Include="cmv_results.h" />
     <ClInclude Include="cmv_system.h" />
     <ClInclude Include="global_definitions.h" />
-    <ClInclude Include="growth_activation.h" />
     <ClInclude Include="half_sarcomere.h" />
     <ClInclude Include="heart_rate.h" />
     <ClInclude Include="hemi_vent.h" />

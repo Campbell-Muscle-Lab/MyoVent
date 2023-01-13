@@ -50,6 +50,8 @@ public:
 	double hr_t_countdown_s;				/**< double, with t to next heart-beat
 													in s */
 
+	double hr_heart_rate_bpm;				/**< double with heart rate in bpm */
+
 	// Other functions
 	
 	/**

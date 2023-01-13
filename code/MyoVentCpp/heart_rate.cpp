@@ -28,6 +28,7 @@ heart_rate::heart_rate(half_sarcomere* set_p_parent_hs)
 	hr_new_beat = 0.0;
 	hr_t_RR_interval_s = p_cmv_model->hr_t_RR_interval_s;
 	hr_t_countdown_s = hr_t_RR_interval_s;
+	hr_heart_rate_bpm = (60.0 / hr_t_RR_interval_s);
 }
 
 // Destructor
@@ -45,9 +46,7 @@ void heart_rate::initialise_simulation(void)
 
 	// Now add the results fields
 	p_cmv_results->add_results_field("hr_new_beat", &hr_new_beat);
-
-	std::cout << "heart_rate:: finished initialise simulation\n";
-
+	p_cmv_results->add_results_field("hr_heart_rate_bpm", &hr_heart_rate_bpm);
 }
 
 bool heart_rate::implement_time_step(double time_step)
@@ -75,6 +74,8 @@ bool heart_rate::implement_time_step(double time_step)
 		hr_new_beat = 0.0;
 		new_beat = false;
 	}
+
+	hr_heart_rate_bpm = (60.0 / hr_t_RR_interval_s);
 
 	// Return
 	return(new_beat);

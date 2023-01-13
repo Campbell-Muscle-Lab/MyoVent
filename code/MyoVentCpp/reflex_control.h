@@ -82,6 +82,8 @@ public:
 
 	double rc_k_recov;
 
+	double rc_output;						/**< double with the current control value */
+
 	double* p_controlled_variable;			/**< double to the variable managed
 													by the reflex control */
 
@@ -89,4 +91,12 @@ public:
 	void initialise_simulation(void);
 
 	void implement_time_step(double time_step_s);
+
+	void set_controlled_variable(void);
+
+	void extract_digits(string test_string, int digits[], int no_of_digits);
+
+	void calculate_baro_C(double time_step_s);
+
+	void calculate_output(void);
 };

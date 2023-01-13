@@ -202,7 +202,7 @@
             },
             {
                 "level": "myofilaments",
-                "variable": "m_state 1 trans 2 para 3",
+                "variable": "m_state_1_trans_1_param_1",
                 "k_control": 0.075,
                 "k_recov": 0.1,
                 "para_factor": 0.5,
@@ -218,7 +218,7 @@
             },
             {
                 "level": "circulation",
-                "variable": "arterioles_resistance",
+                "variable": "resistance_4",
                 "k_control": 0.075,
                 "k_recov": 0.1,
                 "para_factor": 0.5,
@@ -226,7 +226,7 @@
             },
             {
                 "level": "circulation",
-                "variable": "veins_compliance",
+                "variable": "compliance_7",
                 "k_control": 0.075,
                 "k_recov": 0.1,
                 "para_factor": 4,

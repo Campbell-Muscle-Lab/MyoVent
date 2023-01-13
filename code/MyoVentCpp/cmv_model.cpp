@@ -374,7 +374,7 @@ void cmv_model::initialise_model_from_JSON_file(string JSON_model_file_string)
 			p_rc[i]->para_factor = cont["para_factor"].GetDouble();
 
 			JSON_functions::check_JSON_member_number(cont, "symp_factor");
-			p_rc[i]->symp_factor = cont["para_factor"].GetDouble();
+			p_rc[i]->symp_factor = cont["symp_factor"].GetDouble();
 
 			no_of_rc_controls = no_of_rc_controls + 1;
 		}

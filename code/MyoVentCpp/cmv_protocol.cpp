@@ -13,7 +13,7 @@
 #include "rapidjson\filereadstream.h"
 
 #include "cmv_protocol.h"
-#include "baro_activation.h"
+#include "activation.h"
 
 #include "gsl_math.h"
 
@@ -33,12 +33,12 @@ cmv_protocol::cmv_protocol(string set_protocol_file_string)
 	time_step_s = 0.0;
 	no_of_time_steps = 0;
 
-	no_of_baro_activations = 0;
+	no_of_activations = 0;
 
 	// Null the activation pointers
-	for (int i = 0; i < MAX_NO_OF_PERTURBATIONS; i++)
+	for (int i = 0; i < MAX_NO_OF_ACTIVATIONS; i++)
 	{
-		p_baro_activation[i] = NULL;
+		p_activation[i] = NULL;
 	}
 
 	// Now update from file
@@ -56,8 +56,8 @@ cmv_protocol::~cmv_protocol(void)
 	// Tidy up
 	for (int i = 0; i < MAX_NO_OF_PERTURBATIONS; i++)
 	{
-		if (p_baro_activation[i] != NULL)
-			delete p_baro_activation[i];
+		if (p_activation[i] != NULL)
+			delete p_activation[i];
 	}
 }
 
@@ -70,6 +70,7 @@ void cmv_protocol::initialise_protocol_from_JSON_file(string protocol_file_strin
 	FILE* fp;
 	char readBuffer[65536];
 
+	string activation_type;
 	double t_start_s;
 	double t_stop_s;
 
@@ -103,17 +104,18 @@ void cmv_protocol::initialise_protocol_from_JSON_file(string protocol_file_strin
 	no_of_time_steps = prot["no_of_time_steps"].GetInt();
 
 	// Check for baroreflex activations
-	if (JSON_functions::check_JSON_member_exists(doc, "baroreflex"))
+	if (JSON_functions::check_JSON_member_exists(doc, "activation"))
 	{
-		const rapidjson::Value& baro = doc["baroreflex"];
+		JSON_functions::check_JSON_member_array(doc, "activation");
+		const rapidjson::Value& act = doc["activation"];
 
 		// Pull aray
-		JSON_functions::check_JSON_member_array(baro, "activations");
-		const rapidjson::Value& act = baro["activations"];
-
 		for (rapidjson::SizeType i = 0; i < act.Size(); i++)
 		{
 			const rapidjson::Value& temp = act[i];
+
+			JSON_functions::check_JSON_member_string(temp, "type");
+			activation_type = temp["type"].GetString();
 			
 			JSON_functions::check_JSON_member_number(temp, "t_start_s");
 			t_start_s = temp["t_start_s"].GetDouble();
@@ -121,27 +123,27 @@ void cmv_protocol::initialise_protocol_from_JSON_file(string protocol_file_strin
 			JSON_functions::check_JSON_member_number(temp, "t_stop_s");
 			t_stop_s = temp["t_stop_s"].GetDouble();
 
-			p_baro_activation[i] = new baro_activation(t_start_s, t_stop_s);
+			p_activation[i] = new activation(activation_type, t_start_s, t_stop_s);
 
-			no_of_baro_activations = no_of_baro_activations + 1;
+			no_of_activations = no_of_activations + 1;
 		}
 	}
 }
 
-double cmv_protocol::return_baro_activation(double time_s)
+double cmv_protocol::return_activation(string activation_type, double time_s)
 {
-	//! Function returns the baro_activation status
+	//! Function returns the activation status for a given type
 	
 	// Variables
-	double baro_activation = 0.0;
+	double activation = 0.0;
 
 	// Code
-	for (int i = 0; i < no_of_baro_activations; i++)
+	for (int i = 0; i < no_of_activations; i++)
 	{
-		baro_activation = baro_activation + p_baro_activation[i]->return_status(time_s);
+		activation = activation + p_activation[i]->return_status(activation_type, time_s);
 	}
 
-	baro_activation = GSL_MIN(1.0, baro_activation);
+	activation = GSL_MIN(1.0, activation);
 
-	return (baro_activation);
+	return (activation);
 }

@@ -10,10 +10,11 @@ classDiagram
     cmv_system <|-- cmv_results
     cmv_system <|-- circulation
     circulation <|-- hemi_vent
+    circulation <|-- VAD
     circulation <|-- baroreflex
     circulation <|-- Growth
-    hemi_vent <|-- half_sarcomere
-    hemi_vent <|-- valve 
+        hemi_vent <|-- half_sarcomere
+    hemi_vent <|-- valve
     half_sarcomere <|-- membranes
     half_sarcomere <|-- heart_rate
     half_sarcomere <|-- myofilaments
@@ -21,11 +22,11 @@ classDiagram
     kinetic_scheme <|-- m_state
     m_state <|-- transition
     baroreflex <|-- reflex_control
-    cmv_protocol <|-- baro_activation
-    cmv_protocol <|-- growth_activation
+    Growth <|-- Growth_control
+    cmv_protocol <|-- activation
+    cmv_protocol <|-- perturbation
     
     cmv_system: + *cmv_model p_cmv_model
     cmv_system: + run_simulation()
-
 
 ````

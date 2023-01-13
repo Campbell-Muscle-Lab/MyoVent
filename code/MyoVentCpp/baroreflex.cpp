@@ -98,6 +98,7 @@ void baroreflex::initialise_simulation(void)
 
 	// Add fields
 	p_cmv_results->add_results_field("baro_active", &baro_active);
+	p_cmv_results->add_results_field("baro_P_set", &baro_P_set);
 	p_cmv_results->add_results_field("baro_A", &baro_A);
 	p_cmv_results->add_results_field("baro_B", &baro_B);
 }
@@ -114,6 +115,11 @@ void baroreflex::implement_time_step(double time_step_s)
 
 	calculate_B_b(time_step_s);
 
+	// And now daughter objects
+	for (int i = 0; i < no_of_reflex_controls; i++)
+	{
+		p_rc[i]->implement_time_step(time_step_s);
+	}
 }
 
 void baroreflex::calculate_B_a(void)

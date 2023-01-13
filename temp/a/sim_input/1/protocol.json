@@ -1,37 +1,25 @@
 {
-    "protocol": {
+    "protocol":
+    {
         "time_step": 0.001,
-        "no_of_time_steps": 16000
+        "no_of_time_steps": 30000
     },
-    "baroreflex": {
-        "activations": [
-            {
-                "t_start_s": 3,
-                "t_stop_s": 6.0
-            },
-            {
-                "t_start_s": 7,
-                "t_stop_s": 9.0
-            }
-        ]
-    },
-    "perturbation": {
-        "perturbations": [
-            {
-                "level": "circulation",
-                "variable": "ventricle_wall_volume",
-                "t_start_s": 40.0,
-                "t_stop_s": 40.1,
-                "total_change": 0.0
-            }
-        ]
-    },
-    "growth": {
-        "activations": [
-            {
-                "t_start_s": 1000,
-                "t_stop_s": 1000.0
-            }
-        ]
-    }
+    "activation":
+    [
+        {
+            "type": "baroreflex",
+            "t_start_s": 20,
+            "t_stop_s": 100.0
+        }
+    ],
+    "perturbation":
+    [
+        {
+            "level": "circulation",
+            "variable": "ventricle_wall_volume",
+            "t_start_s": 40.0,
+            "t_stop_s": 40.1,
+            "total_change": 0.0
+        }
+    ]
 }

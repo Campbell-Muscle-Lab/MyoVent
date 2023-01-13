@@ -153,6 +153,8 @@ void circulation::initialise_simulation(void)
 		p_baroreflex->initialise_simulation();
 
 	// Add data fields
+	p_cmv_results->add_results_field("circ_blood_volume", &circ_blood_volume);
+
 	for (int i = 0; i < circ_no_of_compartments; i++)
 	{
 		string label = string("pressure_") + to_string(i);
@@ -231,7 +233,8 @@ bool circulation::implement_time_step(double time_step_s)
 	// Update the baroreflex, which includes updating the daughter objects
 	if (p_baroreflex != NULL)
 	{
-		p_baroreflex->baro_active = p_cmv_protocol->return_baro_activation(p_parent_cmv_system->cum_time_s);
+		p_baroreflex->baro_active = p_cmv_protocol->return_activation("baroreflex",
+			p_parent_cmv_system->cum_time_s);
 		p_baroreflex->implement_time_step(time_step_s);
 	}
 
