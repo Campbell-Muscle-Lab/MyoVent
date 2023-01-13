@@ -439,7 +439,41 @@
           }
       ]
       }
+    },
+    {
+      "column": 5,
+      "y_info": {
+        "label": "Baro_active",
+        "series": [
+          {
+            "field": "baro_active"
+          }
+      ]
+      }
+    },
+    {
+      "column": 5,
+      "y_info": {
+        "label": "Baro_A",
+        "series": [
+          {
+            "field": "baro_A"
+          }
+      ]
+      }
+    },
+    {
+      "column": 5,
+      "y_info": {
+        "label": "Baro_B",
+        "series": [
+          {
+            "field": "baro_B"
+          }
+      ]
+      }
     }
+
  
     ]
 }

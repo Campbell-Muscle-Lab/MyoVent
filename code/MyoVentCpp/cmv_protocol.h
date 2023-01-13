@@ -16,7 +16,11 @@
 #include "rapidjson/document.h"
 #endif
 
+#include "global_definitions.h"
+
 using namespace std;
+
+class baro_activation;
 
 class cmv_protocol
 {
@@ -38,11 +42,19 @@ public:
 	
 	int no_of_time_steps;					/**< int holding number of time-steps */
 
+	int no_of_baro_activations;				/**< int holding the number of baro activations */
+
+	baro_activation* p_baro_activation[MAX_NO_OF_PERTURBATIONS];
+											/**< an array of pointers to baro_activation
+													objects */
+
 	// Functions
 
 	/**
 	/* Function initialises protocol object from file
 	*/
 	void initialise_protocol_from_JSON_file(string JSON_protocol_file_string);
+
+	double return_baro_activation(double time_s);
 
 };

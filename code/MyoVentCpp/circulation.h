@@ -15,10 +15,13 @@
 // Forward declararations
 class cmv_system;
 class cmv_model;
+class cmv_protocol;
 class cmv_options;
 class cmv_results;
+
 class hemi_vent;
 class valve;
+class baroreflex;
 
 class circulation
 {
@@ -39,6 +42,8 @@ public:
 
 	cmv_model* p_cmv_model;								/**< Pointer to the cmv_model */
 
+	cmv_protocol* p_cmv_protocol;						/**< Pointer to the cmv protocol object */
+
 	cmv_options* p_cmv_options;							/**< Pointer to cmv_options */
 
 	cmv_results*  p_cmv_results;						/**< Pointer to cmv_results */
@@ -48,6 +53,8 @@ public:
 	valve* p_av;										/**< Pointer to the aortic valve */
 
 	valve* p_mv;										/**< Pointer to the mitral valve */
+
+	baroreflex* p_baroreflex;							/**< Pointer to the baroreflex object */
 
 	double circ_blood_volume;							/**< double holding total blood volume
 																in liters */

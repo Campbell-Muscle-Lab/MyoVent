@@ -9,11 +9,13 @@
 #include "circulation.h"
 #include "cmv_system.h"
 #include "cmv_model.h"
+#include "cmv_protocol.h"
 #include "cmv_options.h"
 #include "cmv_results.h"
 #include "hemi_vent.h"
 #include "valve.h"
 #include "half_sarcomere.h"
+#include "baroreflex.h"
 
 #include "gsl_math.h"
 #include "gsl_errno.h"
@@ -91,6 +93,16 @@ circulation::circulation(cmv_system* set_p_parent_cmv_system = NULL)
 	// Set the pointer to the aortic valve
 	p_av = p_hemi_vent->p_av;
 	p_mv = p_hemi_vent->p_mv;
+
+	// Make a new baroreflex object if it has been defined
+	if (!gsl_isnan(p_cmv_model->baro_S))
+	{
+		p_baroreflex = new baroreflex(this);
+	}
+	else
+	{
+		p_baroreflex = NULL;
+	}
 }
 
 // Destructor
@@ -102,6 +114,9 @@ circulation::~circulation(void)
 	printf("circulation destructor()\n");
 
 	delete p_hemi_vent;
+
+	if (p_baroreflex != NULL)
+		delete p_baroreflex;
 
 	free(circ_resistance);
 	free(circ_compliance);
@@ -128,8 +143,14 @@ void circulation::initialise_simulation(void)
 	// Set the results
 	p_cmv_results = p_parent_cmv_system->p_cmv_results;
 
+	// Set the protocol
+	p_cmv_protocol = p_parent_cmv_system->p_cmv_protocol;
+
 	// Now handle daughter objects
 	p_hemi_vent->initialise_simulation();
+
+	if (p_baroreflex != NULL)
+		p_baroreflex->initialise_simulation();
 
 	// Add data fields
 	for (int i = 0; i < circ_no_of_compartments; i++)
@@ -206,6 +227,13 @@ bool circulation::implement_time_step(double time_step_s)
 	double* flow_calc = (double*)malloc(circ_no_of_compartments * sizeof(double));
 
 	// Code
+
+	// Update the baroreflex, which includes updating the daughter objects
+	if (p_baroreflex != NULL)
+	{
+		p_baroreflex->baro_active = p_cmv_protocol->return_baro_activation(p_parent_cmv_system->cum_time_s);
+		p_baroreflex->implement_time_step(time_step_s);
+	}
 
 	// Update the hemi_vent object, which includes
 	// updating the daughter objects

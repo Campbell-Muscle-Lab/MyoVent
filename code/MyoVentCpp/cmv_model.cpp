@@ -32,6 +32,15 @@ struct cmv_model_valve_structure {
 	double k;
 };
 
+struct cmv_model_rc_structure {
+	string level;
+	string variable;
+	double k_control;
+	double k_recov;
+	double para_factor;
+	double symp_factor;
+};
+
 // Constructor
 cmv_model::cmv_model(string JSON_model_file_string)
 {
@@ -56,6 +65,21 @@ cmv_model::cmv_model(string JSON_model_file_string)
 	p_av = new cmv_model_valve_structure;
 	p_mv = new cmv_model_valve_structure;
 
+	// Set values that might not be defined in the model file
+	baro_P_set = GSL_NAN;
+	baro_S = GSL_NAN;
+	baro_k_drive = GSL_NAN;
+	baro_k_recov = GSL_NAN;
+	baro_P_compartment = -1;
+
+	// Safe pointers
+	for (int i = 0; i < MAX_NO_OF_REFLEX_CONTROLS; i++)
+	{
+		p_rc[i] = NULL;
+	}
+
+	no_of_rc_controls = 0;
+
 	// Set rest from file
 	initialise_model_from_JSON_file(JSON_model_file_string);
 }
@@ -70,6 +94,12 @@ cmv_model::~cmv_model(void)
 
 	delete p_av;
 	delete p_mv;
+
+	for (int i = 0; i < MAX_NO_OF_REFLEX_CONTROLS; i++)
+	{
+		if (p_rc[i] != NULL)
+			delete p_rc[i];
+	}
 
 	free(circ_resistance);
 	free(circ_compliance);
@@ -297,4 +327,56 @@ void cmv_model::initialise_model_from_JSON_file(string JSON_model_file_string)
 
 	JSON_functions::check_JSON_member_number(actin, "k_coop");
 	myof_a_k_coop = actin["k_coop"].GetDouble();
+
+	// Now try the baroreflex
+	if (JSON_functions::check_JSON_member_exists(doc, "baroreflex"))
+	{
+		// It might not be in the model file
+		const rapidjson::Value& baro = doc["baroreflex"];
+
+		JSON_functions::check_JSON_member_number(baro, "baro_P_set");
+		baro_P_set = baro["baro_P_set"].GetDouble();
+
+		JSON_functions::check_JSON_member_number(baro, "baro_S");
+		baro_S = baro["baro_S"].GetDouble();
+
+		JSON_functions::check_JSON_member_number(baro, "baro_k_drive");
+		baro_k_drive = baro["baro_k_drive"].GetDouble();
+
+		JSON_functions::check_JSON_member_number(baro, "baro_k_recov");
+		baro_k_recov = baro["baro_k_recov"].GetDouble();
+
+		JSON_functions::check_JSON_member_number(baro, "baro_P_compartment");
+		baro_P_compartment = baro["baro_P_compartment"].GetUint();
+
+		JSON_functions::check_JSON_member_array(baro, "control");
+		const rapidjson::Value& cont_array = baro["control"];
+
+		for (rapidjson::SizeType i = 0; i < cont_array.Size(); i++)
+		{
+			const rapidjson::Value& cont = cont_array[i];
+
+			p_rc[i] = new cmv_model_rc_structure();
+
+			JSON_functions::check_JSON_member_string(cont, "level");
+			p_rc[i]->level = cont["level"].GetString();
+
+			JSON_functions::check_JSON_member_string(cont, "variable");
+			p_rc[i]->variable = cont["variable"].GetString();
+
+			JSON_functions::check_JSON_member_number(cont, "k_control");
+			p_rc[i]->k_control = cont["k_control"].GetDouble();
+
+			JSON_functions::check_JSON_member_number(cont, "k_recov");
+			p_rc[i]->k_recov = cont["k_recov"].GetDouble();
+
+			JSON_functions::check_JSON_member_number(cont, "para_factor");
+			p_rc[i]->para_factor = cont["para_factor"].GetDouble();
+
+			JSON_functions::check_JSON_member_number(cont, "symp_factor");
+			p_rc[i]->symp_factor = cont["para_factor"].GetDouble();
+
+			no_of_rc_controls = no_of_rc_controls + 1;
+		}
+	}
 }

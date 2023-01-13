@@ -6,8 +6,12 @@
     "baroreflex": {
         "activations": [
             {
-                "t_start_s": 20,
-                "t_stop_s": 1000.0
+                "t_start_s": 3,
+                "t_stop_s": 6.0
+            },
+            {
+                "t_start_s": 7,
+                "t_stop_s": 9.0
             }
         ]
     },

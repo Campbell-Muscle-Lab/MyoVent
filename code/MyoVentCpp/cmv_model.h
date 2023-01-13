@@ -25,6 +25,7 @@ class heart_rate;
 class kinetic_scheme;
 
 struct cmv_model_valve_structure;
+struct cmv_model_rc_structure;
 
 using namespace std;
 
@@ -61,6 +62,24 @@ public:
 
 	double* circ_inertance;				/**< pointer to array of doubles holding
 												inertances of individual compartments */
+
+	// Baroreflex
+	double baro_P_set;					/**< double with baroreflex set point in mmHg */
+
+	double baro_S;						/**< double with baroreflex S parameter (mmHg)^-1 */
+
+	double baro_k_drive;				/**< double with baroreflex k_drive (s)^-1 */
+
+	double baro_k_recov;				/**< double with baroreflex k_recovery (s)^-1 */
+
+	int baro_P_compartment;				/**< int for the compartment number used to
+													calculate the B_a signal, subtract 1
+													to get the compartment index */
+
+	cmv_model_rc_structure* p_rc[MAX_NO_OF_REFLEX_CONTROLS];
+										/**< array of pointers to reflex controls */
+
+	int no_of_rc_controls;				/**< integer with the number of rc_controls */
 
 	// Ventricle
 	double vent_wall_density;			/**< double with wall density in kg m^-3 */

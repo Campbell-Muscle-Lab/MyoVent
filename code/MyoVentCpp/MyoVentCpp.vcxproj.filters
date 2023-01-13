@@ -66,6 +66,18 @@
     <ClCompile Include="valve.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="baroreflex.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="baro_activation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="growth_activation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="reflex_control.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cmv_system.h">
@@ -117,6 +129,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="valve.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="baroreflex.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="baro_activation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="growth_activation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="reflex_control.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
