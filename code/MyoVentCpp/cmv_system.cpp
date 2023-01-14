@@ -75,7 +75,7 @@ void cmv_system::run_simulation(string options_file_string,
 	p_cmv_options = new cmv_options(options_file_string);
 
 	// Initialise the protocol object
-	p_cmv_protocol = new cmv_protocol(protocol_file_string);
+	p_cmv_protocol = new cmv_protocol(this, protocol_file_string);
 
 	// Initialise the results object
 	p_cmv_results = new cmv_results(this, p_cmv_protocol->no_of_time_steps);
@@ -83,6 +83,7 @@ void cmv_system::run_simulation(string options_file_string,
 	// Add in the results
 	add_fields_to_cmv_results();
 
+	// Initialise the circulation and daughter objects
 	p_circulation->initialise_simulation();
 
 	// Simulation
@@ -133,6 +134,9 @@ bool cmv_system::implement_time_step(double time_step_s)
 
 	// Update system time
 	cum_time_s = cum_time_s + time_step_s;
+
+	// Impose perturbations
+	p_cmv_protocol->impose_perturbations(cum_time_s);
 
 	new_beat = p_circulation->implement_time_step(time_step_s);
 
