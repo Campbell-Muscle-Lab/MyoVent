@@ -78,6 +78,9 @@
     <ClCompile Include="perturbation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="mitochondria.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cmv_system.h">
@@ -141,6 +144,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="perturbation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mitochondria.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

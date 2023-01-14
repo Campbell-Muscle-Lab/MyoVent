@@ -53,8 +53,6 @@ myofilaments::myofilaments(half_sarcomere* set_p_parent_hs)
 
 	// Initialize
 	myof_cb_number_density = p_cmv_model->myof_cb_number_density;
-	myof_prop_fibrosis = p_cmv_model->myof_prop_fibrosis;
-	myof_prop_myofilaments = p_cmv_model->myof_prop_myofilaments;
 	myof_k_cb = p_cmv_model->myof_k_cb;
 
 	myof_int_pas_sigma = p_cmv_model->myof_int_pas_sigma;
@@ -695,7 +693,8 @@ void myofilaments::calculate_m_state_stresses(void)
 		}
 
 		// Adjust for fibrosis, myofilament area, and units
-		holder = (1.0 - myof_prop_fibrosis) * myof_prop_myofilaments *
+		holder = (1.0 - p_parent_hs->hs_prop_fibrosis) * 
+			p_parent_hs->hs_prop_myofilaments *
 			myof_cb_number_density * 1e-9 * myof_k_cb * holder;
 
 		gsl_vector_set(m_state_stresses, state_counter, holder);
@@ -810,7 +809,8 @@ double myofilaments::return_stress_after_delta_hsl(double delta_hsl)
 	delta_ext_pas_stress = calculate_ext_pas_stress(true, delta_hsl) -
 		myof_stress_ext_pas;
 
-	delta_cb_stress = (1.0 - myof_prop_fibrosis) * myof_prop_myofilaments *
+	delta_cb_stress = (1.0 - p_parent_hs->hs_prop_fibrosis) * 
+		p_parent_hs->hs_prop_myofilaments *
 		myof_cb_number_density * 1e-9 * myof_k_cb * myof_m_bound *
 		myof_fil_compliance_factor * delta_hsl;
 

@@ -19,6 +19,7 @@
 
 #include "gsl_math.h"
 #include "gsl_const_mksa.h"
+#include "gsl_const_num.h"
 
 struct stats_structure {
 	double mean_value;
@@ -47,9 +48,10 @@ hemi_vent::hemi_vent(circulation* set_p_parent_circulation)
 	vent_wall_volume = p_cmv_model->vent_wall_volume;
 
 	vent_stroke_work_J = GSL_NAN;
-	vent_energy_used_J = GSL_NAN;
+	vent_stroke_energy_used_J = GSL_NAN;
 	vent_efficiency = GSL_NAN;
 	vent_ejection_fraction = GSL_NAN;
+	vent_ATP_used_per_s = 0.0;
 
 	// Initialise child half-sarcomere
 	p_hs = new half_sarcomere(this);
@@ -109,9 +111,10 @@ void hemi_vent::initialise_simulation(void)
 
 	// Add fields
 	p_cmv_results->add_results_field("vent_stroke_work_J", &vent_stroke_work_J);
-	p_cmv_results->add_results_field("vent_energy_used_J", &vent_energy_used_J);
+	p_cmv_results->add_results_field("vent_stroke_energy_used_J", &vent_stroke_energy_used_J);
 	p_cmv_results->add_results_field("vent_efficiency", &vent_efficiency);
 	p_cmv_results->add_results_field("vent_ejection_fraction", &vent_ejection_fraction);
+	p_cmv_results->add_results_field("vent_ATP_used_per_s", &vent_ATP_used_per_s);
 }
 
 bool hemi_vent::implement_time_step(double time_step_s)
@@ -127,6 +130,9 @@ bool hemi_vent::implement_time_step(double time_step_s)
 	p_mv->implement_time_step(time_step_s);
 
 	new_beat = p_hs->implement_time_step(time_step_s);
+
+	// Calculate energy used per s
+	calculate_vent_ATP_used_per_s();
 
 	// Return
 	return (new_beat);
@@ -271,8 +277,8 @@ void hemi_vent::update_beat_metrics()
 
 	// Update beat values
 	vent_stroke_work_J = p_cmv_results->return_stroke_work(p_parent_cmv_system->sim_t_index);
-	vent_energy_used_J = p_cmv_results->return_energy_used(p_parent_cmv_system->sim_t_index);
-	vent_efficiency = -vent_stroke_work_J / vent_energy_used_J;
+	vent_stroke_energy_used_J = p_cmv_results->return_energy_used(p_parent_cmv_system->sim_t_index);
+	vent_efficiency = -vent_stroke_work_J / vent_stroke_energy_used_J;
 
 	// Calculate the ejection fraction
 	stats_structure* p_v_stats = new stats_structure;
@@ -289,8 +295,8 @@ void hemi_vent::update_beat_metrics()
 		vent_stroke_work_J, p_parent_cmv_system->sim_t_index);
 
 	p_cmv_results->backfill_beat_data(
-		p_cmv_results->gsl_results_vectors[p_cmv_results->vent_energy_used_field_index],
-		vent_energy_used_J, p_parent_cmv_system->sim_t_index);
+		p_cmv_results->gsl_results_vectors[p_cmv_results->vent_stroke_energy_used_field_index],
+		vent_stroke_energy_used_J, p_parent_cmv_system->sim_t_index);
 
 	p_cmv_results->backfill_beat_data(
 		p_cmv_results->gsl_results_vectors[p_cmv_results->vent_efficiency_field_index],
@@ -299,4 +305,25 @@ void hemi_vent::update_beat_metrics()
 	p_cmv_results->backfill_beat_data(
 		p_cmv_results->gsl_results_vectors[p_cmv_results->vent_ejection_fraction_field_index],
 		vent_ejection_fraction, p_parent_cmv_system->sim_t_index);
+}
+
+void hemi_vent::calculate_vent_ATP_used_per_s()
+{
+	//! Function updates vent_ATP_used_per_s
+
+	// Variables
+	double d_heads;				// density of heads per m^3
+	double v_myocardium;
+
+	// Code
+	d_heads = (1.0 - p_hs->hs_prop_fibrosis) *
+		p_hs->hs_prop_myofilaments *
+		p_hs->p_myofilaments->myof_cb_number_density *
+		(1.0 / (1e-9 * p_hs->hs_reference_hs_length));
+
+	v_myocardium = 0.001 * vent_wall_volume;
+
+	vent_ATP_used_per_s = -d_heads * v_myocardium *
+		p_hs->p_myofilaments->myof_ATP_flux /
+		GSL_CONST_NUM_AVOGADRO;
 }

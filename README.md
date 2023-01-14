@@ -13,11 +13,12 @@ classDiagram
     circulation <|-- VAD
     circulation <|-- baroreflex
     circulation <|-- Growth
-        hemi_vent <|-- half_sarcomere
+    hemi_vent <|-- half_sarcomere
     hemi_vent <|-- valve
     half_sarcomere <|-- membranes
     half_sarcomere <|-- heart_rate
     half_sarcomere <|-- myofilaments
+    half_sarcomere <|-- mitochondria
     myofilaments <|--kinetic_scheme
     kinetic_scheme <|-- m_state
     m_state <|-- transition
@@ -28,5 +29,14 @@ classDiagram
     
     cmv_system: + *cmv_model p_cmv_model
     cmv_system: + run_simulation()
+
+    half_sarcomere: + prop_fibrosis
+    half_sarcomere: + prop_myofilaments
+    half_sarcomere: + hs_length
+    half_sarcomere: + hs_stress
+    half_sarcomere: + ATP_concentration
+
+
+
 
 ````

@@ -38,6 +38,10 @@
         },
         "half_sarcomere":{
             "reference_hs_length": 1100,
+            "initial_ATP_concentration": 0.007,
+            "prop_fibrosis": 0.1,
+            "prop_myofilaments": 0.6,
+            "delta_G_ATP": 45000,
             "membranes": {
                 "Ca_content": 1e-3,
                 "k_leak": 6e-4,
@@ -45,19 +49,12 @@
                 "k_serca": 8.0,
                 "t_open": 0.01
             },
-            "energetics":
+            "mitochondria":
             {
-                "intracell_ATP_conc": 0.007,
-                "rate_ATP_generated": 1.2,
-                "implementation":
-                {
-                    "kinetic_scheme": "mito_myo_SERCA"
-                }
+                "ATP_generation_rate": 12.0
             },
             "myofilaments":{
                 "cb_number_density": 1.15e17,
-                "prop_fibrosis": 0.1,
-                "prop_myofilaments": 0.6,
                 "int_pas_sigma": 15,
                 "int_pas_L": 90,
                 "int_pas_slack_hsl": 1000,

@@ -15,11 +15,12 @@
 
 #include "circulation.h"
 #include "hemi_vent.h"
+#include "half_sarcomere.h"
+#include "myofilaments.h"
 
 #include "gsl_vector.h"
 #include "gsl_math.h"
 #include "gsl_const_mksa.h"
-#include "gsl_const_num.h"
 
 using namespace std;
 using namespace std::filesystem;
@@ -57,9 +58,10 @@ cmv_results::cmv_results(cmv_system* set_p_parent_cmv_system, int set_no_of_time
 	myof_stress_int_pas_field_index = -1;
 	myof_ATP_flux_field_index = -1;
 	vent_stroke_work_field_index = -1;
-	vent_energy_used_field_index = -1;
+	vent_stroke_energy_used_field_index = -1;
 	vent_efficiency_field_index = -1;
 	vent_ejection_fraction_field_index = -1;
+	vent_ATP_used_per_s_field_index = -1;
 }
 
 // Destructor
@@ -127,14 +129,17 @@ void cmv_results::add_results_field(std::string field_name, double* p_double)
 	if (field_name == "vent_stroke_work_J")
 		vent_stroke_work_field_index = new_index;
 
-	if (field_name == "vent_energy_used_J")
-		vent_energy_used_field_index = new_index;
+	if (field_name == "vent_stroke_energy_used_J")
+		vent_stroke_energy_used_field_index = new_index;
 
 	if (field_name == "vent_efficiency")
 		vent_efficiency_field_index = new_index;
 
 	if (field_name == "vent_ejection_fraction")
 		vent_ejection_fraction_field_index = new_index;
+
+	if (field_name == "vent_ATP_used_per_s")
+		vent_ATP_used_per_s_field_index = new_index;
 
 	// Update the number of defined fields
 	no_of_defined_results_fields = no_of_defined_results_fields + 1;
@@ -336,22 +341,16 @@ double cmv_results::return_stroke_work(int stop_t_index)
 
 double cmv_results::return_energy_used(int stop_t_index)
 {
-	//! Returns energy used as product of flux through ATPase cycle(mol ^ -1 s ^ -1) and
-	//! the number of heads corrected for Avogadro's number
-	//! 	Number of heads per m ^ 3 is(1 - fibrosis) * prop_myofilaments *
-//! 		cb_number_density / l_0[reference length]
-
-	//! 	Delta_G_ATP is set in model file as Joules / mole, 45000
-	//! 	https://equilibrator.weizmann.ac.il/static/classic_rxns/classic_reactions/atp.html
+	//! Returns energy used as the integral of the ATP used over
+	//! the cycle in moles multipled by the energy from ATP
+	//!	Delta_G_ATP is set in model file as Joules / mole, 45000
+	//!	https://equilibrator.weizmann.ac.il/static/classic_rxns/classic_reactions/atp.html
 
 	// Variables
 
 	double delta_t;
-	double d_heads;
-	double v_myocardium;
 	double holder;
 	double energy_used;
-	double delta_G_ATP = 45000.0;		// Energy in Joules per mole of ATP
 
 	// Code
 
@@ -370,21 +369,12 @@ double cmv_results::return_energy_used(int stop_t_index)
 	for (int i = last_beat_t_index; i <= stop_t_index; i++)
 	{
 		holder = holder +
-			delta_t * gsl_vector_get(gsl_results_vectors[myof_ATP_flux_field_index], i);
+			gsl_vector_get(gsl_results_vectors[vent_ATP_used_per_s_field_index], i);
 	}
 
-	// Calculate the density of heads per m^3
-	d_heads = (1.0 - p_parent_cmv_system->p_cmv_model->myof_prop_fibrosis) *
-		p_parent_cmv_system->p_cmv_model->myof_prop_myofilaments *
-		p_parent_cmv_system->p_cmv_model->myof_cb_number_density *
-		(1.0 / (1e-9 * p_parent_cmv_system->p_cmv_model->hs_reference_hs_length));
-
-	// Volume of myocardium
-	v_myocardium = 0.001 * p_parent_cmv_system->p_circulation->p_hemi_vent->vent_wall_volume;
-
 	// Calculate energy per second
-	energy_used = -d_heads * v_myocardium * holder * delta_G_ATP /
-		GSL_CONST_NUM_AVOGADRO;
+	energy_used = holder * delta_t *
+		p_parent_cmv_system->p_circulation->p_hemi_vent->p_hs->hs_delta_G_ATP;
 
 	return energy_used;
 }

@@ -11,12 +11,14 @@
 #include "hemi_vent.h"
 #include "cmv_results.h"
 #include "membranes.h"
+#include "mitochondria.h"
 #include "myofilaments.h"
 #include "heart_rate.h"
 
 #include "gsl_errno.h"
 #include "gsl_math.h"
 #include "gsl_roots.h"
+#include "gsl_const_num.h"
 
 // Constructor
 half_sarcomere::half_sarcomere(hemi_vent* set_p_parent_hemi_vent)
@@ -33,6 +35,7 @@ half_sarcomere::half_sarcomere(hemi_vent* set_p_parent_hemi_vent)
 	// Create the daugher objects
 	p_heart_rate = new heart_rate(this);
 	p_membranes = new membranes(this);
+	p_mitochondria = new mitochondria(this);
 	p_myofilaments = new myofilaments(this);
 
 	// Set safe values
@@ -42,6 +45,11 @@ half_sarcomere::half_sarcomere(hemi_vent* set_p_parent_hemi_vent)
 	// Initialise
 	hs_stress = 0.0;
 	hs_length = p_cmv_model->hs_reference_hs_length;
+	hs_reference_hs_length = p_cmv_model->hs_reference_hs_length;
+	hs_delta_G_ATP = p_cmv_model->hs_delta_G_ATP;
+	hs_ATP_concentration = p_cmv_model->hs_initial_ATP_concentration;
+	hs_prop_fibrosis = p_cmv_model->hs_prop_fibrosis;
+	hs_prop_myofilaments = p_cmv_model->hs_prop_myofilaments;
 }
 
 // Destructor
@@ -55,6 +63,7 @@ half_sarcomere::~half_sarcomere(void)
 	// Tidy up
 	delete p_heart_rate;
 	delete p_membranes;
+	delete p_mitochondria;
 	delete p_myofilaments;
 }
 
@@ -77,10 +86,12 @@ void half_sarcomere::initialise_simulation(void)
 	// Now add the results fields
 	p_cmv_results->add_results_field("hs_length", &hs_length);
 	p_cmv_results->add_results_field("hs_stress", &hs_stress);
+	p_cmv_results->add_results_field("hs_ATP_concentration", &hs_ATP_concentration);
 
 	// Now initialise daughter objects
 	p_heart_rate->initialise_simulation();
 	p_membranes->initialise_simulation();
+	p_mitochondria->initialise_simulation();
 	p_myofilaments->initialise_simulation();
 
 	// Set the hs_length so that wall stress is zero
@@ -103,13 +114,19 @@ bool half_sarcomere::implement_time_step(double time_step_s)
 
 	// Code
 
+	// Update daughter objects
 	new_beat = p_heart_rate->implement_time_step(time_step_s);
-
+	
 	p_membranes->implement_time_step(time_step_s, new_beat);
+
+	p_mitochondria->implement_time_step(time_step_s);
 
 	p_myofilaments->implement_time_step(time_step_s);
 
-	// Return new beat status
+	// Update the ATP
+	calculate_hs_ATP_concentration(time_step_s);
+
+		// Return new beat status
 	return (new_beat);
 }
 
@@ -221,4 +238,27 @@ double half_sarcomere::return_hs_length_for_stress(double target_stress)
 	// Calculate the length
 
 	return (hs_length + r);
+}
+
+void half_sarcomere::calculate_hs_ATP_concentration(double time_step_s)
+{
+	//! Function updates hs ATP concentration
+
+	// Variables
+	double d_heads;					// number of heads per liter
+
+	// Code
+
+	d_heads = 0.001 *
+		(1.0 - hs_prop_fibrosis) * hs_prop_myofilaments *
+			p_myofilaments->myof_cb_number_density *
+			(1.0 / (1e-9 * hs_reference_hs_length));
+
+	// Euler step
+
+	hs_ATP_concentration = hs_ATP_concentration +
+		(time_step_s *
+			((-d_heads * p_myofilaments->myof_ATP_flux /
+				GSL_CONST_NUM_AVOGADRO) +
+				p_mitochondria->mito_ATP_generated_M_per_s));
 }

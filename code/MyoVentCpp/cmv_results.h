@@ -87,7 +87,7 @@ public:
 	int vent_stroke_work_field_index;		/**< integer holding the index for the
 													vent stroke work field */
 
-	int vent_energy_used_field_index;		/**< integer holding the index for the
+	int vent_stroke_energy_used_field_index;		/**< integer holding the index for the
 													vent energy used field */
 
 	int vent_efficiency_field_index;		/**< integer holding the index for the
@@ -95,6 +95,9 @@ public:
 
 	int vent_ejection_fraction_field_index;	/**< integer holding the index for the
 													vent ejection fraction field */
+
+	int vent_ATP_used_per_s_field_index;	/**< integer holding the index for the
+													vent ATP used per s field */
 
 
 	// Functions

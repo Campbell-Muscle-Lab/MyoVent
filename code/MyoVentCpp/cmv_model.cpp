@@ -239,7 +239,19 @@ void cmv_model::initialise_model_from_JSON_file(string JSON_model_file_string)
 	// Load the half_sarcomere parameters
 	JSON_functions::check_JSON_member_number(hs, "reference_hs_length");
 	hs_reference_hs_length = hs["reference_hs_length"].GetDouble();
-		
+
+	JSON_functions::check_JSON_member_number(hs, "initial_ATP_concentration");
+	hs_initial_ATP_concentration = hs["initial_ATP_concentration"].GetDouble();
+
+	JSON_functions::check_JSON_member_number(hs, "prop_fibrosis");
+	hs_prop_fibrosis = hs["prop_fibrosis"].GetDouble();
+
+	JSON_functions::check_JSON_member_number(hs, "prop_myofilaments");
+	hs_prop_myofilaments = hs["prop_myofilaments"].GetDouble();
+
+	JSON_functions::check_JSON_member_number(hs, "delta_G_ATP");
+	hs_delta_G_ATP = hs["delta_G_ATP"].GetDouble();
+
 	// Load the membranes structure
 	JSON_functions::check_JSON_member_exists(hs, "membranes");
 	const rapidjson::Value& memb = hs["membranes"];
@@ -259,18 +271,19 @@ void cmv_model::initialise_model_from_JSON_file(string JSON_model_file_string)
 	JSON_functions::check_JSON_member_number(memb, "t_open");
 	memb_t_open_s = memb["t_open"].GetDouble();
 
+	// Load the mitochondria structure
+	JSON_functions::check_JSON_member_exists(hs, "mitochondria");
+	const rapidjson::Value& mito = hs["mitochondria"];
+
+	JSON_functions::check_JSON_member_number(mito, "ATP_generation_rate");
+	mito_ATP_generation_rate = mito["ATP_generation_rate"].GetDouble();
+
 	// Load the myofilaments structure
 	JSON_functions::check_JSON_member_exists(hs, "myofilaments");
 	const rapidjson::Value& myof = hs["myofilaments"];
 
 	JSON_functions::check_JSON_member_number(myof, "cb_number_density");
 	myof_cb_number_density = myof["cb_number_density"].GetDouble();
-
-	JSON_functions::check_JSON_member_number(myof, "prop_fibrosis");
-	myof_prop_fibrosis = myof["prop_fibrosis"].GetDouble();
-
-	JSON_functions::check_JSON_member_number(myof, "prop_myofilaments");
-	myof_prop_myofilaments = myof["prop_myofilaments"].GetDouble();
 
 	JSON_functions::check_JSON_member_number(myof, "int_pas_sigma");
 	myof_int_pas_sigma = myof["int_pas_sigma"].GetDouble();

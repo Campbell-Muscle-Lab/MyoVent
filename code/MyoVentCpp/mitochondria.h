@@ -1,0 +1,62 @@
+#pragma once
+
+/**
+/* @file		mitchondria.h
+/* @brief		Header file for a mitochondria object
+/* @author		Ken Campbell
+*/
+
+#include "stdio.h"
+
+#include <iostream>
+
+#include "global_definitions.h"
+
+// Forward declararations
+class half_sarcomere;
+class cmv_model;
+class cmv_options;
+class cmv_results;
+
+class mitochondria
+{
+public:
+	/**
+	 * Constructor
+	 */
+	mitochondria(half_sarcomere* set_p_parent_hs);
+
+	/**
+	* Destructor
+	*/
+	~mitochondria(void);
+
+	// Variables
+
+	half_sarcomere* p_parent_hs;		/**< pointer to parent half-sarcomere */
+
+	cmv_model* p_cmv_model;				/**< pointer to cmv_model object */
+
+	cmv_options* p_cmv_options;			/**< pointer to cmv_options object */
+
+	cmv_results* p_cmv_results;			/**< pointer to cmv_results object */
+
+	double mito_ATP_generation_rate;	/**< double with rate mitochondria
+												generate ATP, in M s^-1 m^-3 */
+
+	double mito_volume;					/**< double holding the mitochondrial
+												volume in m^3 */
+
+	double mito_ATP_generated_M_per_s;	/**< double holding the moles of ATP
+												generated per s */
+
+	/**
+	/* function adds data fields and vectors to the results objet
+	*/
+	void initialise_simulation(void);
+
+	/**
+	/* function updates state variables
+	*/
+	void implement_time_step(double time_step_s);
+};

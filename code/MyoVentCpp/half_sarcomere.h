@@ -22,6 +22,7 @@ class hemi_vent;
 class membranes;
 class myofilaments;
 class heart_rate;
+class mitochondria;
 
 class half_sarcomere
 {
@@ -50,11 +51,28 @@ public:
 	membranes* p_membranes;							/**< Pointer to the daughter
 															membranes object */
 
+	mitochondria* p_mitochondria;					/**< Pointer to the daughter
+															mitochondria object */
+
 	myofilaments* p_myofilaments;					/**< Pointer to the daughter
 															myofilaments object */
 
+	double hs_prop_fibrosis;						/**< Double with the proportion of the
+															hs cross-sectional area
+															that is fibrosis */
+
+	double hs_prop_myofilaments;					/**< Double with the proportion of the
+															hs non-fibrotic area that is
+															that is myofilaments, remainder
+															is mitochondria */
+
 	double hs_length;
+	double hs_reference_hs_length;						
 	double hs_stress;
+	double hs_ATP_concentration;					/**< double with ATP concentration */
+
+	double hs_delta_G_ATP;							/**< double with energy in Joules
+															per mole of ATP */
 
 	/**
 	/* function adds data fields and vectors to the results objet
@@ -69,4 +87,6 @@ public:
 	double return_wall_stress_after_delta_hsl(double delta_hsl);
 
 	double return_hs_length_for_stress(double target_stress);
+
+	void calculate_hs_ATP_concentration(double time_step);
 };

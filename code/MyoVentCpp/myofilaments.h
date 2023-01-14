@@ -48,10 +48,12 @@ public:
 
 	kinetic_scheme* p_m_scheme;				/**< Pointer to a kinetic scheme */
 
-	double myof_cb_number_density;
-	double myof_prop_fibrosis;
-	double myof_prop_myofilaments;
-	double myof_k_cb;
+	double myof_cb_number_density;			/**< double with number of cross-bridges in
+													a half-sarcomere with an area of
+													1 m^-2 */
+	
+	double myof_k_cb;						/**< double with stiffness of cross-bridge
+													link in N m^-1 */
 
 	double myof_int_pas_sigma;				/**< double with sigma for intracellular
 														passive stress exponential

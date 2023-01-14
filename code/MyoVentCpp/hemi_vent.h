@@ -75,11 +75,13 @@ public:
 
 	double vent_stroke_work_J;				/**< double with stroke work in J for a cardiac cycle */
 
-	double vent_energy_used_J;				/**< double with energy_used in J for a cardiac cycle */
+	double vent_stroke_energy_used_J;		/**< double with energy_used in J for a cardiac cycle */
 
 	double vent_efficiency;					/**< double efficiency for a cardiac cycle */
 
 	double vent_ejection_fraction;			/**< double with ejection fraction for a cardiac cycle */
+
+	double vent_ATP_used_per_s;				/**< double with ATP used per used */
 
 	// Other functions
 	void initialise_simulation(void);
@@ -97,4 +99,6 @@ public:
 	void update_chamber_volume(double new_volume);
 
 	void update_beat_metrics();
+
+	void calculate_vent_ATP_used_per_s(void);
 };

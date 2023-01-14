@@ -1,7 +1,7 @@
 {
     "layout":
     {
-        "fig_width": 7,
+        "fig_width": 10,
         "top_margin": 0.25,
         "left_margin": 0,
         "right_margin": 0,
@@ -350,6 +350,97 @@
                     }
                 ]
             }
+        },
+        {
+            "column": 4,
+            "y_info":
+            {
+                "label": "Ejection\nfraction",
+                "series":
+                [
+                    {
+                        "field": "vent_ejection_fraction"
+                    }
+                ]
+            }
+        },
+        {
+            "column": 4,
+            "y_info":
+            {
+                "label": "Stroke\nwork",
+                "series":
+                [
+                    {
+                        "field": "vent_stroke_work_J"
+                    }
+                ]
+            }
+        },
+        {
+            "column": 4,
+            "y_info":
+            {
+                "label": "Energy\nused",
+                "series":
+                [
+                    {
+                        "field": "vent_stroke_energy_used_J"
+                    }
+                ]
+            }
+        },
+        {
+            "column": 4,
+            "y_info":
+            {
+                "label": "Efficiency",
+                "series":
+                [
+                    {
+                        "field": "vent_efficiency"
+                    }
+                ]
+            }
+        },
+        {
+            "column": 5,
+            "y_info":
+            {
+                "label": "myosin ATP\nflux\n(M s^-1 m^-3)",
+                "series":
+                [
+                    {
+                        "field": "myof_ATP_flux"
+                    }
+                ]
+            }
+        },
+        {
+            "column": 5,
+            "y_info":
+            {
+                "label": "vent\nATP\nused\n(M s^-1)",
+                "series":
+                [
+                    {
+                        "field": "vent_ATP_used_per_s"
+                    }
+                ]
+            }
+        },
+        {
+            "column": 5,
+            "y_info":
+            {
+                "label": "hs [ATP]\n(M)",
+                "series":
+                [
+                    {
+                        "field": "hs_ATP_concentration"
+                    }
+                ]
+            }
         }
-   ]
+    ]
 }
