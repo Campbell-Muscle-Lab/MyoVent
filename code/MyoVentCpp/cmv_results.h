@@ -20,6 +20,7 @@ using namespace std;
 struct stats_structure;
 
 class cmv_system;
+class cmv_options;
 
 class cmv_results
 {
@@ -36,6 +37,8 @@ public:
 
 	// Variables
 	cmv_system* p_parent_cmv_system;		/**< pointer to parent cmv_system */
+
+	cmv_options* p_cmv_options;				/**< pointer to cmv options */
 
 	std::string results_fields[MAX_NO_OF_RESULT_FIELDS];
 											/**< array of strings defining the
@@ -83,6 +86,10 @@ public:
 
 	int myof_stress_int_pas_field_index;	/**< integer holding the index for the
 													myofilament int pass stress */
+
+	int myof_mean_stress_int_pas_field_index;
+											/**< integer holding the index for the
+													myofilament mean int pass stress */
 
 	int myof_ATP_flux_field_index;			/**< integer holding the index for the
 													myofilament ATPase field */

@@ -41,6 +41,16 @@ struct cmv_model_rc_structure {
 	double symp_factor;
 };
 
+struct cmv_model_gc_structure {
+	string type;
+	string level;
+	string signal;
+	double set_point;
+	double prop_gain;
+	double deriv_gain;
+	double max_rate;
+};
+
 // Constructor
 cmv_model::cmv_model(string JSON_model_file_string)
 {
@@ -79,6 +89,13 @@ cmv_model::cmv_model(string JSON_model_file_string)
 	}
 
 	no_of_rc_controls = 0;
+
+	for (int i = 0; i < MAX_NO_OF_GROWTH_CONTROLS; i++)
+	{
+		p_gc[i] = NULL;
+	}
+
+	no_of_gc_controls = 0;
 
 	// Set rest from file
 	initialise_model_from_JSON_file(JSON_model_file_string);
@@ -389,6 +406,52 @@ void cmv_model::initialise_model_from_JSON_file(string JSON_model_file_string)
 			p_rc[i]->symp_factor = cont["symp_factor"].GetDouble();
 
 			no_of_rc_controls = no_of_rc_controls + 1;
+		}
+	}
+
+	// Now try the growth
+	if (JSON_functions::check_JSON_member_exists(doc, "growth"))
+	{
+		// It might not be in the model file
+		const rapidjson::Value& grow = doc["growth"];
+
+		JSON_functions::check_JSON_member_array(grow, "control");
+		const rapidjson::Value& grow_array = grow["control"];
+
+		for (rapidjson::SizeType i = 0; i < grow_array.Size(); i++)
+		{
+			const rapidjson::Value& cont = grow_array[i];
+
+			p_gc[i] = new cmv_model_gc_structure();
+
+			JSON_functions::check_JSON_member_string(cont, "type");
+			p_gc[i]->type = cont["type"].GetString();
+
+			JSON_functions::check_JSON_member_string(cont, "level");
+			p_gc[i]->level = cont["level"].GetString();
+
+			JSON_functions::check_JSON_member_string(cont, "signal");
+			p_gc[i]->signal = cont["signal"].GetString();
+
+			JSON_functions::check_JSON_member_number(cont, "set_point");
+			p_gc[i]->set_point = cont["set_point"].GetDouble();
+
+			JSON_functions::check_JSON_member_number(cont, "prop_gain");
+			p_gc[i]->prop_gain = cont["prop_gain"].GetDouble();
+
+			if (JSON_functions::check_JSON_member_exists(cont, "deriv_gain"))
+			{
+				p_gc[i]->deriv_gain = cont["deriv_gain"].GetDouble();
+			}
+			else
+			{
+				p_gc[i]->deriv_gain = 0.0;
+			}
+
+			JSON_functions::check_JSON_member_number(cont, "max_rate");
+			p_gc[i]->max_rate = cont["max_rate"].GetDouble();
+
+			no_of_gc_controls = no_of_gc_controls + 1;
 		}
 	}
 }

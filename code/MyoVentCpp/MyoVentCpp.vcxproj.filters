@@ -81,6 +81,12 @@
     <ClCompile Include="mitochondria.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="growth.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="growth_control.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cmv_system.h">
@@ -147,6 +153,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="mitochondria.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="growth.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="growth_control.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

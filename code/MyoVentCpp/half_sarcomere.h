@@ -46,6 +46,8 @@ public:
 
 	cmv_options* p_cmv_options;						/**< Pointer to cmv_options */
 
+	cmv_system* p_cmv_system;						/**< Pointer to the cmv system */
+
 	heart_rate* p_heart_rate;						/**< Pointer to heart-rate object */
 
 	membranes* p_membranes;							/**< Pointer to the daughter

@@ -46,7 +46,7 @@ perturbation::perturbation(cmv_protocol* set_p_cmv_protocol, perturbation_struct
 
 	increment = total_change / n_steps;
 
-	cout << "n_steps: " << n_steps << "total_change: " << total_change << "increment " << increment << "\n";
+	cout << "n_steps: " << n_steps << " total_change: " << total_change << " increment " << increment << "\n";
 }
 
 // Destructor

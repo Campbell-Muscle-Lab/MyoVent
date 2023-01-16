@@ -17,6 +17,7 @@
 // Forward declararations
 class half_sarcomere;
 class cmv_model;
+class cmv_system;
 class cmv_options;
 class cmv_results;
 
@@ -45,6 +46,8 @@ public:
 	cmv_options* p_cmv_options;				/**< Pointer to cmv_options */
 
 	cmv_results* p_cmv_results;				/**< Pointer to cmv_results */
+
+	cmv_system* p_cmv_system;				/**< Pointer to the cmv_system */
 
 	kinetic_scheme* p_m_scheme;				/**< Pointer to a kinetic scheme */
 
@@ -157,6 +160,9 @@ public:
 
 	double max_shift;
 
+	double myof_mean_stress_int_pas;	/**< double holding the mean pas int
+												stress over a cardiac cycle */
+
 	string cb_dump_file_string;			/**< string hold cb dump file */
 	bool cb_dump_file_defined;
 
@@ -189,4 +195,6 @@ public:
 	void move_cb_populations(double delta_hsl);
 
 	void dump_cb_distributions(void);
+
+	void update_beat_metrics(void);
 };

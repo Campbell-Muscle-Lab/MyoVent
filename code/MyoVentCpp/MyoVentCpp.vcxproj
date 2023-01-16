@@ -154,6 +154,8 @@
     <ClCompile Include="cmv_protocol.cpp" />
     <ClCompile Include="cmv_results.cpp" />
     <ClCompile Include="cmv_system.cpp" />
+    <ClCompile Include="growth.cpp" />
+    <ClCompile Include="growth_control.cpp" />
     <ClCompile Include="half_sarcomere.cpp" />
     <ClCompile Include="heart_rate.cpp" />
     <ClCompile Include="hemi_vent.cpp" />
@@ -179,6 +181,8 @@
     <ClInclude Include="cmv_results.h" />
     <ClInclude Include="cmv_system.h" />
     <ClInclude Include="global_definitions.h" />
+    <ClInclude Include="growth.h" />
+    <ClInclude Include="growth_control.h" />
     <ClInclude Include="half_sarcomere.h" />
     <ClInclude Include="heart_rate.h" />
     <ClInclude Include="hemi_vent.h" />

@@ -60,6 +60,9 @@ public:
 													If True, use thick-wall approximation
 													otherwise, use thin-wall */
 
+	int output_skip_points;					/**< int defining time points to skip in the
+													output file */
+
 	/**
 	/* Function initialises protocol object from file
 	*/

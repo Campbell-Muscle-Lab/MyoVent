@@ -1,7 +1,7 @@
 {
     "layout":
     {
-        "fig_width": 10,
+        "fig_width": 14,
         "top_margin": 0.25,
         "left_margin": 0,
         "right_margin": 0,
@@ -466,6 +466,106 @@
                 [
                     {
                         "field": "hs_ATP_concentration"
+                    }
+                ]
+            }
+        },
+        {
+            "column": 6,
+            "y_info":
+            {
+                "label": "Growth\nactive",
+                "series":
+                [
+                    {
+                        "field": "growth_active"
+                    }
+                ]
+            }
+        },
+        {
+            "column": 6,
+            "y_info":
+            {
+                "label": "GC 1",
+                "series":
+                [
+                    {
+                        "field": "gc_1_output"
+                    }
+                ]
+            }
+        },
+        {
+            "column": 6,
+            "y_info":
+            {
+                "label": "Vent n_hs",
+                "series":
+                [
+                    {
+                        "field": "vent_n_hs"
+                    }
+                ]
+            }
+        },
+        {
+            "column": 6,
+            "y_info":
+            {
+                "label": "Myof stress\nint pas\n(kN m^-2)",
+                "scaling_factor": 0.001,
+                "series":
+                [
+                    {
+                        "field": "myof_mean_stress_int_pas"
+                    },
+                    {
+                        "reference": 350
+                    }
+                ]
+            }
+        },
+        {
+            "column": 6,
+            "y_info":
+            {
+                "label": "GC 2",
+                "series":
+                [
+                    {
+                        "field": "gc_2_prop_signal",
+                        "field_label": "Prop"
+                    },
+                    {
+                        "field": "gc_2_deriv_signal",
+                        "field_label": "Deriv"
+                    }
+                ]
+            }
+        },
+        {
+            "column": 6,
+            "y_info":
+            {
+                "label": "GC 2",
+                "series":
+                [
+                    {
+                        "field": "gc_2_output"
+                    }
+                ]
+            }
+        },
+        {
+            "column": 6,
+            "y_info":
+            {
+                "label": "Vent\nvolume",
+                "series":
+                [
+                    {
+                        "field": "vent_wall_volume"
                     }
                 ]
             }

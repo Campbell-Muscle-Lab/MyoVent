@@ -34,7 +34,6 @@ valve::valve(hemi_vent* set_p_parent_hemi_vent, cmv_model_valve_structure* set_p
 	//! Constructor
 
 	// Code
-	printf("valve constructor()\n");
 
 	// Set the pointers to the parent system
 	p_parent_hemi_vent = set_p_parent_hemi_vent;
@@ -65,7 +64,6 @@ valve::~valve(void)
 	//! Destructor
 
 	// Code
-	printf("valve destructor()\n");
 
 	// Tidy up
 }

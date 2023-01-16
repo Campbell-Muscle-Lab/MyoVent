@@ -16,6 +16,7 @@
 #include "valve.h"
 #include "half_sarcomere.h"
 #include "baroreflex.h"
+#include "growth.h"
 
 #include "gsl_math.h"
 #include "gsl_errno.h"
@@ -107,6 +108,16 @@ circulation::circulation(cmv_system* set_p_parent_cmv_system = NULL)
 	{
 		p_baroreflex = NULL;
 	}
+
+	// Make a growth object if has been defined
+	if (p_cmv_model->no_of_gc_controls > 0)
+	{
+		p_growth = new growth(this);
+	}
+	else
+	{
+		p_growth = NULL;
+	}
 }
 
 // Destructor
@@ -120,6 +131,9 @@ circulation::~circulation(void)
 
 	if (p_baroreflex != NULL)
 		delete p_baroreflex;
+
+	if (p_growth != NULL)
+		delete p_growth;
 
 	free(circ_resistance);
 	free(circ_compliance);
@@ -154,6 +168,9 @@ void circulation::initialise_simulation(void)
 
 	if (p_baroreflex != NULL)
 		p_baroreflex->initialise_simulation();
+
+	if (p_growth != NULL)
+		p_growth->initialise_simulation();
 
 	// Add data fields
 	p_cmv_results->add_results_field("circ_blood_volume", &circ_blood_volume);
@@ -233,14 +250,6 @@ bool circulation::implement_time_step(double time_step_s)
 
 	// Code
 
-	// Update the baroreflex, which includes updating the daughter objects
-	if (p_baroreflex != NULL)
-	{
-		p_baroreflex->baro_active = p_cmv_protocol->return_activation("baroreflex",
-			p_parent_cmv_system->cum_time_s);
-		p_baroreflex->implement_time_step(time_step_s);
-	}
-
 	// Update the hemi_vent object, which includes
 	// updating the daughter objects
 	new_beat = p_hemi_vent->implement_time_step(time_step_s);
@@ -274,6 +283,22 @@ bool circulation::implement_time_step(double time_step_s)
 	{
 		cout << "Blood volume mismatch\n";
 		exit(1);
+	}
+
+	// Update the baroreflex, which includes updating the daughter objects
+	if (p_baroreflex != NULL)
+	{
+		p_baroreflex->baro_active = p_cmv_protocol->return_activation("baroreflex",
+			p_parent_cmv_system->cum_time_s);
+		p_baroreflex->implement_time_step(time_step_s);
+	}
+
+	// Update the growth, which includes updating the daughter objects
+	if (p_growth != NULL)
+	{
+		p_growth->growth_active = p_cmv_protocol->return_activation("growth",
+			p_parent_cmv_system->cum_time_s);
+		p_growth->implement_time_step(time_step_s, new_beat);
 	}
 
 	// Tidy up

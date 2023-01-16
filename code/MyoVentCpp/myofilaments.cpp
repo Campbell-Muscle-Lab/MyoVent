@@ -28,6 +28,12 @@
 using namespace std;
 using namespace std::filesystem;
 
+struct stats_structure {
+	double mean_value;
+	double min_value;
+	double max_value;
+};
+
 // Constructor
 myofilaments::myofilaments(half_sarcomere* set_p_parent_hs)
 {
@@ -38,9 +44,10 @@ myofilaments::myofilaments(half_sarcomere* set_p_parent_hs)
 	// Set the pointers to the appropriate places
 	p_parent_hs = set_p_parent_hs;
 	p_cmv_model = p_parent_hs->p_cmv_model;
-	
-	p_m_scheme = p_cmv_model->p_m_scheme;
+	p_cmv_system = p_parent_hs->p_cmv_system;
 
+	p_m_scheme = p_cmv_model->p_m_scheme;
+	
 	// Set other pointers safe
 	p_cmv_results = NULL;
 	p_cmv_options = NULL;
@@ -91,6 +98,8 @@ myofilaments::myofilaments(half_sarcomere* set_p_parent_hs)
 	y_length = 0;
 
 	max_shift = GSL_NAN;
+
+	myof_mean_stress_int_pas = GSL_NAN;
 
 	cb_dump_file_string;
 	cb_dump_file_defined = false;
@@ -247,8 +256,8 @@ void myofilaments::initialise_simulation(void)
 	p_cmv_results->add_results_field("myof_stress_ext_pas", &myof_stress_ext_pas);
 	p_cmv_results->add_results_field("myof_stress_myof", &myof_stress_myof);
 	p_cmv_results->add_results_field("myof_stress_total", &myof_stress_total);
-	p_cmv_results->add_results_field("myof_ATP_flux", &myof_ATP_flux);
 
+	p_cmv_results->add_results_field("myof_mean_stress_int_pas", &myof_mean_stress_int_pas);
 }
 
 // This function is not a member of the myofilaments class but is used to interace
@@ -1089,4 +1098,34 @@ void myofilaments::dump_cb_distributions(void)
 
 	// Update
 	cb_dump_file_defined = true;
+}
+
+void myofilaments::update_beat_metrics(void)
+{
+	//! Function updates beat metrics
+	
+	// Variables
+
+	stats_structure* p_stats;
+
+	// Code
+
+	p_stats = new stats_structure;
+
+	// Calculate the mean pas int stress
+
+	p_cmv_results->calculate_sub_vector_statistics(
+		p_cmv_results->gsl_results_vectors[p_cmv_results->myof_stress_int_pas_field_index],
+		p_cmv_results->last_beat_t_index, p_cmv_system->sim_t_index, p_stats);
+
+	// Set the class value
+	myof_mean_stress_int_pas = p_stats->mean_value;
+
+	// Backfill results
+	p_cmv_results->backfill_beat_data(
+		p_cmv_results->gsl_results_vectors[p_cmv_results->myof_stress_int_pas_field_index],
+		myof_mean_stress_int_pas, p_cmv_system->sim_t_index);
+
+	// Tidy up
+	delete p_stats;
 }

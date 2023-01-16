@@ -37,6 +37,7 @@ half_sarcomere::half_sarcomere(hemi_vent* set_p_parent_hemi_vent)
 	// Set the pointers to the parent system
 	p_parent_hemi_vent = set_p_parent_hemi_vent;
 	p_cmv_model = p_parent_hemi_vent->p_cmv_model;
+	p_cmv_system = p_parent_hemi_vent->p_parent_cmv_system;
 
 	// Create the daugher objects
 	p_heart_rate = new heart_rate(this);
@@ -288,6 +289,9 @@ void half_sarcomere::update_beat_metrics(void)
 
 		cout << "HS length range: " << p_stats->max_value << " to " << p_stats->min_value << "\n";
 	}
+
+	// Update daughter objects
+	p_myofilaments->update_beat_metrics();
 
 	// Tidy up
 	delete p_stats;

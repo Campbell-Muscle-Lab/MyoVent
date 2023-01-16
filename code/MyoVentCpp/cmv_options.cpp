@@ -27,6 +27,9 @@ cmv_options::cmv_options(string set_options_file_string)
 	// Initialise variables
 	options_file_string = set_options_file_string;
 
+	// Set safe options
+	output_skip_points = 0;
+
 	// Now update from file
 	initialise_options_from_JSON_file(options_file_string);
 }
@@ -135,4 +138,12 @@ void cmv_options::initialise_options_from_JSON_file(string options_file_string)
 	// Load protocol variables
 	JSON_functions::check_JSON_member_string(hv, "thick_wall_approximation");
 	hv_thick_wall_approximation = hv["thick_wall_approximation"].GetString();
+
+	if (JSON_functions::check_JSON_member_exists(doc, "output"))
+	{
+		const rapidjson::Value& out = doc["output"];
+
+		JSON_functions::check_JSON_member_int(out, "skip_points");
+		output_skip_points = out["skip_points"].GetInt();
+	}
 }

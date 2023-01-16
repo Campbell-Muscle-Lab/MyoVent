@@ -51,14 +51,14 @@
             },
             "mitochondria":
             {
-                "ATP_generation_rate": 12.0
+                "ATP_generation_rate": 10.0
             },
             "myofilaments":{
                 "cb_number_density": 1.15e17,
-                "int_pas_sigma": 30,
+                "int_pas_sigma": 300,
                 "int_pas_L": 90,
                 "int_pas_slack_hsl": 950,
-                "ext_pas_sigma": 5,
+                "ext_pas_sigma": 0.5,
                 "ext_pas_L": 30,
                 "ext_pas_slack_hsl": 950,
                 "fil_compliance_factor": 0.5,
@@ -239,31 +239,24 @@
             "buffer_time_s": 2,
             "shrink_factor": 100
         },
-        "components":
+        "control":
         [
             {
                 "type": "eccentric",
-                "level": "half_sarcomere",
-                "signal": "cpt_int_pas_stress",
-                "rel_S": 1,
-                "setpoint": 1350,
-                "buffer_time_s": 5,
-                "deriv_gain": 0,
-                "xgrowth_factor": 0,
-                "growth_factor": 1e-3,
-                "energy_factor": 0
+                "level": "myofilaments",
+                "signal": "myof_mean_stress_int_pas",
+                "set_point": 350,
+                "prop_gain": -0.005,
+                "max_rate": 0.01
             },
             {
                 "type": "concentric",
-                "level": "energetics",
-                "signal": "ener_intracell_ATP_conc",
-                "rel_S": 5,
-                "setpoint": 0.007,
-                "buffer_time_s": 5,
-                "deriv_gain": 0,
-                "xgrowth_factor": 0,
-                "growth_factor": -1e-2,
-                "energy_factor": 0
+                "level": "half_sarcomere",
+                "signal": "hs_ATP_concentration",
+                "set_point": 0.007,
+                "prop_gain": -0.005,
+                "deriv_gain": -50,
+                "max_rate": 0.01
             }
         ]
     }

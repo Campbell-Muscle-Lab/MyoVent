@@ -112,6 +112,9 @@ void hemi_vent::initialise_simulation(void)
 	vent_n_hs = 1e9 * vent_circumference / p_hs->hs_length;
 
 	// Add fields
+	p_cmv_results->add_results_field("vent_wall_volume", &vent_wall_volume);
+	p_cmv_results->add_results_field("vent_wall_thickness", &vent_wall_thickness);
+	p_cmv_results->add_results_field("vent_n_hs", &vent_n_hs);
 	p_cmv_results->add_results_field("vent_stroke_work_J", &vent_stroke_work_J);
 	p_cmv_results->add_results_field("vent_stroke_energy_used_J", &vent_stroke_energy_used_J);
 	p_cmv_results->add_results_field("vent_efficiency", &vent_efficiency);

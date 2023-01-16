@@ -22,6 +22,7 @@ class cmv_results;
 class hemi_vent;
 class valve;
 class baroreflex;
+class growth;
 
 class circulation
 {
@@ -55,6 +56,8 @@ public:
 	valve* p_mv;										/**< Pointer to the mitral valve */
 
 	baroreflex* p_baroreflex;							/**< Pointer to the baroreflex object */
+
+	growth* p_growth;									/**< Pointer to the growth object */
 
 	double circ_blood_volume;							/**< double holding total blood volume
 																in liters */

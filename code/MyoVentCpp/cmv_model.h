@@ -26,6 +26,7 @@ class kinetic_scheme;
 
 struct cmv_model_valve_structure;
 struct cmv_model_rc_structure;
+struct cmv_model_gc_structure;
 
 using namespace std;
 
@@ -80,6 +81,12 @@ public:
 										/**< array of pointers to reflex controls */
 
 	int no_of_rc_controls;				/**< integer with the number of rc_controls */
+
+	// Growth
+	cmv_model_gc_structure* p_gc[MAX_NO_OF_GROWTH_CONTROLS];
+										/**< array of pointers to growth controls */
+
+	int no_of_gc_controls;				/**< integer with the number of growth controls */
 
 	// Ventricle
 	double vent_wall_density;			/**< double with wall density in kg m^-3 */

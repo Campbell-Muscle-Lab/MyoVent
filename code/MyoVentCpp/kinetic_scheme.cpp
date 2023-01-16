@@ -28,7 +28,6 @@ kinetic_scheme::kinetic_scheme(const rapidjson::Value& m_ks, cmv_model* set_p_cm
 	//! Constructor for kinetic scheme
 
 	// Code
-	cout << "Constructor for kinetic scheme\n";
 
 	// Initialise
 	p_cmv_model = set_p_cmv_model;

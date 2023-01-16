@@ -11,6 +11,7 @@
 
 #include "cmv_results.h"
 #include "cmv_system.h"
+#include "cmv_options.h"
 #include "cmv_model.h"
 
 #include "circulation.h"
@@ -42,6 +43,7 @@ cmv_results::cmv_results(cmv_system* set_p_parent_cmv_system, int set_no_of_time
 	printf("cmv_results constructor()\n");
 
 	p_parent_cmv_system = set_p_parent_cmv_system;
+	p_cmv_options = p_parent_cmv_system->p_cmv_options;
 
 	no_of_defined_results_fields = 0;
 
@@ -129,6 +131,9 @@ void cmv_results::add_results_field(std::string field_name, double* p_double)
 	if (field_name == "myof_stress_int_pas")
 		myof_stress_int_pas_field_index = new_index;
 
+	if (field_name == "myof_mean_stress_int_pas")
+		myof_mean_stress_int_pas_field_index = new_index;
+
 	if (field_name == "myof_ATP_flux")
 		myof_ATP_flux_field_index = new_index;
 
@@ -213,7 +218,8 @@ int cmv_results::write_data_to_file(std::string output_file_string)
 	FILE* output_file;
 
 	// Code
-	cout << "Writing simulation results to: " << output_file_string << "\n";
+	cout << "Writing simulation results to: " << output_file_string <<
+		" skipping every " << p_cmv_options->output_skip_points << " points \n";
 
 	// Make sure results directory exists
 	path output_file_path(output_file_string);
@@ -251,7 +257,7 @@ int cmv_results::write_data_to_file(std::string output_file_string)
 	}
 
 	// Now data
-	for (int i = 0; i < no_of_time_points; i++)
+	for (int i = 0; i < no_of_time_points; i = i + p_cmv_options->output_skip_points)
 	{
 		for (int j = 0; j < no_of_defined_results_fields; j++)
 		{
