@@ -89,4 +89,6 @@ public:
 	double return_hs_length_for_stress(double target_stress);
 
 	void calculate_hs_ATP_concentration(double time_step);
+	
+	void update_beat_metrics(void);
 };

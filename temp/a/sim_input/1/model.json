@@ -55,12 +55,12 @@
             },
             "myofilaments":{
                 "cb_number_density": 1.15e17,
-                "int_pas_sigma": 15,
+                "int_pas_sigma": 30,
                 "int_pas_L": 90,
-                "int_pas_slack_hsl": 1000,
-                "ext_pas_sigma": 2.5,
+                "int_pas_slack_hsl": 950,
+                "ext_pas_sigma": 5,
                 "ext_pas_L": 30,
-                "ext_pas_slack_hsl": 1000,
+                "ext_pas_slack_hsl": 950,
                 "fil_compliance_factor": 0.5,
                 "thick_filament_length": 815,
                 "bare_zone_length": 80,
@@ -176,7 +176,7 @@
             {
                 "level": "heart_rate",
                 "variable": "t_RR_interval_s",
-                "k_control": 0.05,
+                "k_control": 0.075,
                 "k_recov": 0.1,
                 "para_factor": 1.753497,
                 "symp_factor": 0.386
@@ -184,7 +184,7 @@
             {
                 "level": "membranes",
                 "variable": "k_active",
-                "k_control": 0.05,
+                "k_control": 0.075,
                 "k_recov": 0.1,
                 "para_factor": 0.5,
                 "symp_factor": 2.0
@@ -192,7 +192,7 @@
             {
                 "level": "membranes",
                 "variable": "k_serca",
-                "k_control": 0.05,
+                "k_control": 0.075,
                 "k_recov": 0.1,
                 "para_factor": 0.5,
                 "symp_factor": 2
@@ -200,7 +200,7 @@
             {
                 "level": "myofilaments",
                 "variable": "m_state_1_trans_1_param_1",
-                "k_control": 0.05,
+                "k_control": 0.075,
                 "k_recov": 0.1,
                 "para_factor": 0.5,
                 "symp_factor": 2
@@ -208,7 +208,7 @@
             {
                 "level": "myofilaments",
                 "variable": "k_on",
-                "k_control": 0.05,
+                "k_control": 0.075,
                 "k_recov": 0.1,
                 "para_factor": 2,
                 "symp_factor": 0.5
@@ -216,7 +216,7 @@
             {
                 "level": "circulation",
                 "variable": "resistance_4",
-                "k_control": 0.05,
+                "k_control": 0.075,
                 "k_recov": 0.1,
                 "para_factor": 0.5,
                 "symp_factor": 2
@@ -224,7 +224,7 @@
             {
                 "level": "circulation",
                 "variable": "compliance_7",
-                "k_control": 0.05,
+                "k_control": 0.075,
                 "k_recov": 0.1,
                 "para_factor": 4,
                 "symp_factor": 0.25

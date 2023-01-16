@@ -20,6 +20,12 @@
 #include "gsl_roots.h"
 #include "gsl_const_num.h"
 
+struct stats_structure {
+	double mean_value;
+	double min_value;
+	double max_value;
+};
+
 // Constructor
 half_sarcomere::half_sarcomere(hemi_vent* set_p_parent_hemi_vent)
 {
@@ -261,3 +267,29 @@ void half_sarcomere::calculate_hs_ATP_concentration(double time_step_s)
 				GSL_CONST_NUM_AVOGADRO) +
 				p_mitochondria->mito_ATP_generated_M_per_s));
 }
+
+void half_sarcomere::update_beat_metrics(void)
+{
+	//! Update beat metrics
+
+	// Variables
+	stats_structure* p_stats;
+
+	// Code
+
+	p_stats = new stats_structure;
+
+	if (p_cmv_results->hs_length_field_index >= 0)
+	{
+		p_cmv_results->calculate_sub_vector_statistics(
+			p_cmv_results->gsl_results_vectors[p_cmv_results->hs_length_field_index],
+			p_cmv_results->last_beat_t_index, p_parent_hemi_vent->p_parent_cmv_system->sim_t_index,
+			p_stats);
+
+		cout << "HS length range: " << p_stats->max_value << " to " << p_stats->min_value << "\n";
+	}
+
+	// Tidy up
+	delete p_stats;
+}
+

@@ -330,6 +330,9 @@ void hemi_vent::update_beat_metrics()
 	p_cmv_results->backfill_beat_data(
 		p_cmv_results->gsl_results_vectors[p_cmv_results->vent_cardiac_output_field_index],
 		vent_cardiac_output, p_parent_cmv_system->sim_t_index);
+
+	// Update hs metrics
+	p_hs->update_beat_metrics();
 }
 
 void hemi_vent::calculate_vent_ATP_used_per_s()

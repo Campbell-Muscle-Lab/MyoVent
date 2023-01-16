@@ -306,6 +306,7 @@
             "y_info":
             {
                 "label": "Thin filament",
+                "ticks": [0, 1],
                 "series":
                 [
                     {
@@ -326,6 +327,7 @@
             "y_info":
             {
                 "label": "Thick filament",
+                "ticks": [0, 1],
                 "series":
                 [
                     {
