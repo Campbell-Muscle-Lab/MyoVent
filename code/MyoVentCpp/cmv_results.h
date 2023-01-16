@@ -72,6 +72,9 @@ public:
 	int volume_vent_field_index;			/**< integer holding the index for the
 													ventricular volume */
 
+	int pressure_arteries_field_index;		/**< integer holding the index for the
+													arterial pressure */
+
 	int pressure_veins_field_index;			/**< integer holding the index for the
 													venous pressure */
 

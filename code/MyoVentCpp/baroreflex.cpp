@@ -67,7 +67,6 @@ baroreflex::baroreflex(circulation* set_p_parent_circulation)
 baroreflex::~baroreflex(void)
 {
 	//! hemi_vent destructor
-	std::cout << "baroreflex_destructor\n";
 
 	// Tidy up
 	for (int i = 0; i < MAX_NO_OF_REFLEX_CONTROLS; i++)

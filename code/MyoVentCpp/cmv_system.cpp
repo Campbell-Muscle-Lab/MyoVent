@@ -23,13 +23,18 @@
 
 using namespace std;
 
+struct stats_structure {
+	double mean_value;
+	double min_value;
+	double max_value;
+};
+
 // Constructor
 cmv_system::cmv_system(string JSON_model_file_string)
 {
 	// Initialise
 
 	// Code
-	printf("cmv_constructor()\n");
 
 	// Code creates a cmv_model object
 	p_cmv_model = new cmv_model(JSON_model_file_string);
@@ -53,7 +58,6 @@ cmv_system::~cmv_system(void)
 	// Initialise
 
 	// Code
-	printf("cmv_system destructor()\n");
 
 	// Tidy up
 	delete p_circulation;
@@ -98,12 +102,6 @@ void cmv_system::run_simulation(string options_file_string,
 			// Update beat metrics
 			update_beat_metrics();
 		}
-
-		// Update simulation
-		if (fmod(cum_time_s, 1.0) < p_cmv_protocol->time_step_s)
-		{
-			cout << "Simulation time: " << cum_time_s << " s\n";
-		}
 	}
 
 	// Now save data to file
@@ -146,7 +144,8 @@ bool cmv_system::implement_time_step(double time_step_s)
 void cmv_system::update_beat_metrics(void)
 {
 	//! Updates beat metrics in daughter objects
-	
+
+	cout << "New beat at: " << cum_time_s << " s\n";
 	p_circulation->update_beat_metrics();
 
 	p_cmv_results->last_beat_t_index = sim_t_index;

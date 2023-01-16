@@ -14,6 +14,7 @@
 #include "cmv_model.h"
 
 #include "circulation.h"
+#include "baroreflex.h"
 #include "hemi_vent.h"
 #include "half_sarcomere.h"
 #include "myofilaments.h"
@@ -30,6 +31,7 @@ struct stats_structure {
 	double min_value;
 	double max_value;
 };
+
 
 // Constructor
 cmv_results::cmv_results(cmv_system* set_p_parent_cmv_system, int set_no_of_time_points)
@@ -62,13 +64,15 @@ cmv_results::cmv_results(cmv_system* set_p_parent_cmv_system, int set_no_of_time
 	vent_efficiency_field_index = -1;
 	vent_ejection_fraction_field_index = -1;
 	vent_ATP_used_per_s_field_index = -1;
+
+	// Special case
+	pressure_arteries_field_index = -1;
 }
 
 // Destructor
 cmv_results::~cmv_results(void)
 {
 	// Code
-	printf("cmv_results descructor()\n");
 
 	// Delete all of the defined vectors
 	for (int i = 0; i < no_of_defined_results_fields; i++)
@@ -141,6 +145,15 @@ void cmv_results::add_results_field(std::string field_name, double* p_double)
 	if (field_name == "vent_ATP_used_per_s")
 		vent_ATP_used_per_s_field_index = new_index;
 
+	if (p_parent_cmv_system->p_circulation->p_baroreflex != NULL)
+	{
+		string b_string = "pressure_" +
+			to_string(p_parent_cmv_system->p_circulation->p_baroreflex->
+				baro_P_compartment);
+		if (field_name == b_string)
+			pressure_arteries_field_index = new_index;
+	}
+
 	// Update the number of defined fields
 	no_of_defined_results_fields = no_of_defined_results_fields + 1;
 }
@@ -153,55 +166,6 @@ void cmv_results::update_results_vectors(int t_index)
 	{
 		gsl_vector_set(gsl_results_vectors[i], t_index, *p_data_sources[i]);
 	}
-}
-
-void cmv_results::calculate_beat_metrics(int t_index)
-{
-	//! Function calculates metrics for the beat
-	
-	// Variables
-
-	stats_structure* p_stats;			// Pointer to a stats structure
-
-	// Code
-
-	// Handle first beat
-	if (last_beat_t_index < 0)
-	{
-		last_beat_t_index = t_index;
-		return;
-	}
-
-	p_stats = new stats_structure;
-
-	// Time
-	calculate_sub_vector_statistics(gsl_results_vectors[time_field_index],
-		last_beat_t_index, t_index, p_stats);
-	cout << "New beat time: " << p_stats->max_value << "\n";
-
-	calculate_sub_vector_statistics(gsl_results_vectors[pressure_vent_field_index],
-		last_beat_t_index, t_index, p_stats);
-	cout << "Arterial pressure (mmHg): " << p_stats->max_value << " / " << p_stats->min_value << "\n";
-
-	calculate_sub_vector_statistics(gsl_results_vectors[volume_vent_field_index],
-		last_beat_t_index, t_index, p_stats);
-	cout << "Max ventricular volume (liters): " << p_stats->max_value << "\n";
-	cout << "Ejection fraction: " << 
-		100.0 * (p_stats->max_value - p_stats->min_value) / (p_stats->max_value) << "\n";
-
-	calculate_sub_vector_statistics(gsl_results_vectors[hs_length_field_index],
-		last_beat_t_index, t_index, p_stats);
-	cout << "hs_length range (nm): " << p_stats->max_value << " / " << p_stats->min_value << "\n";
-
-	calculate_sub_vector_statistics(gsl_results_vectors[myof_stress_int_pas_field_index],
-		last_beat_t_index, t_index, p_stats);
-	cout << "myof_stress_int_pas, mean (N m^-2): " << p_stats->mean_value << "\n";
-
-	// Prepare for next beat
-	last_beat_t_index = t_index;
-
-	// Tidy up
-	delete p_stats;
 }
 
 void cmv_results::calculate_sub_vector_statistics(gsl_vector* gsl_v, int start_index, int stop_index,

@@ -18,7 +18,6 @@ heart_rate::heart_rate(half_sarcomere* set_p_parent_hs)
 	// Initialise
 
 	// Code
-	std::cout << "heart_rate_constructor()\n";
 
 	// Set pointers
 	p_parent_hs = set_p_parent_hs;
@@ -35,7 +34,6 @@ heart_rate::heart_rate(half_sarcomere* set_p_parent_hs)
 heart_rate::~heart_rate(void)
 {
 	//! Heart_rate destructor
-	std::cout << "heart_rate_destructor\n";
 }
 
 // Other functions

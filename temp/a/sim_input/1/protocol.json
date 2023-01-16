@@ -2,7 +2,7 @@
     "protocol":
     {
         "time_step": 0.001,
-        "no_of_time_steps": 40000
+        "no_of_time_steps": 15000
     },
     "activation":
     [

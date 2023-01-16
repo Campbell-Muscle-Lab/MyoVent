@@ -83,6 +83,12 @@ public:
 
 	double vent_ATP_used_per_s;				/**< double with ATP used per used */
 
+	double vent_stroke_volume;				/**< double with vent stroke volume
+													in liters */
+
+	double vent_cardiac_output;				/**< double with vent cardiac output
+													in liter per minute */
+
 	// Other functions
 	void initialise_simulation(void);
 

@@ -23,7 +23,6 @@ cmv_options::cmv_options(string set_options_file_string)
 	// Initialise
 
 	// Code
-	cout << "cmv_options constructor\n";
 
 	// Initialise variables
 	options_file_string = set_options_file_string;
@@ -38,7 +37,6 @@ cmv_options::~cmv_options(void)
 	// Initialise
 
 	// Code
-	cout << "cmv_options desctructor\n";
 }
 
 void cmv_options::initialise_options_from_JSON_file(string options_file_string)

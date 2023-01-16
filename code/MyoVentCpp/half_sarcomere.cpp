@@ -58,7 +58,6 @@ half_sarcomere::~half_sarcomere(void)
 	//! Destructor
 
 	// Code
-	printf("half_saromere destructor()\n");
 
 	// Tidy up
 	delete p_heart_rate;

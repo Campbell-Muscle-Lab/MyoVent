@@ -88,7 +88,6 @@ cmv_model::cmv_model(string JSON_model_file_string)
 cmv_model::~cmv_model(void)
 {
 	// Code
-	std::cout << "cmv_model destructor\n";
 
 	delete p_m_scheme;
 

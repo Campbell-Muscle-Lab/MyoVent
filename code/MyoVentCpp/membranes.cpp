@@ -22,7 +22,6 @@ membranes::membranes(half_sarcomere* set_p_parent_hs)
 	//! Constructor
 
 	// Code
-	printf("membranes constructor()\n");
 
 	// Set the pointer to the parent system
 	p_parent_hs = set_p_parent_hs;
@@ -54,7 +53,6 @@ membranes::~membranes(void)
 	//! Destructor
 
 	// Code
-	printf("membranes destructor()\n");
 }
 
 // Other functions

@@ -52,6 +52,8 @@ hemi_vent::hemi_vent(circulation* set_p_parent_circulation)
 	vent_efficiency = GSL_NAN;
 	vent_ejection_fraction = GSL_NAN;
 	vent_ATP_used_per_s = 0.0;
+	vent_cardiac_output = GSL_NAN;
+	vent_stroke_volume = GSL_NAN;
 
 	// Initialise child half-sarcomere
 	p_hs = new half_sarcomere(this);
@@ -67,7 +69,6 @@ hemi_vent::hemi_vent(circulation* set_p_parent_circulation)
 hemi_vent::~hemi_vent(void)
 {
 	//! hemi_vent destructor
-	std::cout << "hemi_vent_destructor\n";
 
 	// Tidy up
 	delete p_hs;
@@ -283,11 +284,15 @@ void hemi_vent::update_beat_metrics()
 	// Calculate the ejection fraction
 	stats_structure* p_v_stats = new stats_structure;
 
+	// Calculate stroke volume
 	p_cmv_results->calculate_sub_vector_statistics(
-	p_cmv_results->gsl_results_vectors[p_cmv_results->volume_vent_field_index],
-	p_cmv_results->last_beat_t_index, p_parent_cmv_system->sim_t_index, p_v_stats);
+		p_cmv_results->gsl_results_vectors[p_cmv_results->volume_vent_field_index],
+		p_cmv_results->last_beat_t_index, p_parent_cmv_system->sim_t_index, p_v_stats);
 
-	vent_ejection_fraction = (p_v_stats->max_value - p_v_stats->min_value) / p_v_stats->max_value;
+	vent_stroke_volume = p_v_stats->max_value - p_v_stats->min_value;
+
+	vent_ejection_fraction = vent_stroke_volume / p_v_stats->max_value;
+
 
 	// Backfill results
 	p_cmv_results->backfill_beat_data(

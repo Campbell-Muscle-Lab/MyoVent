@@ -331,22 +331,22 @@
                     {
                         "field": "myof_m_pop_0",
                         "field_label": "SRX",
-                        "style": "envelope"
+                        "style": "line"
                     },
                     {
                         "field": "myof_m_pop_1",
                         "field_label": "DRX",
-                        "style": "envelope"
+                        "style": "line"
                     },
                     {
                         "field": "myof_m_pop_2",
                         "field_label": "PRE",
-                        "style": "envelope"
+                        "style": "line"
                     },
                     {
                         "field": "myof_m_pop_3",
                         "field_label": "POST",
-                        "style": "envelope"
+                        "style": "line"
                     }
                 ]
             }
@@ -407,7 +407,7 @@
             "column": 5,
             "y_info":
             {
-                "label": "myosin ATP\nflux\n(M s^-1 m^-3)",
+                "label": "myosin ATP\nflux\n(s^-1)",
                 "series":
                 [
                     {

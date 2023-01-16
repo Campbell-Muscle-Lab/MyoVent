@@ -36,7 +36,6 @@ cmv_protocol::cmv_protocol(cmv_system* set_p_cmv_system, string set_protocol_fil
 	// Initialise
 
 	// Code
-	cout << "cmv_protocol constructor\n";
 
 	// Initialise variables
 	p_cmv_sytem = set_p_cmv_system;
@@ -70,7 +69,6 @@ cmv_protocol::~cmv_protocol(void)
 	// Initialise
 
 	// Code
-	cout << "cmv_protocol desctructor\n";
 
 	// Tidy up
 	for (int i = 0; i < MAX_NO_OF_ACTIVATIONS; i++)

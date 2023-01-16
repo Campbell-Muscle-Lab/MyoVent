@@ -6,7 +6,7 @@
         "blood_volume": 4.5,
         "compartments":
         {
-            "resistance": [5, 20, 20, 1200, 600, 50, 20],
+            "resistance": [5, 20, 20, 1000, 500, 50, 20],
             "compliance": [0, 4e-4, 8e-4, 1e-3, 1e-3, 0.03, 0.08],
             "slack_volume": [0.065, 0.3, 0.3, 0.1, 0.25, 0.5, 2.0],
             "inertance": [100, 100, 100, 100, 100, 100, 100]
@@ -34,7 +34,7 @@
             }
         },
         "heart_rate": {
-            "t_RR_interval_s": 1.0
+            "t_RR_interval_s": 0.85
         },
         "half_sarcomere":{
             "reference_hs_length": 1100,
@@ -90,7 +90,7 @@
                             "new_state": 2,
                             "rate_type": "force_dependent",
                             "rate_parameters": [
-                                15,
+                                10,
                                 1e-4
                             ]
                             }
@@ -112,7 +112,7 @@
                             "new_state": 3,
                             "rate_type": "gaussian_hsl",
                             "rate_parameters": [
-                                250
+                                125
                             ]
                             }
                         ]
@@ -126,7 +126,7 @@
                             "new_state": 2,
                             "rate_type": "poly",
                             "rate_parameters": [
-                                250,
+                                200,
                                 0.1,
                                 4
                             ]
@@ -143,14 +143,14 @@
                         {
                             "number": 4,
                             "type": "A",
-                            "extension": 5.0,
+                            "extension": 8.0,
                             "transition": [
                                 {
                                 "new_state": 2,
                                 "ATP_required": "y",
                                 "rate_type": "exp_wall",
                                 "rate_parameters": [
-                                    100,
+                                    180,
                                     0.5,
                                     5,
                                     3

@@ -21,7 +21,11 @@
 #include "gsl_errno.h"
 #include "gsl_odeiv2.h"
 
-
+struct stats_structure{
+	double mean_value;
+	double min_value;
+	double max_value;
+};
 
 // Constructor
 circulation::circulation(cmv_system* set_p_parent_cmv_system = NULL)
@@ -111,7 +115,6 @@ circulation::~circulation(void)
 	//! Destructor
 
 	// Code
-	printf("circulation destructor()\n");
 
 	delete p_hemi_vent;
 
@@ -343,6 +346,27 @@ void circulation::calculate_flows(const double v[])
 void circulation::update_beat_metrics(void)
 {
 	//! Update beat metrics in daughter objects
+
+	// Variables
+	stats_structure* p_stats;
+
+	// Code
 	
+	p_stats = new stats_structure;
+
+	if (p_cmv_results->pressure_arteries_field_index >= 0)
+	{
+		p_cmv_results->calculate_sub_vector_statistics(
+			p_cmv_results->gsl_results_vectors[p_cmv_results->pressure_arteries_field_index],
+			p_cmv_results->last_beat_t_index, p_parent_cmv_system->sim_t_index,
+			p_stats);
+
+		cout << "Arterial pressure: " << p_stats->max_value << " / " << p_stats->min_value << "\n";
+	}
+
 	p_hemi_vent->update_beat_metrics();
+
+	// Tidy up
+	delete p_stats;
 }
+

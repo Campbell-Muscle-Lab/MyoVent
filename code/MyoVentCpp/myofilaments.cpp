@@ -34,7 +34,6 @@ myofilaments::myofilaments(half_sarcomere* set_p_parent_hs)
 	//! Constructor
 
 	// Code
-	cout << "myofilaments constructor()\n";
 
 	// Set the pointers to the appropriate places
 	p_parent_hs = set_p_parent_hs;
@@ -105,7 +104,6 @@ myofilaments::~myofilaments(void)
 	//! Destructor
 
 	// Code
-	cout << "Myofilaments destructor()\n";
 
 	// Tidy up
 	if (x != NULL)
