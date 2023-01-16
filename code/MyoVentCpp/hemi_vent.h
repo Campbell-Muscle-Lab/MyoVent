@@ -104,7 +104,7 @@ public:
 
 	void update_chamber_volume(double new_volume);
 
-	void update_beat_metrics();
+	void update_beat_metrics(void);
 
 	void calculate_vent_ATP_used_per_s(void);
 };

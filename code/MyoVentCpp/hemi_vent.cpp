@@ -54,6 +54,7 @@ hemi_vent::hemi_vent(circulation* set_p_parent_circulation)
 	vent_ATP_used_per_s = 0.0;
 	vent_cardiac_output = GSL_NAN;
 	vent_stroke_volume = GSL_NAN;
+	vent_cardiac_output = GSL_NAN;
 
 	// Initialise child half-sarcomere
 	p_hs = new half_sarcomere(this);
@@ -116,6 +117,8 @@ void hemi_vent::initialise_simulation(void)
 	p_cmv_results->add_results_field("vent_efficiency", &vent_efficiency);
 	p_cmv_results->add_results_field("vent_ejection_fraction", &vent_ejection_fraction);
 	p_cmv_results->add_results_field("vent_ATP_used_per_s", &vent_ATP_used_per_s);
+	p_cmv_results->add_results_field("vent_stroke_volume", &vent_stroke_volume);
+	p_cmv_results->add_results_field("vent_cardiac_output", &vent_cardiac_output);
 }
 
 bool hemi_vent::implement_time_step(double time_step_s)
@@ -275,6 +278,9 @@ void hemi_vent::update_chamber_volume(double new_volume)
 void hemi_vent::update_beat_metrics()
 {
 	//! Code updates beat metrics
+	
+	// Variables
+	double cardiac_cycle_s;
 
 	// Update beat values
 	vent_stroke_work_J = p_cmv_results->return_stroke_work(p_parent_cmv_system->sim_t_index);
@@ -293,6 +299,12 @@ void hemi_vent::update_beat_metrics()
 
 	vent_ejection_fraction = vent_stroke_volume / p_v_stats->max_value;
 
+	// Calculate period of cardiac cycle to get cardiac output
+	cardiac_cycle_s = p_parent_cmv_system->cum_time_s -
+		gsl_vector_get(p_cmv_results->gsl_results_vectors[p_cmv_results->time_field_index],
+			p_cmv_results->last_beat_t_index);
+
+	vent_cardiac_output = 60.0 * vent_stroke_volume / cardiac_cycle_s;
 
 	// Backfill results
 	p_cmv_results->backfill_beat_data(
@@ -310,6 +322,14 @@ void hemi_vent::update_beat_metrics()
 	p_cmv_results->backfill_beat_data(
 		p_cmv_results->gsl_results_vectors[p_cmv_results->vent_ejection_fraction_field_index],
 		vent_ejection_fraction, p_parent_cmv_system->sim_t_index);
+
+	p_cmv_results->backfill_beat_data(
+		p_cmv_results->gsl_results_vectors[p_cmv_results->vent_stroke_volume_field_index],
+		vent_stroke_volume, p_parent_cmv_system->sim_t_index);
+
+	p_cmv_results->backfill_beat_data(
+		p_cmv_results->gsl_results_vectors[p_cmv_results->vent_cardiac_output_field_index],
+		vent_cardiac_output, p_parent_cmv_system->sim_t_index);
 }
 
 void hemi_vent::calculate_vent_ATP_used_per_s()

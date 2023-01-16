@@ -404,6 +404,32 @@
             }
         },
         {
+            "column": 4,
+            "y_info":
+            {
+                "label": "Stroke\nvolume\n(liters)",
+                "series":
+                [
+                    {
+                        "field": "vent_stroke_volume"
+                    }
+                ]
+            }
+        },
+        {
+            "column": 4,
+            "y_info":
+            {
+                "label": "Cardiac\noutput\n(liters min^-1)",
+                "series":
+                [
+                    {
+                        "field": "vent_cardiac_output"
+                    }
+                ]
+            }
+        },
+        {
             "column": 5,
             "y_info":
             {

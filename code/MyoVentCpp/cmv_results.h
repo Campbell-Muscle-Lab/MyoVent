@@ -102,6 +102,12 @@ public:
 	int vent_ATP_used_per_s_field_index;	/**< integer holding the index for the
 													vent ATP used per s field */
 
+	int vent_stroke_volume_field_index;		/**< integer holding the index for the
+													vent stroke volume field */
+
+	int vent_cardiac_output_field_index;	/**< integer holding the index for the
+													vent cardiac output volume field */
+
 
 	// Functions
 

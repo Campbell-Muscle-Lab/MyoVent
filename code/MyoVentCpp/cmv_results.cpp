@@ -64,6 +64,8 @@ cmv_results::cmv_results(cmv_system* set_p_parent_cmv_system, int set_no_of_time
 	vent_efficiency_field_index = -1;
 	vent_ejection_fraction_field_index = -1;
 	vent_ATP_used_per_s_field_index = -1;
+	vent_stroke_volume_field_index = -1;
+	vent_cardiac_output_field_index = -1;
 
 	// Special case
 	pressure_arteries_field_index = -1;
@@ -144,6 +146,12 @@ void cmv_results::add_results_field(std::string field_name, double* p_double)
 
 	if (field_name == "vent_ATP_used_per_s")
 		vent_ATP_used_per_s_field_index = new_index;
+
+	if (field_name == "vent_stroke_volume")
+		vent_stroke_volume_field_index = new_index;
+
+	if (field_name == "vent_cardiac_output")
+		vent_cardiac_output_field_index = new_index;
 
 	if (p_parent_cmv_system->p_circulation->p_baroreflex != NULL)
 	{
