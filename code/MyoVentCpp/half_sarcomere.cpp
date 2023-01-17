@@ -286,8 +286,6 @@ void half_sarcomere::update_beat_metrics(void)
 			p_cmv_results->gsl_results_vectors[p_cmv_results->hs_length_field_index],
 			p_cmv_results->last_beat_t_index, p_parent_hemi_vent->p_parent_cmv_system->sim_t_index,
 			p_stats);
-
-		cout << "HS length range: " << p_stats->max_value << " to " << p_stats->min_value << "\n";
 	}
 
 	// Update daughter objects

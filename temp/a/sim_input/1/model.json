@@ -235,9 +235,9 @@
     {
         "shrinkage":
         {
-            "signal": "ener_flux_total_ATP_consumed",
-            "buffer_time_s": 2,
-            "shrink_factor": 100
+            "level": "ventricle",
+            "signal": "vent_stroke_energy_used_J",
+            "prop_gain": 0.00
         },
         "control":
         [
@@ -254,9 +254,9 @@
                 "level": "half_sarcomere",
                 "signal": "hs_ATP_concentration",
                 "set_point": 0.007,
-                "prop_gain": -0.005,
-                "deriv_gain": -50,
-                "max_rate": 0.01
+                "prop_gain": -0.025,
+                "deriv_gain": -25,
+                "max_rate": 0.02
             }
         ]
     }

@@ -51,8 +51,6 @@ valve::valve(hemi_vent* set_p_parent_hemi_vent, cmv_model_valve_structure* set_p
 	valve_eta = p_cmv_model_valve->eta;
 	valve_k = p_cmv_model_valve->k;
 
-	cout << "valve_name: " << valve_name << "\n";
-
 	// Initialise
 	valve_pos = 0.0;
 	valve_vel = 0.0;
@@ -86,8 +84,6 @@ void valve::initialise_simulation(void)
 
 	// Now add the results fields
 	label_string = valve_name + "_valve_pos";
-	
-	cout << "label_string: " << label_string << "\n";
 
 	p_cmv_results->add_results_field(label_string, &valve_pos);
 }

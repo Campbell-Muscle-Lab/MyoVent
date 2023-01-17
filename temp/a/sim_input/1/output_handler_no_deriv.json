@@ -1,0 +1,10 @@
+{
+    "templated_images":
+    [
+        {
+            "relative_to": "this_file",
+            "template_file_string": "../../templates/template_baro.json",
+            "output_file_string": "../../sim_output/summary_no_deriv"
+        }
+    ]
+}

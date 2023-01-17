@@ -34,7 +34,6 @@ circulation::circulation(cmv_system* set_p_parent_cmv_system = NULL)
 	//! Constructor
 
 	// Code
-	printf("circulation constructor()\n");
 
 	// Initialise
 

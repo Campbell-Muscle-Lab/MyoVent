@@ -83,6 +83,12 @@ public:
 	int no_of_rc_controls;				/**< integer with the number of rc_controls */
 
 	// Growth
+	string gr_shrink_level;				/**< string with shrinkage level */
+
+	string gr_shrink_signal;			/**< string with shrinkage signal */
+
+	double gr_shrink_prop_gain;			/**< double with shrinkage gain */
+
 	cmv_model_gc_structure* p_gc[MAX_NO_OF_GROWTH_CONTROLS];
 										/**< array of pointers to growth controls */
 

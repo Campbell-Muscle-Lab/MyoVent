@@ -46,6 +46,13 @@ growth::growth(circulation* set_p_parent_circulation)
 
 	// Set from model
 
+	gr_shrink_level = p_cmv_model->gr_shrink_level;
+	gr_shrink_signal = p_cmv_model->gr_shrink_signal;
+	gr_shrink_prop_gain = p_cmv_model->gr_shrink_prop_gain;
+
+	p_gr_shrink_signal = NULL;
+	gr_shrink_output = GSL_NAN;
+
 	// Set the controls
 	no_of_growth_controls = p_cmv_model->no_of_gc_controls;
 
@@ -87,8 +94,11 @@ void growth::initialise_simulation(void)
 		p_gc[i]->initialise_simulation();
 	}
 
+	set_p_gr_shrink_signal();
+
 	// Add fields
 	p_cmv_results->add_results_field("growth_active", &growth_active);
+	p_cmv_results->add_results_field("gr_shrink_output", &gr_shrink_output);
 }
 
 void growth::implement_time_step(double time_step_s, bool new_beat)
@@ -137,6 +147,36 @@ void growth::implement_time_step(double time_step_s, bool new_beat)
 					p_parent_circulation->p_hemi_vent->vent_wall_volume *
 					(1.0 + (delta_n_hs / p_parent_circulation->p_hemi_vent->vent_n_hs));
 			}
+		}
+	}
+
+	if (growth_active)
+	{
+		// Finally shrinkage
+		if (!gsl_isnan(*p_gr_shrink_signal))
+		{
+			gr_shrink_output = gr_shrink_prop_gain * (*p_gr_shrink_signal);
+
+			p_parent_circulation->p_hemi_vent->vent_wall_volume =
+				p_parent_circulation->p_hemi_vent->vent_wall_volume *
+				(1.0 + (time_step_s * gr_shrink_output));
+		}
+	}
+
+}
+
+void growth::set_p_gr_shrink_signal(void)
+{
+	//! Sets the pointer to the growth signal
+
+	// Variables
+
+	// Code
+	if (gr_shrink_level == "ventricle")
+	{
+		if (gr_shrink_signal == "vent_stroke_energy_used_J")
+		{
+			p_gr_shrink_signal = &(p_parent_circulation->p_hemi_vent->vent_stroke_energy_used_J);
 		}
 	}
 }

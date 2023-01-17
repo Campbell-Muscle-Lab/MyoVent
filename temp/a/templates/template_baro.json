@@ -466,6 +466,23 @@
                 [
                     {
                         "field": "hs_ATP_concentration"
+                    },
+                    {
+                        "reference": 0.007
+                    }
+                ]
+            }
+        },
+        {
+            "column": 5,
+            "y_info":
+            {
+                "label": "Vent\nwall\nthickness",
+                "series":
+                [
+                    {
+                        "field": "vent_wall_thickness",
+                        "style": "envelope"
                     }
                 ]
             }
@@ -552,7 +569,16 @@
                 "series":
                 [
                     {
-                        "field": "gc_2_output"
+                        "field": "gc_2_output",
+                        "field_label": "Concentric"
+                    },
+                    {
+                        "field": "gr_shrink_output",
+                        "field_label": "Shrinkage"
+                    },
+                    {
+                        "reference": 0,
+                        "field_label": "Zero"
                     }
                 ]
             }

@@ -209,7 +209,6 @@ double hemi_vent::return_pressure_for_chamber_volume(double cv)
 	double delta_hs_length;
 	double new_stress;
 	double internal_r;
-	double wall_thickness;
 	double P_in_Pascals;
 	double P_in_mmHg;
 
@@ -227,7 +226,7 @@ double hemi_vent::return_pressure_for_chamber_volume(double cv)
 
 	internal_r = return_internal_radius_for_chamber_volume(cv);
 
-	wall_thickness = return_wall_thickness_for_chamber_volume(cv);
+	vent_wall_thickness = return_wall_thickness_for_chamber_volume(cv);
 
 	// Pressure from Laplace's law
 	// https://www.annalsthoracicsurgery.org/action/showPdf?pii=S0003-4975%2810%2901981-8
@@ -238,12 +237,12 @@ double hemi_vent::return_pressure_for_chamber_volume(double cv)
 		cout << "Hemi_vent, internal_r ~= 0.0 problem\n";
 		cout << "delta_hs_length: " << delta_hs_length << "\n";
 		cout << "new_stress: " << new_stress << "\n";
-		cout << "wall_thickness: " << wall_thickness << "\n";
+		cout << "wall_thickness: " << vent_wall_thickness << "\n";
 	}
 	else
 	{
-		P_in_Pascals = (new_stress * wall_thickness *
-			(2.0 + (vent_thick_wall_multiplier * (wall_thickness / internal_r)))) /
+		P_in_Pascals = (new_stress * vent_wall_thickness *
+			(2.0 + (vent_thick_wall_multiplier * (vent_wall_thickness / internal_r)))) /
 			internal_r;
 	}
 

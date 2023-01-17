@@ -415,6 +415,22 @@ void cmv_model::initialise_model_from_JSON_file(string JSON_model_file_string)
 		// It might not be in the model file
 		const rapidjson::Value& grow = doc["growth"];
 
+		// Shrinkage
+
+		JSON_functions::check_JSON_member_exists(grow, "shrinkage");
+		const rapidjson::Value& shrink = grow["shrinkage"];
+
+		JSON_functions::check_JSON_member_string(shrink, "level");
+		gr_shrink_level = shrink["level"].GetString();
+
+		JSON_functions::check_JSON_member_string(shrink, "signal");
+		gr_shrink_signal = shrink["signal"].GetString();
+
+		JSON_functions::check_JSON_member_number(shrink, "prop_gain");
+		gr_shrink_prop_gain = shrink["prop_gain"].GetDouble();
+
+		// Growth controls
+
 		JSON_functions::check_JSON_member_array(grow, "control");
 		const rapidjson::Value& grow_array = grow["control"];
 

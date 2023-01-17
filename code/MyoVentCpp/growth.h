@@ -21,6 +21,8 @@ class cmv_options;
 class circulation;
 class growth_control;
 
+using namespace::std;
+
 class growth
 {
 public:
@@ -56,9 +58,18 @@ public:
 													1.0, active
 													0.0, inactive */
 
+	string gr_shrink_level;
+	string gr_shrink_signal;
+	double gr_shrink_prop_gain;
+	
+	double* p_gr_shrink_signal;
+
+	double gr_shrink_output;
 
 	// Other functions
 	void initialise_simulation(void);
 
 	void implement_time_step(double time_step_s, bool new_beat);
+
+	void set_p_gr_shrink_signal(void);
 };

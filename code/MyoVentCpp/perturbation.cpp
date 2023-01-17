@@ -7,10 +7,17 @@
 #include "stdio.h"
 
 #include <iostream>
+#include <regex>
 
 #include "cmv_protocol.h"
 #include "perturbation.h"
+#include "cmv_system.h"
 #include "circulation.h"
+#include "hemi_vent.h"
+#include "half_sarcomere.h"
+#include "myofilaments.h"
+#include "kinetic_scheme.h"
+#include "transition.h"
 #include "baroreflex.h"
 
 #include "gsl_math.h"
@@ -79,5 +86,79 @@ void perturbation::impose(double sim_time_s)
 				*p_double = *p_double + increment;
 			}
 		}
+
+		if (class_name == "circulation")
+		{
+			if (variable.rfind("resistance", 0) == 0)
+			{
+				// Starts with resistance
+				int no_of_digits = 1;
+				int digits[1];
+				int compartment_index;
+
+				for (int i = 0; i < no_of_digits; i++)
+					digits[i] = 0;
+
+				extract_digits(variable, digits, 1);
+
+				compartment_index = digits[0] - 1;
+
+				p_double = &(p_cmv_protocol->p_cmv_sytem->p_circulation->circ_resistance[compartment_index]);
+
+				*p_double = *p_double + increment;
+			}
+		}
+
+		if (class_name == "myofilaments")
+		{
+			if (variable.rfind("m_state", 0) == 0)
+			{
+				// Starts with m_state
+				int no_of_digits = 3;
+				int digits[3];
+				int state_index;
+				int transition_index;
+				int parameter_index;
+
+				for (int i = 0; i < no_of_digits; i++)
+					digits[i] = 0;
+
+				extract_digits(variable, digits, 3);
+
+				state_index = digits[0] - 1;
+				transition_index = digits[1] - 1;
+				parameter_index = digits[2] - 1;
+
+				// This is tricky because the variable is stored in a gsl_vector
+				gsl_vector* p_gsl_v = p_cmv_protocol->p_cmv_sytem->p_circulation->p_hemi_vent->
+					p_hs->p_myofilaments->p_m_scheme->p_m_states[state_index]->p_transitions[transition_index]->rate_parameters;
+				
+				gsl_vector_set(p_gsl_v, parameter_index,
+					gsl_vector_get(p_gsl_v, parameter_index) + increment);
+			}
+		}
+	}
+}
+
+void perturbation::extract_digits(string test_string, int digits[], int no_of_digits)
+{
+	//! Function fills digits array with [0-9] extracted from string
+	//! See https://en.cppreference.com/w/cpp/regex/regex_iterator
+
+	// Variables
+	int counter;
+
+	// Code
+	regex ex("[0-9]");
+
+	auto digits_begin = sregex_iterator(test_string.begin(), test_string.end(), ex);
+	auto digits_end = sregex_iterator();
+
+	counter = 0;
+	for (regex_iterator i = digits_begin; i != digits_end; i++)
+	{
+		smatch match = *i;
+		digits[counter] = atoi((match.str().c_str()));
+		counter = counter + 1;
 	}
 }

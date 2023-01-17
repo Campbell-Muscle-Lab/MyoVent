@@ -9,6 +9,7 @@
 #include "stdio.h"
 
 #include <iostream>
+#include <regex>
 
 #include "global_definitions.h"
 
@@ -55,4 +56,10 @@ public:
 	 int return_status(string test_type, double t_test_s);
 
 	 void impose(double time_step_s);
+
+	 void extract_digits(string test_string, int digits[], int no_of_digits);
+
+
+
+
 };
