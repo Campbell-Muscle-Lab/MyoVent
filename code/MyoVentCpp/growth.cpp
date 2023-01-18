@@ -178,5 +178,10 @@ void growth::set_p_gr_shrink_signal(void)
 		{
 			p_gr_shrink_signal = &(p_parent_circulation->p_hemi_vent->vent_stroke_energy_used_J);
 		}
+
+		if (gr_shrink_signal == "vent_wall_volume")
+		{
+			p_gr_shrink_signal = &(p_parent_circulation->p_hemi_vent->vent_wall_volume);
+		}
 	}
 }

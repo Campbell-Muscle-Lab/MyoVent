@@ -15,6 +15,7 @@
 #include "circulation.h"
 #include "hemi_vent.h"
 #include "half_sarcomere.h"
+#include "mitochondria.h"
 #include "myofilaments.h"
 #include "kinetic_scheme.h"
 #include "transition.h"
@@ -73,6 +74,9 @@ void perturbation::impose(double sim_time_s)
 	// Variables
 	double* p_double;
 
+	double delta_n_hs;
+	double delta_hs_length;
+
 	// Code
 
 	if ((sim_time_s >= t_start_s) && (sim_time_s <= t_stop_s))
@@ -104,6 +108,52 @@ void perturbation::impose(double sim_time_s)
 				compartment_index = digits[0] - 1;
 
 				p_double = &(p_cmv_protocol->p_cmv_sytem->p_circulation->circ_resistance[compartment_index]);
+
+				*p_double = *p_double + increment;
+			}
+		}
+
+		if (class_name == "ventricle")
+		{
+			if (variable == "vent_wall_volume")
+			{
+				p_double = &(p_cmv_protocol->p_cmv_sytem->p_circulation->p_hemi_vent->vent_wall_volume);
+
+				*p_double = *p_double + increment;
+			}
+
+			if (variable == "vent_n_hs")
+			{
+				p_double = &(p_cmv_protocol->p_cmv_sytem->p_circulation->p_hemi_vent->vent_n_hs);
+
+				// When we change vent_n_hs, we need to adjust the length of the existing half-sarcomeres
+				// and the wall volume as well
+
+				delta_n_hs = increment;
+
+				// Work out how far half-sarcomeres move using chain rule
+				delta_hs_length = -(delta_n_hs * p_cmv_protocol->p_cmv_sytem->p_circulation->p_hemi_vent->p_hs->hs_length) /
+					p_cmv_protocol->p_cmv_sytem->p_circulation->p_hemi_vent->vent_n_hs;
+
+				// Apply to half-sarcomere
+				p_cmv_protocol->p_cmv_sytem->p_circulation->p_hemi_vent->p_hs->change_hs_length(delta_hs_length);
+
+				// And the wall volume
+				p_cmv_protocol->p_cmv_sytem->p_circulation->p_hemi_vent->vent_wall_volume =
+					p_cmv_protocol->p_cmv_sytem->p_circulation->p_hemi_vent->vent_wall_volume *
+					(1.0 + (delta_n_hs / p_cmv_protocol->p_cmv_sytem->p_circulation->p_hemi_vent->vent_n_hs));
+
+				// Finally increment the vent_n_hs
+				*p_double = *p_double + increment;
+			}
+		}
+
+		if (class_name == "mitochondria")
+		{
+			if (variable == "ATP_generation_rate")
+			{
+				p_double = &(p_cmv_protocol->p_cmv_sytem->p_circulation->p_hemi_vent->p_hs->
+					p_mitochondria->mito_ATP_generation_rate);
 
 				*p_double = *p_double + increment;
 			}

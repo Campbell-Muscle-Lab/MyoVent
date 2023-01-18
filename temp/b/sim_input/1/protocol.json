@@ -1,0 +1,58 @@
+{
+    "protocol":
+    {
+        "time_step": 0.001,
+        "no_of_time_steps": 500000
+    },
+    "activation":
+    [
+        {
+            "type": "baroreflex",
+            "t_start_s": 15,
+            "t_stop_s": 1000.0
+        },
+        {
+            "type": "growth",
+            "t_start_s": 25,
+            "t_stop_s": 1000.0
+        }
+    ],
+    "perturbation":
+    [
+        {
+            "class": "baroreflex",
+            "variable": "baro_P_set",
+            "t_start_s": 200.0,
+            "t_stop_s": 200.1,
+            "total_change": 40
+        },
+        {
+            "class": "circulation",
+            "variable": "resistance_2",
+            "t_start_s": 2000.0,
+            "t_stop_s": 2000.1,
+            "total_change": 400
+        },
+        {
+            "class": "mitochondria",
+            "variable": "ATP_generation_rate",
+            "t_start_s": 2000.0,
+            "t_stop_s": 2000.1,
+            "total_change": -1.5
+        },
+        {
+            "class": "ventricle",
+            "variable": "vent_wall_volume",
+            "t_start_s": 1200.0,
+            "t_stop_s": 1220.0,
+            "total_change": -0.04
+        },
+        {
+            "class": "ventricle",
+            "variable": "vent_n_hs",
+            "t_start_s": 1100.0,
+            "t_stop_s": 1100.1,
+            "total_change": 60000
+        }
+    ]
+}
