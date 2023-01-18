@@ -4,10 +4,17 @@
     },
     "circulation":{
         "blood_volume": 4.5,
-        "compartments":
+        "xcompartments":
         {
             "resistance": [5, 15, 30, 650, 350, 50, 20],
             "compliance": [0, 5e-4, 6e-4, 7e-4, 1.2e-3, 0.03, 0.08],
+            "slack_volume": [0.065, 0.3, 0.3, 0.1, 0.25, 0.5, 2.0],
+            "inertance": [100, 100, 100, 100, 100, 100, 100]
+        },
+        "compartments":
+        {
+            "resistance": [5, 1500000, 30, 650, 350, 50, 20],
+            "compliance": [0, 5e-4, 6e-4, 7e-4, 1.2e-3, 0.03, 10],
             "slack_volume": [0.065, 0.3, 0.3, 0.1, 0.25, 0.5, 2.0],
             "inertance": [100, 100, 100, 100, 100, 100, 100]
         }
@@ -55,10 +62,10 @@
             },
             "myofilaments":{
                 "cb_number_density": 1.15e17,
-                "int_pas_sigma": 300,
+                "int_pas_sigma": 50,
                 "int_pas_L": 90,
                 "int_pas_slack_hsl": 950,
-                "ext_pas_sigma": 0.5,
+                "ext_pas_sigma": 2.5,
                 "ext_pas_L": 30,
                 "ext_pas_slack_hsl": 950,
                 "fil_compliance_factor": 0.5,
@@ -67,9 +74,9 @@
                 "thin_filament_length": 1120,
                 "actin":
                 {
-                    "k_on": 2e8,
+                    "k_on": 1.25e8,
                     "k_off": 100,
-                    "k_coop": 20
+                    "k_coop": 10
                 },
                 "myosin":
                 {
@@ -90,8 +97,8 @@
                             "new_state": 2,
                             "rate_type": "force_dependent",
                             "rate_parameters": [
-                                12,
-                                2.5e-4
+                                10,
+                                5e-4
                             ]
                             }
                         ]
@@ -112,7 +119,7 @@
                             "new_state": 3,
                             "rate_type": "gaussian_hsl",
                             "rate_parameters": [
-                                125
+                                200
                             ]
                             }
                         ]

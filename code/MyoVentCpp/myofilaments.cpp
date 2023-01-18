@@ -1123,7 +1123,7 @@ void myofilaments::update_beat_metrics(void)
 
 	// Backfill results
 	p_cmv_results->backfill_beat_data(
-		p_cmv_results->gsl_results_vectors[p_cmv_results->myof_stress_int_pas_field_index],
+		p_cmv_results->gsl_results_vectors[p_cmv_results->myof_mean_stress_int_pas_field_index],
 		myof_mean_stress_int_pas, p_cmv_system->sim_t_index);
 
 	// Tidy up

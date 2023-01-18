@@ -106,6 +106,9 @@ void growth::implement_time_step(double time_step_s, bool new_beat)
 	//! Implements time-step
 	
 	// Variables
+	double internal_r;
+	double wall_thickness;
+
 	double delta_n_hs;
 	double delta_hs_length;
 
@@ -118,9 +121,24 @@ void growth::implement_time_step(double time_step_s, bool new_beat)
 
 		if (p_gc[i]->gc_type == "concentric")
 		{
+			/*
 			p_parent_circulation->p_hemi_vent->vent_wall_volume =
 				p_parent_circulation->p_hemi_vent->vent_wall_volume *
 				(1.0 + (time_step_s * p_gc[i]->gc_output));
+			*/
+
+			internal_r = p_parent_circulation->p_hemi_vent->
+				return_internal_radius_for_chamber_volume(p_parent_circulation->circ_volume[0]);
+			wall_thickness = p_parent_circulation->p_hemi_vent->
+				return_wall_thickness_for_chamber_volume(p_parent_circulation->circ_volume[0]);
+
+			//cout << "vent volume " << p_parent_circulation->circ_volume[0] << "\n";
+			//cout << "internal_r " << internal_r << " thick " << wall_thickness << "\n";
+
+			p_parent_circulation->p_hemi_vent->vent_wall_volume =
+				1000 * ((2.0 / 3.0) * M_PI *
+					pow((internal_r + (wall_thickness * (1.0 + (time_step_s * p_gc[i]->gc_output)))), 3.0)) -
+				p_parent_circulation->circ_volume[0];
 		}
 
 		if (p_gc[i]->gc_type == "eccentric")
