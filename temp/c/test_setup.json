@@ -1,0 +1,15 @@
+{
+    "MyoVent_test":
+    {
+        "MyoVentCpp_exe":
+        {
+            "exe_file:": "d:/ken/github/campbellmusclelab/models/myovent/code/myoventcpp/bin/myoventcpp.exe"
+        },
+        "Frank_Starling":
+        {
+            "relative_to": "this_file",
+            "model_file": "base/model.json",
+            "sim_folder": "sim_Frank_Starling"
+        }
+    }
+}
