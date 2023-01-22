@@ -48,7 +48,7 @@ def run_batch(json_batch_file_string):
         for f in ['model_file', 'options_file',
                   'protocol_file', 'results_file']:
             fs = j[f]
-            if (not j['relative_to']):
+            if not ('relative_to' in j):
                 fs = os.path.abspath(fs)
             elif (j['relative_to'] == 'this_file'):
                 base_directory = Path(json_batch_file_string).parent.absolute()

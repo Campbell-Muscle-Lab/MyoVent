@@ -8,7 +8,7 @@ import sys
 import time
 
 from modules.batch.batch import run_batch
-from modulues.util.util import util_Frank_Starling
+from modules.utilities.utilities import util_Frank_Starling
 
 def parse_inputs():
 
@@ -18,6 +18,7 @@ def parse_inputs():
         run_batch(sys.argv[2])
     
     if (sys.argv[1] == "util_Frank_Starling"):
+        util_Frank_Starling(sys.argv[2])
         
         
     print('MyoVent execution time: %f' % (time.time() - start_time))

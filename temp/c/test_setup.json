@@ -3,13 +3,20 @@
     {
         "MyoVentCpp_exe":
         {
-            "exe_file:": "d:/ken/github/campbellmusclelab/models/myovent/code/myoventcpp/bin/myoventcpp.exe"
+            "exe_file": "d:/ken/github/campbellmusclelab/models/myovent/code/myoventcpp/bin/myoventcpp.exe"
         },
         "Frank_Starling":
         {
             "relative_to": "this_file",
             "model_file": "base/model.json",
-            "sim_folder": "sim_Frank_Starling"
+            "options_file": "base/options.json",
+            "sim_folder": "sim_Frank_Starling",
+            "venous_compliance_factors": [0.1, 0.3, 1.0, 3, 10],
+            "protocol":
+            {
+                "time_step": 0.001,
+                "no_of_time_steps": 2000
+            }
         }
     }
 }
