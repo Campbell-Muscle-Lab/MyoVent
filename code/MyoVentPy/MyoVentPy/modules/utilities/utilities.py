@@ -166,7 +166,8 @@ def create_Frank_Starling_figure(batch_data):
                              wspace = 2, hspace = 1)
     
     ax=[]
-    vp = []
+    vent_sp = []
+    vent_dp = []
     hsl = []
     stress_total = []
     stress_cb = []
@@ -207,7 +208,8 @@ def create_Frank_Starling_figure(batch_data):
         
         # Hold data
         hsl.append(d['hs_length'].max())
-        vp.append(d['pressure_0'].max())
+        vent_sp.append(d['pressure_0'].max())
+        vent_dp.append(d['pressure_0'].iloc[1500])
         stress_total.append(d['hs_stress'].max())
         stress_cb.append(d['myof_stress_cb'].max())
         stress_int_pas.append(d['myof_stress_int_pas'].max())
@@ -248,6 +250,13 @@ def create_Frank_Starling_figure(batch_data):
     ax[8].legend(bbox_to_anchor=(1.05, 1))
     ax[8].set_ylim([0, 10000])
     ax[8].set_xlabel('Half-sarcomere length (nm)')
-        
+    
+    ax.append(fig.add_subplot(spec[4,1]))
+    ax[9].plot(vent_dp, stress_int_pas, 'o-', label='Int')
+    ax[9].plot(vent_dp, stress_ext_pas, 'o-', label='Ext')
+    ax[9].set_ylabel('Pas stress')
+    ax[9].legend(bbox_to_anchor=(1.05, 1))
+    ax[9].set_ylim([0, 10000])
+    ax[9].set_xlabel('Diastolic pressure')
 
-    fig.savefig('d:/temp/sl.png')
+    fig.savefig('c:/temp/sl.png')
