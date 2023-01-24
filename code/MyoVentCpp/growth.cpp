@@ -135,10 +135,20 @@ void growth::implement_time_step(double time_step_s, bool new_beat)
 			//cout << "vent volume " << p_parent_circulation->circ_volume[0] << "\n";
 			//cout << "internal_r " << internal_r << " thick " << wall_thickness << "\n";
 
-			p_parent_circulation->p_hemi_vent->vent_wall_volume =
+/*			p_parent_circulation->p_hemi_vent->vent_wall_volume =
 				1000 * ((2.0 / 3.0) * M_PI *
 					pow((internal_r + (wall_thickness * (1.0 + (time_step_s * p_gc[i]->gc_output)))), 3.0)) -
 				p_parent_circulation->circ_volume[0];
+*/
+			double delta_rwt;
+
+			delta_rwt = time_step_s * (p_gc[i]->gc_output + (gr_shrink_prop_gain * (*p_gr_shrink_signal)));
+
+			p_parent_circulation->p_hemi_vent->vent_wall_volume =
+				1000 * ((2.0 / 3.0) * M_PI *
+					pow((internal_r + (wall_thickness * (1.0 + delta_rwt))), 3.0)) -
+				p_parent_circulation->circ_volume[0];
+
 		}
 
 		if (p_gc[i]->gc_type == "eccentric")
@@ -146,6 +156,10 @@ void growth::implement_time_step(double time_step_s, bool new_beat)
 			// Work out change in n_hs
 			delta_n_hs = -time_step_s * p_gc[i]->gc_output *
 				p_parent_circulation->p_hemi_vent->vent_n_hs;
+
+			// Shrink
+			delta_n_hs = delta_n_hs +
+				time_step_s * (gr_shrink_prop_gain * (*p_gr_shrink_signal)) * p_parent_circulation->p_hemi_vent->vent_n_hs;
 
 			if (fabs(delta_n_hs) > 0.0)
 			{
@@ -168,6 +182,7 @@ void growth::implement_time_step(double time_step_s, bool new_beat)
 		}
 	}
 
+	/*
 	if (growth_active)
 	{
 		// Finally shrinkage
@@ -180,6 +195,7 @@ void growth::implement_time_step(double time_step_s, bool new_beat)
 				(1.0 + (time_step_s * gr_shrink_output));
 		}
 	}
+	*/
 
 }
 

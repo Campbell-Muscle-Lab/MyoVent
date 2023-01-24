@@ -237,7 +237,7 @@
         {
             "level": "ventricle",
             "signal": "vent_wall_volume",
-            "prop_gain": -0.0
+            "prop_gain": -0.002
         },
         "control":
         [
@@ -246,7 +246,7 @@
                 "level": "myofilaments",
                 "signal": "myof_mean_stress_int_pas",
                 "set_point": 150,
-                "prop_gain": -0.0025,
+                "prop_gain": -0.002,
                 "max_rate": 0.02
             },
             {

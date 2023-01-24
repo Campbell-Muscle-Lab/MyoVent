@@ -1,0 +1,23 @@
+{
+    "xtemplated_images":
+    [
+        {
+            "relative_to": "this_file",
+            "template_file_string": "../../templates/template_baro.json",
+            "output_file_string": "../../sim_output/summary"
+        }
+    ],
+    "templated_images":
+    [
+        {
+            "relative_to": "this_file",
+            "template_file_string": "../../templates/template_zoom.json",
+            "output_file_string": "../../sim_output/zoom_no_shrink"
+        },
+        {
+            "relative_to": "this_file",
+            "template_file_string": "../../templates/template_baro.json",
+            "output_file_string": "../../sim_output/summary_no_shrink"
+        }
+    ]
+}
