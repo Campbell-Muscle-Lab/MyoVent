@@ -161,8 +161,8 @@ def create_Frank_Starling_figure(batch_data):
     
     # Create a figure
     fig = plt.figure(constrained_layout = False)
-    fig.set_size_inches([12, 7])
-    spec = gridspec.GridSpec(nrows = 5, ncols = 2, figure = fig,
+    fig.set_size_inches([14, 10])
+    spec = gridspec.GridSpec(nrows = 6, ncols = 2, figure = fig,
                              wspace = 2, hspace = 1)
     
     ax=[]
@@ -188,13 +188,15 @@ def create_Frank_Starling_figure(batch_data):
             ax.append(fig.add_subplot(spec[2,0]))
             ax.append(fig.add_subplot(spec[3,0]))
             ax.append(fig.add_subplot(spec[4,0]))
-            
-        ax[0].plot(d['time'], d['hs_length'])
-        ax[1].plot(d['time'], d['pressure_0'])
-        ax[2].plot(d['time'], d['memb_Ca_cytosol'])
+            ax.append(fig.add_subplot(spec[5,0]))
+        
+        ax[0].plot(d['time'], d['pressure_0'])
+        ax[1].plot(d['time'], d['hs_length'])
+        ax[2].plot(d['time'], d['hs_stress'])
+        ax[3].plot(d['time'], d['memb_Ca_cytosol'])
         
         for k, str in enumerate(['myof_a_off', 'myof_a_on']):
-            ax[3].plot(d['time'], d[str], color = thin_color_set[k])
+            ax[4].plot(d['time'], d[str], color = thin_color_set[k])
             
         for k, str in enumerate(['myof_m_pop_0', 'myof_m_pop_1',
                                  'myof_m_pop_2', 'myof_m_pop_3']):
@@ -203,60 +205,58 @@ def create_Frank_Starling_figure(batch_data):
                     lab = str
                 else:
                     lab = None
-                ax[4].plot(d['time'], d[str], color = thick_color_set[k],
+                ax[5].plot(d['time'], d[str], color = thick_color_set[k],
                            label=lab)
-        
         # Hold data
         hsl.append(d['hs_length'].max())
         vent_sp.append(d['pressure_0'].max())
-        vent_dp.append(d['pressure_0'].iloc[1500])
+        vent_dp.append(d.loc[171]['pressure_0'])
         stress_total.append(d['hs_stress'].max())
         stress_cb.append(d['myof_stress_cb'].max())
         stress_int_pas.append(d['myof_stress_int_pas'].max())
         stress_ext_pas.append(d['myof_stress_ext_pas'].max())
 
-    ax[0].set_ylabel('Half-sarcomere\nlength\n(nm)')
 
-    ax[1].set_ylabel('Ventricular\npressure')
+    ax[0].set_ylabel('Ventricular\npressure')
 
-    ax[2].set_ylabel('Ca\nconcentration\n(M)')
+    ax[1].set_ylabel('Half-sarcomere\nlength\n(nm)')
+    
+    ax[2].set_ylabel('Stress')
 
-    ax[3].set_ylabel('Thin\npopulations')
+    ax[3].set_ylabel('Ca\nconcentration\n(M)')
+
+    ax[4].set_ylabel('Thin\npopulations')
         
-    ax[4].legend(bbox_to_anchor=(1.05, 1))
-    ax[4].set_ylabel('Thick\npopulations')
-    ax[4].set_xlabel('Time (s)')
+    ax[5].legend(bbox_to_anchor=(1.05, 1))
+    ax[5].set_ylabel('Thick\npopulations')
+    ax[5].set_xlabel('Time (s)')
 
     # Plot values
     ax.append(fig.add_subplot(spec[0,1]))
-    ax[5].plot(hsl, vp, 'o-')
-    ax[5].set_ylabel('Isovolumic\nVentricular\npressure\n(mmHg)')
-    ax[5].set_ylim([0, np.amax(vp)])
+    ax[6].plot(hsl, vent_sp, 'o-')
+    ax[6].set_ylabel('Isovolumic\nVentricular\npressure\n(mmHg)')
+    ax[6].set_ylim([0, np.amax(vent_sp)])
     
     ax.append(fig.add_subplot(spec[1,1]))
-    ax[6].plot(hsl, stress_total, 'o-')
-    ax[6].set_ylabel('Total stress')
-    ax[6].set_ylim([0, np.amax(stress_total)])
+    ax[7].plot(hsl, stress_total, 'o-')
+    ax[7].set_ylabel('Total stress')
+    ax[7].set_ylim([0, np.amax(stress_total)])
     
     ax.append(fig.add_subplot(spec[2,1]))
-    ax[7].plot(hsl, stress_cb, 'o-')
-    ax[7].set_ylabel('cb stress')
-    ax[7].set_ylim([0, np.amax(stress_total)])
+    ax[8].plot(hsl, stress_cb, 'o-')
+    ax[8].set_ylabel('cb stress')
+    ax[8].set_ylim([0, np.amax(stress_total)])
 
     ax.append(fig.add_subplot(spec[3,1]))
-    ax[8].plot(hsl, stress_int_pas, 'o-', label='Int')
-    ax[8].plot(hsl, stress_ext_pas, 'o-', label='Ext')
-    ax[8].set_ylabel('Pas stress')
-    ax[8].legend(bbox_to_anchor=(1.05, 1))
-    ax[8].set_ylim([0, 10000])
-    ax[8].set_xlabel('Half-sarcomere length (nm)')
-    
-    ax.append(fig.add_subplot(spec[4,1]))
-    ax[9].plot(vent_dp, stress_int_pas, 'o-', label='Int')
-    ax[9].plot(vent_dp, stress_ext_pas, 'o-', label='Ext')
+    ax[9].plot(hsl, stress_int_pas, 'o-', label='Int')
+    ax[9].plot(hsl, stress_ext_pas, 'o-', label='Ext')
     ax[9].set_ylabel('Pas stress')
     ax[9].legend(bbox_to_anchor=(1.05, 1))
-    ax[9].set_ylim([0, 10000])
-    ax[9].set_xlabel('Diastolic pressure')
+    
+    ax.append(fig.add_subplot(spec[4,1]))
+    ax[10].plot(hsl, vent_dp, 'o-')
+    ax[10].plot([hsl[0], hsl[-1]], [8, 8], 'k:')
+    ax[10].set_ylabel('Diastolic\npressure')
+    ax[10].set_xlabel('Half-sarcomere len\gth (nm)')
 
     fig.savefig('c:/temp/sl.png')

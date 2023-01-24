@@ -6,7 +6,7 @@
         "blood_volume": 4.5,
         "compartments": {
             "resistance": [
-                5,
+                2,
                 100000.0,
                 100000.0,
                 100000.0,
@@ -16,12 +16,12 @@
             ],
             "compliance": [
                 0,
-                0.0005,
-                0.0006,
-                0.0007,
-                0.0012,
+                0.0004,
+                0.0008,
+                0.001,
+                0.0001,
                 0.03,
-                0.8
+                0.56
             ],
             "slack_volume": [
                 0.065,
@@ -61,7 +61,7 @@
             }
         },
         "heart_rate": {
-            "t_RR_interval_s": 0.85
+            "t_RR_interval_s": 0.99
         },
         "half_sarcomere": {
             "reference_hs_length": 1100,
@@ -81,20 +81,20 @@
             },
             "myofilaments": {
                 "cb_number_density": 1.15e+17,
-                "int_pas_sigma": 500,
+                "int_pas_sigma": 100,
                 "int_pas_L": 70,
                 "int_pas_slack_hsl": 950,
                 "ext_pas_sigma": 3,
-                "ext_pas_L": 30,
+                "ext_pas_L": 35,
                 "ext_pas_slack_hsl": 950,
                 "fil_compliance_factor": 0.5,
                 "thick_filament_length": 815,
                 "bare_zone_length": 80,
                 "thin_filament_length": 1120,
                 "actin": {
-                    "k_on": 50000000.0,
-                    "k_off": 100,
-                    "k_coop": 10
+                    "k_on": 200000000.0,
+                    "k_off": 200,
+                    "k_coop": 20
                 },
                 "myosin": {
                     "k_cb": 0.001,
@@ -111,8 +111,8 @@
                                         "new_state": 2,
                                         "rate_type": "force_dependent",
                                         "rate_parameters": [
-                                            10,
-                                            0.0005
+                                            3,
+                                            0.0002
                                         ]
                                     }
                                 ]
@@ -133,7 +133,7 @@
                                         "new_state": 3,
                                         "rate_type": "gaussian_hsl",
                                         "rate_parameters": [
-                                            200
+                                            1000
                                         ]
                                     }
                                 ]
@@ -147,8 +147,8 @@
                                         "new_state": 2,
                                         "rate_type": "poly",
                                         "rate_parameters": [
-                                            200,
-                                            0.1,
+                                            250,
+                                            0.01,
                                             4
                                         ]
                                     },
@@ -156,7 +156,7 @@
                                         "new_state": 4,
                                         "rate_type": "constant",
                                         "rate_parameters": [
-                                            100
+                                            150
                                         ]
                                     }
                                 ]
@@ -171,10 +171,10 @@
                                         "ATP_required": "y",
                                         "rate_type": "exp_wall",
                                         "rate_parameters": [
-                                            180,
+                                            125,
                                             0.5,
-                                            5,
-                                            3
+                                            8,
+                                            5
                                         ]
                                     }
                                 ]
@@ -188,7 +188,7 @@
     "baroreflex": {
         "baro_P_set": 90,
         "baro_S": 0.01,
-        "baro_k_drive": 10,
+        "baro_k_drive": 5,
         "baro_k_recov": 0.1,
         "baro_P_compartment": 2,
         "control": [

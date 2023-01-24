@@ -2,19 +2,19 @@
     "protocol":
     {
         "time_step": 0.001,
-        "no_of_time_steps": 100000
+        "no_of_time_steps": 1100000
     },
     "activation":
     [
         {
             "type": "baroreflex",
-            "t_start_s": 15,
-            "t_stop_s": 1000.0
+            "t_start_s": 25,
+            "t_stop_s": 10000.0
         },
         {
             "type": "growth",
-            "t_start_s": 25,
-            "t_stop_s": 1000.0
+            "t_start_s": 100,
+            "t_stop_s": 10000.0
         }
     ],
     "perturbation":
@@ -22,9 +22,9 @@
         {
             "class": "baroreflex",
             "variable": "baro_P_set",
-            "t_start_s": 200.0,
-            "t_stop_s": 200.1,
-            "total_change": 40
+            "t_start_s": 400.0,
+            "t_stop_s": 400.1,
+            "total_change": 60
         },
         {
             "class": "circulation",

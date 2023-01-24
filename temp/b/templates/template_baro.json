@@ -14,7 +14,7 @@
         "label": "Time (s)"
     },
     "processing":{
-        "envelope_rel_width": 0.01
+        "line_rel_width": 0.01
     },
     "formatting":
     {
@@ -23,7 +23,7 @@
         "y_label_offset": -0.4,
         "tick_fontsize": 9,
         "legend_fontsize": 7,
-        "legend_bbox_to_anchor": [0.3, 0.5],
+        "legend_bbox_to_anchor": [0.9, 0.5],
         "legend_frame_alpha": 0.65,
         "patch_alpha": 0.3
     },
@@ -33,12 +33,27 @@
             "column": 1,
             "y_info":
             {
+                "label": "Ventricular\npressure\n(mmHg)",
+                "series":
+                [
+                    {
+                        "field": "pressure_0",
+                        "style": "line",
+                        "field_label": "Pressure"
+                    }
+                ]
+            }
+        },
+        {
+            "column": 1,
+            "y_info":
+            {
                 "label": "Arterial\npressure\n(mmHg)",
                 "series":
                 [
                     {
                         "field": "pressure_2",
-                        "style": "envelope",
+                        "style": "line",
                         "field_label": "Pressure"
                     },
                     {
@@ -57,7 +72,7 @@
                 [
                     {
                         "field": "baro_A",
-                        "style": "envelope"
+                        "style": "line"
                     }
                 ]
             }
@@ -110,7 +125,7 @@
                 [
                     {
                         "field": "volume_0",
-                        "style": "envelope"
+                        "style": "line"
                     }
                 ]
             }
@@ -229,7 +244,7 @@
                 [
                     {
                         "field": "hs_length",
-                        "style": "envelope"
+                        "style": "line"
                     }
                 ]
             }
@@ -243,7 +258,7 @@
                 [
                     {
                         "field": "memb_Ca_cytosol",
-                        "style": "envelope",
+                        "style": "line",
                         "scaling_factor": 1e6
                     }
                 ]
@@ -258,7 +273,7 @@
                 [
                     {
                         "field": "myof_stress_total",
-                        "style": "envelope",
+                        "style": "line",
                         "scaling_factor": 1e-3
                     }
                 ]
@@ -273,7 +288,7 @@
                 [
                     {
                         "field": "myof_stress_cb",
-                        "style": "envelope",
+                        "style": "line",
                         "scaling_factor": 1e-3
                     }
                 ]
@@ -289,13 +304,13 @@
                     {
                         "field": "myof_stress_int_pas",
                         "field_label": "Int pas",
-                        "style": "envelope",
+                        "style": "line",
                         "scaling_factor": 1e-3
                     },
                     {
                         "field": "myof_stress_ext_pas",
                         "field_label": "Ext pas",
-                        "style": "envelope",
+                        "style": "line",
                         "scaling_factor": 1e-3
                     }
                 ]
@@ -312,12 +327,12 @@
                     {
                         "field": "myof_a_off",
                         "field_label": "OFF",
-                        "style": "envelope"
+                        "style": "line"
                     },
                     {
                         "field": "myof_a_on",
                         "field_label": "ON",
-                        "style": "envelope"
+                        "style": "line"
                     }
                 ]
             }
@@ -482,7 +497,7 @@
                 [
                     {
                         "field": "vent_wall_thickness",
-                        "style": "envelope"
+                        "style": "line"
                     }
                 ]
             }
@@ -538,7 +553,7 @@
                         "field": "myof_mean_stress_int_pas"
                     },
                     {
-                        "reference": 350
+                        "reference": 150
                     }
                 ]
             }

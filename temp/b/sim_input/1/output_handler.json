@@ -13,6 +13,11 @@
             "relative_to": "this_file",
             "template_file_string": "../../templates/template_zoom.json",
             "output_file_string": "../../sim_output/zoom"
+        },
+        {
+            "relative_to": "this_file",
+            "template_file_string": "../../templates/template_baro.json",
+            "output_file_string": "../../sim_output/summary"
         }
     ]
 }

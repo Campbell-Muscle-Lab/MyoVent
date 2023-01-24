@@ -257,7 +257,7 @@ int cmv_results::write_data_to_file(std::string output_file_string)
 	}
 
 	// Now data
-	for (int i = 0; i < no_of_time_points; i = i + p_cmv_options->output_skip_points)
+	for (int i = 0; i < no_of_time_points; i = i + (1+p_cmv_options->output_skip_points))
 	{
 		for (int j = 0; j < no_of_defined_results_fields; j++)
 		{
