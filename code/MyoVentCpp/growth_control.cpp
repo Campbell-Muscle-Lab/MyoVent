@@ -221,9 +221,11 @@ void growth_control::calculate_output(void)
 	if (p_parent_growth->growth_active > 0.0)
 	{
 		if (gc_set_point != 0.0)
-			gc_prop_signal = gc_prop_gain * (*gc_p_signal - gc_set_point) / gc_set_point;
+			gc_prop_signal = p_parent_growth->gr_master_rate *
+				gc_prop_gain * (*gc_p_signal - gc_set_point) / gc_set_point;
 		else
-			gc_prop_signal = gc_prop_gain * (*gc_p_signal - gc_set_point);
+			gc_prop_signal = p_parent_growth->gr_master_rate *
+			gc_prop_gain * (*gc_p_signal - gc_set_point);
 
 		gc_deriv_signal = gc_deriv_gain * gc_slope;
 	}

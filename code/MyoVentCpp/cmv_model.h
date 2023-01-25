@@ -85,15 +85,11 @@ public:
 	// Growth
 	double gr_master_rate;				/**< double with master rate for growth */
 
-	string gr_shrink_level;				/**< string with shrinkage level */
+	double gr_shrink_eccentric_rate;
+										/**< double with eccentric shrinkage rate */
 
-	string gr_shrink_signal;			/**< string with shrinkage signal */
-
-	double gr_shrink_eccentric_prop_gain;
-										/**< double with eccentric shrinkage gain */
-
-	double gr_shrink_concentric_prop_gain;
-										/**< double with concentric shrinkage gain */
+	double gr_shrink_concentric_rate;
+										/**< double with concentric shrinkage rate */
 
 	cmv_model_gc_structure* p_gc[MAX_NO_OF_GROWTH_CONTROLS];
 										/**< array of pointers to growth controls */

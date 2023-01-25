@@ -588,10 +588,6 @@
                         "field_label": "Concentric"
                     },
                     {
-                        "field": "gr_shrink_output",
-                        "field_label": "Shrinkage"
-                    },
-                    {
                         "reference": 0,
                         "field_label": "Zero"
                     }
@@ -607,6 +603,24 @@
                 [
                     {
                         "field": "vent_wall_volume"
+                    }
+                ]
+            }
+        },
+        {
+            "column": 6,
+            "y_info":
+            {
+                "label": "Shrinkage",
+                "series":
+                [
+                    {
+                        "field": "gr_shrink_concentric_output",
+                        "field_label": "Conc"
+                    },
+                    {
+                        "field": "gr_shrink_eccentric_output",
+                        "field_label": "Ecc"
                     }
                 ]
             }

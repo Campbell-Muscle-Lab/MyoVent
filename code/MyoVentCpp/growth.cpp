@@ -47,13 +47,12 @@ growth::growth(circulation* set_p_parent_circulation)
 	// Set from model
 
 	gr_master_rate = p_cmv_model->gr_master_rate;
-	gr_shrink_level = p_cmv_model->gr_shrink_level;
-	gr_shrink_signal = p_cmv_model->gr_shrink_signal;
-	gr_shrink_concentric_prop_gain = p_cmv_model->gr_shrink_concentric_prop_gain;
-	gr_shrink_eccentric_prop_gain = p_cmv_model->gr_shrink_eccentric_prop_gain;
+	
+	gr_shrink_concentric_rate = p_cmv_model->gr_shrink_concentric_rate;
+	gr_shrink_eccentric_rate = p_cmv_model->gr_shrink_eccentric_rate;
 
-	p_gr_shrink_signal = NULL;
-	gr_shrink_output = GSL_NAN;
+	gr_shrink_concentric_output = GSL_NAN;
+	gr_shrink_eccentric_output = GSL_NAN;
 
 	// Set the controls
 	no_of_growth_controls = p_cmv_model->no_of_gc_controls;
@@ -96,11 +95,10 @@ void growth::initialise_simulation(void)
 		p_gc[i]->initialise_simulation();
 	}
 
-	set_p_gr_shrink_signal();
-
 	// Add fields
 	p_cmv_results->add_results_field("growth_active", &growth_active);
-	p_cmv_results->add_results_field("gr_shrink_output", &gr_shrink_output);
+	p_cmv_results->add_results_field("gr_shrink_concentric_output", &gr_shrink_concentric_output);
+	p_cmv_results->add_results_field("gr_shrink_eccentric_output", &gr_shrink_eccentric_output);
 }
 
 void growth::implement_time_step(double time_step_s, bool new_beat)
@@ -127,14 +125,16 @@ void growth::implement_time_step(double time_step_s, bool new_beat)
 	if (growth_active)
 	{
 		// Finally shrinkage
-		if (!gsl_isnan(*p_gr_shrink_signal))
-		{
-			delta_relative_wall_thickness = time_step_s * gr_master_rate * gr_shrink_concentric_prop_gain *
-				(*p_gr_shrink_signal);
 
-			delta_relative_n_hs = time_step_s * gr_master_rate * gr_shrink_eccentric_prop_gain *
-				(*p_gr_shrink_signal);
-		}
+		// Concentric
+		gr_shrink_concentric_output = time_step_s * gr_master_rate * gr_shrink_concentric_rate;
+
+		delta_relative_wall_thickness = gr_shrink_concentric_output;
+
+		// Eccentric
+		gr_shrink_eccentric_output = time_step_s * gr_master_rate * gr_shrink_eccentric_rate;
+
+		delta_relative_n_hs = gr_shrink_eccentric_output;
 	}
 	
 	// And now daughter objects
@@ -145,18 +145,17 @@ void growth::implement_time_step(double time_step_s, bool new_beat)
 		if (p_gc[i]->gc_type == "concentric")
 		{
 			delta_relative_wall_thickness = delta_relative_wall_thickness +
-				(time_step_s * gr_master_rate * p_gc[i]->gc_output);
+				(time_step_s * p_gc[i]->gc_output);
 		}
 
 		if (p_gc[i]->gc_type == "eccentric")
 		{
 			delta_relative_n_hs = delta_relative_n_hs +
-				(time_step_s * gr_master_rate * p_gc[i]->gc_output);
+				(time_step_s * p_gc[i]->gc_output);
 		}
 	}
 
 	// Apply the concentric growth
-	//cout << "delta_r_wt: " << delta_relative_wall_thickness << "\n";
 	if (fabs(delta_relative_wall_thickness) > 0.0)
 	{
 		internal_r = p_parent_circulation->p_hemi_vent->
@@ -171,7 +170,6 @@ void growth::implement_time_step(double time_step_s, bool new_beat)
 	}
 
 	// Now the eccentric growth
-	//cout << "delta_r_nhs: " << delta_relative_n_hs << "\n";
 	if (fabs(delta_relative_n_hs) > 0.0)
 	{
 		// Work out how far half-sarcomeres move using chain rule
@@ -194,6 +192,7 @@ void growth::implement_time_step(double time_step_s, bool new_beat)
 	}
 }
 
+/*
 void growth::set_p_gr_shrink_signal(void)
 {
 	//! Sets the pointer to the growth signal
@@ -214,3 +213,4 @@ void growth::set_p_gr_shrink_signal(void)
 		}
 	}
 }
+*/

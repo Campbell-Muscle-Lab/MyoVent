@@ -238,8 +238,8 @@
         {
             "level": "ventricle",
             "signal": "vent_wall_volume",
-            "eccentric_prop_gain": -0.002,
-            "concentric_prop_gain": -0.002
+            "eccentric_prop_gain": -0.0002,
+            "concentric_prop_gain": -0.0002
         },
         "control":
         [

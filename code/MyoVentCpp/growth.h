@@ -59,19 +59,17 @@ public:
 													0.0, inactive */
 
 	double gr_master_rate;
-	string gr_shrink_level;
-	string gr_shrink_signal;
-	double gr_shrink_concentric_prop_gain;
-	double gr_shrink_eccentric_prop_gain;
-	
-	double* p_gr_shrink_signal;
 
-	double gr_shrink_output;
+	double gr_shrink_concentric_rate;
+	double gr_shrink_eccentric_rate;
+
+	double gr_shrink_concentric_output;
+	double gr_shrink_eccentric_output;
 
 	// Other functions
 	void initialise_simulation(void);
 
 	void implement_time_step(double time_step_s, bool new_beat);
 
-	void set_p_gr_shrink_signal(void);
+	//void set_p_gr_shrink_signal(void);
 };
