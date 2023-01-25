@@ -233,11 +233,13 @@
     },
     "growth":
     {
+        "master_rate": 1,
         "shrinkage":
         {
             "level": "ventricle",
             "signal": "vent_wall_volume",
-            "prop_gain": -0.002
+            "eccentric_prop_gain": -0.002,
+            "concentric_prop_gain": -0.002
         },
         "control":
         [

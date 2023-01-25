@@ -5,7 +5,7 @@
         "bin_max": 15.0,
         "bin_width": 1.0,
         "max_rate": 1000.0,
-         "rates_dump":
+         "xrates_dump":
         {
             "relative_to": "this_file",
             "file_string": "../../sim_output/1/rates.json"

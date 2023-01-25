@@ -233,11 +233,13 @@
     },
     "growth":
     {
+        "master_rate": 1,
         "shrinkage":
         {
             "level": "ventricle",
             "signal": "vent_wall_volume",
-            "prop_gain": -0.00
+            "eccentric_prop_gain": -0.00,
+            "concentric_prop_gain": -0.00
         },
         "control":
         [
@@ -246,7 +248,7 @@
                 "level": "myofilaments",
                 "signal": "myof_mean_stress_int_pas",
                 "set_point": 150,
-                "prop_gain": -0.002,
+                "prop_gain": 0.002,
                 "max_rate": 0.02
             },
             {

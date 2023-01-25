@@ -2,7 +2,7 @@
     "protocol":
     {
         "time_step": 0.001,
-        "no_of_time_steps": 1100000
+        "no_of_time_steps": 700000
     },
     "activation":
     [
@@ -13,7 +13,7 @@
         },
         {
             "type": "growth",
-            "t_start_s": 100,
+            "t_start_s": 40,
             "t_stop_s": 10000.0
         }
     ],
@@ -22,8 +22,8 @@
         {
             "class": "baroreflex",
             "variable": "baro_P_set",
-            "t_start_s": 400.0,
-            "t_stop_s": 400.1,
+            "t_start_s": 300.0,
+            "t_stop_s": 300.1,
             "total_change": 60
         },
         {

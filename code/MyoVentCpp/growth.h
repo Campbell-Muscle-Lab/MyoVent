@@ -58,9 +58,11 @@ public:
 													1.0, active
 													0.0, inactive */
 
+	double gr_master_rate;
 	string gr_shrink_level;
 	string gr_shrink_signal;
-	double gr_shrink_prop_gain;
+	double gr_shrink_concentric_prop_gain;
+	double gr_shrink_eccentric_prop_gain;
 	
 	double* p_gr_shrink_signal;
 

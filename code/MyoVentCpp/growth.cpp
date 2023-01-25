@@ -46,9 +46,11 @@ growth::growth(circulation* set_p_parent_circulation)
 
 	// Set from model
 
+	gr_master_rate = p_cmv_model->gr_master_rate;
 	gr_shrink_level = p_cmv_model->gr_shrink_level;
 	gr_shrink_signal = p_cmv_model->gr_shrink_signal;
-	gr_shrink_prop_gain = p_cmv_model->gr_shrink_prop_gain;
+	gr_shrink_concentric_prop_gain = p_cmv_model->gr_shrink_concentric_prop_gain;
+	gr_shrink_eccentric_prop_gain = p_cmv_model->gr_shrink_eccentric_prop_gain;
 
 	p_gr_shrink_signal = NULL;
 	gr_shrink_output = GSL_NAN;
@@ -108,12 +110,33 @@ void growth::implement_time_step(double time_step_s, bool new_beat)
 	// Variables
 	double internal_r;
 	double wall_thickness;
+	
+	double delta_relative_wall_thickness;
+	double delta_relative_n_hs;
 
 	double delta_n_hs;
 	double delta_hs_length;
 
 	// Code
 
+	// Zero relative changes
+	delta_relative_wall_thickness = 0.0;
+	delta_relative_n_hs = 0.0;
+
+	// Handle shrinkage
+	if (growth_active)
+	{
+		// Finally shrinkage
+		if (!gsl_isnan(*p_gr_shrink_signal))
+		{
+			delta_relative_wall_thickness = time_step_s * gr_master_rate * gr_shrink_concentric_prop_gain *
+				(*p_gr_shrink_signal);
+
+			delta_relative_n_hs = time_step_s * gr_master_rate * gr_shrink_eccentric_prop_gain *
+				(*p_gr_shrink_signal);
+		}
+	}
+	
 	// And now daughter objects
 	for (int i = 0; i < no_of_growth_controls; i++)
 	{
@@ -121,82 +144,54 @@ void growth::implement_time_step(double time_step_s, bool new_beat)
 
 		if (p_gc[i]->gc_type == "concentric")
 		{
-			/*
-			p_parent_circulation->p_hemi_vent->vent_wall_volume =
-				p_parent_circulation->p_hemi_vent->vent_wall_volume *
-				(1.0 + (time_step_s * p_gc[i]->gc_output));
-			*/
-
-			internal_r = p_parent_circulation->p_hemi_vent->
-				return_internal_radius_for_chamber_volume(p_parent_circulation->circ_volume[0]);
-			wall_thickness = p_parent_circulation->p_hemi_vent->
-				return_wall_thickness_for_chamber_volume(p_parent_circulation->circ_volume[0]);
-
-			//cout << "vent volume " << p_parent_circulation->circ_volume[0] << "\n";
-			//cout << "internal_r " << internal_r << " thick " << wall_thickness << "\n";
-
-/*			p_parent_circulation->p_hemi_vent->vent_wall_volume =
-				1000 * ((2.0 / 3.0) * M_PI *
-					pow((internal_r + (wall_thickness * (1.0 + (time_step_s * p_gc[i]->gc_output)))), 3.0)) -
-				p_parent_circulation->circ_volume[0];
-*/
-			double delta_rwt;
-
-			delta_rwt = time_step_s * (p_gc[i]->gc_output + (gr_shrink_prop_gain * (*p_gr_shrink_signal)));
-
-			p_parent_circulation->p_hemi_vent->vent_wall_volume =
-				1000 * ((2.0 / 3.0) * M_PI *
-					pow((internal_r + (wall_thickness * (1.0 + delta_rwt))), 3.0)) -
-				p_parent_circulation->circ_volume[0];
-
+			delta_relative_wall_thickness = delta_relative_wall_thickness +
+				(time_step_s * gr_master_rate * p_gc[i]->gc_output);
 		}
 
 		if (p_gc[i]->gc_type == "eccentric")
 		{
-			// Work out change in n_hs
-			delta_n_hs = -time_step_s * p_gc[i]->gc_output *
-				p_parent_circulation->p_hemi_vent->vent_n_hs;
-
-			// Shrink
-			delta_n_hs = delta_n_hs +
-				time_step_s * (gr_shrink_prop_gain * (*p_gr_shrink_signal)) * p_parent_circulation->p_hemi_vent->vent_n_hs;
-
-			if (fabs(delta_n_hs) > 0.0)
-			{
-				// Work out how far half-sarcomeres move using chain rule
-				delta_hs_length = -(delta_n_hs * p_parent_circulation->p_hemi_vent->p_hs->hs_length) /
-					p_parent_circulation->p_hemi_vent->vent_n_hs;
-
-				// Apply to half-sarcomere
-				p_parent_circulation->p_hemi_vent->p_hs->change_hs_length(delta_hs_length);
-
-				// Update n_hs
-				p_parent_circulation->p_hemi_vent->vent_n_hs =
-					p_parent_circulation->p_hemi_vent->vent_n_hs + delta_n_hs;
-
-				// And the wall volume
-				p_parent_circulation->p_hemi_vent->vent_wall_volume =
-					p_parent_circulation->p_hemi_vent->vent_wall_volume *
-					(1.0 + (delta_n_hs / p_parent_circulation->p_hemi_vent->vent_n_hs));
-			}
+			delta_relative_n_hs = delta_relative_n_hs +
+				(time_step_s * gr_master_rate * p_gc[i]->gc_output);
 		}
 	}
 
-	/*
-	if (growth_active)
+	// Apply the concentric growth
+	//cout << "delta_r_wt: " << delta_relative_wall_thickness << "\n";
+	if (fabs(delta_relative_wall_thickness) > 0.0)
 	{
-		// Finally shrinkage
-		if (!gsl_isnan(*p_gr_shrink_signal))
-		{
-			gr_shrink_output = gr_shrink_prop_gain * (*p_gr_shrink_signal);
+		internal_r = p_parent_circulation->p_hemi_vent->
+			return_internal_radius_for_chamber_volume(p_parent_circulation->circ_volume[0]);
+		wall_thickness = p_parent_circulation->p_hemi_vent->
+			return_wall_thickness_for_chamber_volume(p_parent_circulation->circ_volume[0]);
 
-			p_parent_circulation->p_hemi_vent->vent_wall_volume =
-				p_parent_circulation->p_hemi_vent->vent_wall_volume *
-				(1.0 + (time_step_s * gr_shrink_output));
-		}
+		p_parent_circulation->p_hemi_vent->vent_wall_volume =
+			1000 * ((2.0 / 3.0) * M_PI *
+				pow((internal_r + (wall_thickness * (1.0 + delta_relative_wall_thickness))), 3.0)) -
+			p_parent_circulation->circ_volume[0];
 	}
-	*/
 
+	// Now the eccentric growth
+	//cout << "delta_r_nhs: " << delta_relative_n_hs << "\n";
+	if (fabs(delta_relative_n_hs) > 0.0)
+	{
+		// Work out how far half-sarcomeres move using chain rule
+		delta_n_hs = delta_relative_n_hs * p_parent_circulation->p_hemi_vent->vent_n_hs;
+
+		delta_hs_length = -(delta_n_hs * p_parent_circulation->p_hemi_vent->p_hs->hs_length) /
+			p_parent_circulation->p_hemi_vent->vent_n_hs;
+
+		// Apply to half-sarcomere
+		p_parent_circulation->p_hemi_vent->p_hs->change_hs_length(delta_hs_length);
+
+		// Update the wall volume
+		p_parent_circulation->p_hemi_vent->vent_wall_volume =
+			p_parent_circulation->p_hemi_vent->vent_wall_volume *
+			(1.0 + (delta_n_hs / p_parent_circulation->p_hemi_vent->vent_n_hs));
+
+		// Update n_hs
+		p_parent_circulation->p_hemi_vent->vent_n_hs =
+			p_parent_circulation->p_hemi_vent->vent_n_hs + delta_n_hs;
+	}
 }
 
 void growth::set_p_gr_shrink_signal(void)
