@@ -1,0 +1,22 @@
+{
+    "MyoSim": {
+        "bin_min": -15.0,
+        "bin_max": 15.0,
+        "bin_width": 1.0,
+        "max_rate": 1000.0,
+        "xrates_dump": {
+            "relative_to": "this_file",
+            "file_string": "../../sim_output/1/rates.json"
+        },
+        "xcb_dump": {
+            "relative_to": "this_file",
+            "file_string": "../../sim_output/1/cb.txt"
+        }
+    },
+    "hemi_vent": {
+        "thick_wall_approximation": "True"
+    },
+    "output": {
+        "skip_points": 9
+    }
+}

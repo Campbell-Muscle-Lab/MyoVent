@@ -1,0 +1,51 @@
+{
+    "MyoVent_batch": {
+        "MyoVentCpp_exe": {
+            "exe_file": "c:/ken/github/campbellmusclelab/models/myovent/code/myoventcpp/bin/myoventcpp.exe"
+        },
+        "job": [
+            {
+                "model_file": "C:\\ken\\GitHub\\CampbellMuscleLab\\models\\MyoVent\\temp\\e\\sim_data\\sim_input\\1\\model.json",
+                "options_file": "C:\\ken\\GitHub\\CampbellMuscleLab\\models\\MyoVent\\temp\\e\\sim_data\\sim_input\\1\\options.json",
+                "protocol_file": "C:\\ken\\GitHub\\CampbellMuscleLab\\models\\MyoVent\\temp\\e\\sim_data\\sim_input\\1\\protocol.json",
+                "results_file": "C:\\ken\\GitHub\\CampbellMuscleLab\\models\\MyoVent\\temp\\e\\sim_data\\sim_output\\1\\results.txt",
+                "output_handler_file": "C:\\ken\\GitHub\\CampbellMuscleLab\\models\\MyoVent\\temp\\e\\sim_data\\sim_input\\1\\output_handler.json"
+            },
+            {
+                "model_file": "C:\\ken\\GitHub\\CampbellMuscleLab\\models\\MyoVent\\temp\\e\\sim_data\\sim_input\\2\\model.json",
+                "options_file": "C:\\ken\\GitHub\\CampbellMuscleLab\\models\\MyoVent\\temp\\e\\sim_data\\sim_input\\2\\options.json",
+                "protocol_file": "C:\\ken\\GitHub\\CampbellMuscleLab\\models\\MyoVent\\temp\\e\\sim_data\\sim_input\\2\\protocol.json",
+                "results_file": "C:\\ken\\GitHub\\CampbellMuscleLab\\models\\MyoVent\\temp\\e\\sim_data\\sim_output\\2\\results.txt",
+                "output_handler_file": "C:\\ken\\GitHub\\CampbellMuscleLab\\models\\MyoVent\\temp\\e\\sim_data\\sim_input\\2\\output_handler.json"
+            },
+            {
+                "model_file": "C:\\ken\\GitHub\\CampbellMuscleLab\\models\\MyoVent\\temp\\e\\sim_data\\sim_input\\3\\model.json",
+                "options_file": "C:\\ken\\GitHub\\CampbellMuscleLab\\models\\MyoVent\\temp\\e\\sim_data\\sim_input\\3\\options.json",
+                "protocol_file": "C:\\ken\\GitHub\\CampbellMuscleLab\\models\\MyoVent\\temp\\e\\sim_data\\sim_input\\3\\protocol.json",
+                "results_file": "C:\\ken\\GitHub\\CampbellMuscleLab\\models\\MyoVent\\temp\\e\\sim_data\\sim_output\\3\\results.txt",
+                "output_handler_file": "C:\\ken\\GitHub\\CampbellMuscleLab\\models\\MyoVent\\temp\\e\\sim_data\\sim_input\\3\\output_handler.json"
+            },
+            {
+                "model_file": "C:\\ken\\GitHub\\CampbellMuscleLab\\models\\MyoVent\\temp\\e\\sim_data\\sim_input\\4\\model.json",
+                "options_file": "C:\\ken\\GitHub\\CampbellMuscleLab\\models\\MyoVent\\temp\\e\\sim_data\\sim_input\\4\\options.json",
+                "protocol_file": "C:\\ken\\GitHub\\CampbellMuscleLab\\models\\MyoVent\\temp\\e\\sim_data\\sim_input\\4\\protocol.json",
+                "results_file": "C:\\ken\\GitHub\\CampbellMuscleLab\\models\\MyoVent\\temp\\e\\sim_data\\sim_output\\4\\results.txt",
+                "output_handler_file": "C:\\ken\\GitHub\\CampbellMuscleLab\\models\\MyoVent\\temp\\e\\sim_data\\sim_input\\4\\output_handler.json"
+            },
+            {
+                "model_file": "C:\\ken\\GitHub\\CampbellMuscleLab\\models\\MyoVent\\temp\\e\\sim_data\\sim_input\\5\\model.json",
+                "options_file": "C:\\ken\\GitHub\\CampbellMuscleLab\\models\\MyoVent\\temp\\e\\sim_data\\sim_input\\5\\options.json",
+                "protocol_file": "C:\\ken\\GitHub\\CampbellMuscleLab\\models\\MyoVent\\temp\\e\\sim_data\\sim_input\\5\\protocol.json",
+                "results_file": "C:\\ken\\GitHub\\CampbellMuscleLab\\models\\MyoVent\\temp\\e\\sim_data\\sim_output\\5\\results.txt",
+                "output_handler_file": "C:\\ken\\GitHub\\CampbellMuscleLab\\models\\MyoVent\\temp\\e\\sim_data\\sim_input\\5\\output_handler.json"
+            },
+            {
+                "model_file": "C:\\ken\\GitHub\\CampbellMuscleLab\\models\\MyoVent\\temp\\e\\sim_data\\sim_input\\6\\model.json",
+                "options_file": "C:\\ken\\GitHub\\CampbellMuscleLab\\models\\MyoVent\\temp\\e\\sim_data\\sim_input\\6\\options.json",
+                "protocol_file": "C:\\ken\\GitHub\\CampbellMuscleLab\\models\\MyoVent\\temp\\e\\sim_data\\sim_input\\6\\protocol.json",
+                "results_file": "C:\\ken\\GitHub\\CampbellMuscleLab\\models\\MyoVent\\temp\\e\\sim_data\\sim_output\\6\\results.txt",
+                "output_handler_file": "C:\\ken\\GitHub\\CampbellMuscleLab\\models\\MyoVent\\temp\\e\\sim_data\\sim_input\\6\\output_handler.json"
+            }
+        ]
+    }
+}

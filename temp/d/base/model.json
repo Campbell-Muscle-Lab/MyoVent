@@ -236,10 +236,8 @@
         "master_rate": 1,
         "shrinkage":
         {
-            "level": "ventricle",
-            "signal": "vent_wall_volume",
-            "eccentric_prop_gain": -0.0002,
-            "concentric_prop_gain": -0.0002
+            "eccentric_rate": -0.00,
+            "concentric_rate": 0.00
         },
         "control":
         [

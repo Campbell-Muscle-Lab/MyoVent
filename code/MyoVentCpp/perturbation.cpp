@@ -148,6 +148,16 @@ void perturbation::impose(double sim_time_s)
 			}
 		}
 
+		if (class_name == "half_sarcomere")
+		{
+			if (variable == "prop_fibrosis")
+			{
+				p_double = &(p_cmv_protocol->p_cmv_sytem->p_circulation->p_hemi_vent->p_hs->hs_prop_fibrosis);
+
+				*p_double = *p_double + increment;
+			}
+		}
+
 		if (class_name == "mitochondria")
 		{
 			if (variable == "ATP_generation_rate")

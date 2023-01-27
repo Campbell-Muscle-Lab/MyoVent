@@ -15,7 +15,10 @@ def parse_inputs():
     start_time = time.time()    
 
     if (sys.argv[1] == "run_batch"):
-        run_batch(sys.argv[2])
+        if (len(sys.argv) == 3):
+            run_batch(sys.argv[2])
+        else:
+            run_batch(sys.argv[2], figures_only=True)
     
     if (sys.argv[1] == "util_Frank_Starling"):
         util_Frank_Starling(sys.argv[2])

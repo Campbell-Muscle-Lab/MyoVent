@@ -1,0 +1,8 @@
+{
+    "templated_images": [
+        {
+            "template_file_string": "C:\\ken\\GitHub\\CampbellMuscleLab\\models\\MyoVent\\temp\\d\\templates\\template_baro.json",
+            "output_file_string": "C:\\ken\\GitHub\\CampbellMuscleLab\\models\\MyoVent\\temp\\d\\sim_data\\output_1_2"
+        }
+    ]
+}

@@ -16,7 +16,7 @@ import subprocess
 
 from ..output_handler import output_handler as oh
 
-def run_batch(json_batch_file_string):
+def run_batch(json_batch_file_string, figures_only=False):
     """ Runs >=1 batch using multithreading """
     
     # Load the batch file
@@ -64,7 +64,7 @@ def run_batch(json_batch_file_string):
             com_string = '%s "%s"' % (com_string, fs)
 
         command_strings.append(com_string)
-    
+
     # Check the batch to see if max threads have been specified
     if ('max_threads' in MyoVent_batch):
         requested_max_threads = MyoVent_batch['max_threads']
@@ -76,29 +76,32 @@ def run_batch(json_batch_file_string):
 
     # Set processes to mininmum of requested and available
     num_processes = int(min([requested_max_threads, available_threads]))
-    print('Running batch using %i threads' % num_processes)
-            
-    # Now run the batch
-    my_list = command_strings
 
-    threads = []
-    while threads or my_list:
-        if (len(threads) < num_processes) and my_list:
-            t = threading.Thread(target=worker, args=[my_list.pop()])
-            t.setDaemon(True)
-            t.start()
-            threads.append(t)
-        else:
-            for thread in threads:
-                if not thread.is_alive():
-                    threads.remove(thread)  
+    if (figures_only == False):
+        print('Running batch using %i threads' % num_processes)
+                
+        # Now run the batch
+        my_list = command_strings
+    
+        threads = []
+        while threads or my_list:
+            if (len(threads) < num_processes) and my_list:
+                t = threading.Thread(target=worker, args=[my_list.pop()])
+                t.setDaemon(True)
+                t.start()
+                threads.append(t)
+            else:
+                for thread in threads:
+                    if not thread.is_alive():
+                        threads.remove(thread)  
 
     # At this point we have run all the simulations
-    # Run the output handlers
+    # Run the output handlers in parallel
+   
     for i, j in enumerate(job_data):
         if ('output_handler_file' in j):
             fs = j['output_handler_file']
-            if (not j['relative_to']):
+            if not ('relative_to' in j):
                 fs = os.path.abspath(fs)
             elif (j['relative_to'] == 'this_file'):
                 base_directory = Path(json_batch_file_string).parent.absolute()
@@ -106,13 +109,14 @@ def run_batch(json_batch_file_string):
             else:
                 base_directory = j['relative_to']
                 fs = os.path.join(base_directory, fs)
-            oh.output_handler(fs,
+
+            try:
+                oh.output_handler(fs,
                               sim_results_file_string=results_file_strings[i])
+            except:
+                print('Could not implement output_handler for: %s' %
+                      results_file_strings[i])
     
 def worker(cmd):
     subprocess.call(cmd)
-    
-    
-
-
-
+   

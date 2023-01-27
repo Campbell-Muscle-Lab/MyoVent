@@ -916,7 +916,6 @@ void myofilaments::move_cb_populations(double delta_hsl)
 			{
 				if (repeat== 2)
 				{
-					cout << "t_step: " << 0.01 << "\n";
 					cout << "n_sub_steps: " << n_sub_steps << "  x_shift: " << x_shift << "   s: " << s << "\n";
 				}
 				for (size_t ind = 0; ind < no_of_bin_positions; ind++)

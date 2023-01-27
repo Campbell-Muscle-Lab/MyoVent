@@ -1,0 +1,279 @@
+{
+    "CyMyoVent": {
+        "version": "2.1.0"
+    },
+    "circulation": {
+        "blood_volume": 4.5,
+        "compartments": {
+            "resistance": [
+                2,
+                20,
+                20,
+                800,
+                150,
+                50,
+                20
+            ],
+            "compliance": [
+                0,
+                0.0004,
+                0.0008,
+                0.001,
+                0.0001,
+                0.03,
+                0.08
+            ],
+            "slack_volume": [
+                0.065,
+                0.3,
+                0.3,
+                0.1,
+                0.25,
+                0.5,
+                2.0
+            ],
+            "inertance": [
+                100,
+                100,
+                100,
+                100,
+                100,
+                100,
+                100
+            ]
+        }
+    },
+    "ventricle": {
+        "wall_density": 1055,
+        "wall_volume": 0.1,
+        "valves": {
+            "aortic": {
+                "name": "aortic",
+                "mass": 0.0001,
+                "eta": 0.01,
+                "k": 1.1
+            },
+            "mitral": {
+                "name": "mitral",
+                "mass": 0.0001,
+                "eta": 0.1,
+                "k": 0.01
+            }
+        },
+        "heart_rate": {
+            "t_RR_interval_s": 0.99
+        },
+        "half_sarcomere": {
+            "reference_hs_length": 1100,
+            "initial_ATP_concentration": 0.007,
+            "prop_fibrosis": 0.1,
+            "prop_myofilaments": 0.6,
+            "delta_G_ATP": 45000,
+            "membranes": {
+                "Ca_content": 0.001,
+                "k_leak": 0.0006,
+                "k_active": 0.082,
+                "k_serca": 8.0,
+                "t_open": 0.01
+            },
+            "mitochondria": {
+                "ATP_generation_rate": 10.0
+            },
+            "myofilaments": {
+                "cb_number_density": 1.15e+17,
+                "int_pas_sigma": 100,
+                "int_pas_L": 70,
+                "int_pas_slack_hsl": 950,
+                "ext_pas_sigma": 3,
+                "ext_pas_L": 35,
+                "ext_pas_slack_hsl": 950,
+                "fil_compliance_factor": 0.5,
+                "thick_filament_length": 815,
+                "bare_zone_length": 80,
+                "thin_filament_length": 1120,
+                "actin": {
+                    "k_on": 200000000.0,
+                    "k_off": 200,
+                    "k_coop": 20
+                },
+                "myosin": {
+                    "k_cb": 0.001,
+                    "kinetics": {
+                        "no_of_states": 4,
+                        "max_no_of_transitions": 2,
+                        "scheme": [
+                            {
+                                "number": 1,
+                                "type": "S",
+                                "extension": 0,
+                                "transition": [
+                                    {
+                                        "new_state": 2,
+                                        "rate_type": "force_dependent",
+                                        "rate_parameters": [
+                                            3,
+                                            0.0002
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 2,
+                                "type": "D",
+                                "extension": 0,
+                                "transition": [
+                                    {
+                                        "new_state": 1,
+                                        "rate_type": "constant",
+                                        "rate_parameters": [
+                                            200
+                                        ]
+                                    },
+                                    {
+                                        "new_state": 3,
+                                        "rate_type": "gaussian_hsl",
+                                        "rate_parameters": [
+                                            1000
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 3,
+                                "type": "A",
+                                "extension": 0.0,
+                                "transition": [
+                                    {
+                                        "new_state": 2,
+                                        "rate_type": "poly",
+                                        "rate_parameters": [
+                                            250,
+                                            0.01,
+                                            4
+                                        ]
+                                    },
+                                    {
+                                        "new_state": 4,
+                                        "rate_type": "constant",
+                                        "rate_parameters": [
+                                            150
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "number": 4,
+                                "type": "A",
+                                "extension": 8.0,
+                                "transition": [
+                                    {
+                                        "new_state": 2,
+                                        "ATP_required": "y",
+                                        "rate_type": "exp_wall",
+                                        "rate_parameters": [
+                                            125,
+                                            0.5,
+                                            8,
+                                            5
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+    },
+    "baroreflex": {
+        "baro_P_set": 90,
+        "baro_S": 0.01,
+        "baro_k_drive": 5,
+        "baro_k_recov": 0.1,
+        "baro_P_compartment": 2,
+        "control": [
+            {
+                "level": "heart_rate",
+                "variable": "t_RR_interval_s",
+                "k_control": 0.075,
+                "k_recov": 0.1,
+                "para_factor": 1.753497,
+                "symp_factor": 0.386
+            },
+            {
+                "level": "membranes",
+                "variable": "k_active",
+                "k_control": 0.075,
+                "k_recov": 0.1,
+                "para_factor": 0.5,
+                "symp_factor": 2.0
+            },
+            {
+                "level": "membranes",
+                "variable": "k_serca",
+                "k_control": 0.075,
+                "k_recov": 0.1,
+                "para_factor": 0.5,
+                "symp_factor": 2
+            },
+            {
+                "level": "myofilaments",
+                "variable": "m_state_1_trans_1_param_1",
+                "k_control": 0.075,
+                "k_recov": 0.1,
+                "para_factor": 0.5,
+                "symp_factor": 2
+            },
+            {
+                "level": "myofilaments",
+                "variable": "k_on",
+                "k_control": 0.075,
+                "k_recov": 0.1,
+                "para_factor": 2,
+                "symp_factor": 0.5
+            },
+            {
+                "level": "circulation",
+                "variable": "resistance_4",
+                "k_control": 0.075,
+                "k_recov": 0.1,
+                "para_factor": 0.5,
+                "symp_factor": 2
+            },
+            {
+                "level": "circulation",
+                "variable": "compliance_7",
+                "k_control": 0.075,
+                "k_recov": 0.1,
+                "para_factor": 4,
+                "symp_factor": 0.25
+            }
+        ]
+    },
+    "growth": {
+        "master_rate": 1,
+        "shrinkage": {
+            "eccentric_rate": 0,
+            "concentric_rate": 0
+        },
+        "control": [
+            {
+                "type": "eccentric",
+                "level": "myofilaments",
+                "signal": "myof_mean_stress_int_pas",
+                "set_point": 150,
+                "prop_gain": 0.002,
+                "max_rate": 0.02
+            },
+            {
+                "type": "concentric",
+                "level": "half_sarcomere",
+                "signal": "hs_ATP_concentration",
+                "set_point": 0.007,
+                "prop_gain": -0.0125,
+                "deriv_gain": -25,
+                "max_rate": 0.02
+            }
+        ]
+    }
+}
