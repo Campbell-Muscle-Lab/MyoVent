@@ -526,6 +526,8 @@ void myofilaments::implement_time_step(double time_step_s)
 
 	status = gsl_odeiv2_driver_apply(d, &t_start_s, t_stop_s, y_calc);
 
+	gsl_odeiv2_driver_free(d);
+
 	if (status != GSL_SUCCESS)
 	{
 		std::cout << "Integration problem in myofilaments::implement_time_step\n";

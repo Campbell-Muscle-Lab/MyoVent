@@ -233,7 +233,7 @@
     },
     "growth":
     {
-        "master_rate": 0.5,
+        "master_rate": 1,
         "shrinkage":
         {
             "eccentric_rate": -0.00025,

@@ -246,7 +246,7 @@ bool circulation::implement_time_step(double time_step_s)
 	double* flow_calc = (double*)malloc(circ_no_of_compartments * sizeof(double));
 
 	// Code
-/* LEAKS IN HERE
+// LEAKS IN HERE
 	// Update the hemi_vent object, which includes
 	// updating the daughter objects
 	new_beat = p_hemi_vent->implement_time_step(time_step_s);
@@ -261,8 +261,8 @@ bool circulation::implement_time_step(double time_step_s)
 			0.5 * time_step_s, eps_abs, eps_rel);
 
 	status = gsl_odeiv2_driver_apply(d, &t_start_s, t_stop_s, circ_volume);
-END LEAKS
-*/
+
+	gsl_odeiv2_driver_free(d);
 
 	// Update the hemi_vent with the new volume
 	p_hemi_vent->update_chamber_volume(circ_volume[0]);

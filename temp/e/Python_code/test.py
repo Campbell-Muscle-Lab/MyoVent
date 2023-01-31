@@ -29,7 +29,7 @@ def test():
     figures_only_flag = ''
     
     time_step = 0.001
-    no_of_time_steps = 1200000
+    no_of_time_steps = 1500000
     
     baroreflex_start_s = 25
     baroreflex_stop_s = 10000
@@ -60,7 +60,7 @@ def test():
     pert.append({'test': 4,
                   'class': 'myofilaments', 'variable': 'm_state_2_trans_1_para_1',
                   't_start_s': pert_start_s, 't_stop_s': pert_stop_s,
-                  'total_change': -22})
+                  'total_change': -22.5})
 
     pert.append({'test': 5,
                   'class': 'mitochondria', 'variable': 'ATP_generation_rate',
