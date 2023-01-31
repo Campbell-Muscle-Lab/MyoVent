@@ -438,6 +438,7 @@
             "y_info":
             {
                 "label": "Cardiac\noutput\n(liters min^-1)",
+                "scaling_type": "close_fit",
                 "series":
                 [
                     {
@@ -503,6 +504,20 @@
             }
         },
         {
+            "column": 5,
+            "y_info":
+            {
+                "label": "Vent\npower\nto mass",
+                "series":
+                [
+                    {
+                        "field": "vent_power_to_mass",
+                        "style": "line"
+                    }
+                ]
+            }
+        },
+        {
             "column": 6,
             "y_info":
             {
@@ -550,7 +565,7 @@
                 "series":
                 [
                     {
-                        "field": "myof_mean_stress_int_pas"
+                        "field": "myof_stress_int_pas"
                     },
                     {
                         "reference": 150
@@ -598,11 +613,16 @@
             "column": 6,
             "y_info":
             {
-                "label": "Vent\nwall\nvolume\n(liters)",
+                "label": "GC 3",
                 "series":
                 [
                     {
-                        "field": "vent_wall_volume"
+                        "field": "gc_3_output",
+                        "field_label": "Eccentric"
+                    },
+                    {
+                        "reference": 0,
+                        "field_label": "Zero"
                     }
                 ]
             }
@@ -611,16 +631,11 @@
             "column": 6,
             "y_info":
             {
-                "label": "Shrinkage",
+                "label": "Vent\nwall\nvolume\n(liters)",
                 "series":
                 [
                     {
-                        "field": "gr_shrink_concentric_output",
-                        "field_label": "Conc"
-                    },
-                    {
-                        "field": "gr_shrink_eccentric_output",
-                        "field_label": "Ecc"
+                        "field": "vent_wall_volume"
                     }
                 ]
             }

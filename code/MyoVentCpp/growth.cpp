@@ -142,6 +142,9 @@ void growth::implement_time_step(double time_step_s, bool new_beat)
 	{
 		p_gc[i]->implement_time_step(time_step_s, new_beat);
 
+		if (gsl_isnan(p_gc[i]->gc_output))
+			continue;
+
 		if (p_gc[i]->gc_type == "concentric")
 		{
 			delta_relative_wall_thickness = delta_relative_wall_thickness +

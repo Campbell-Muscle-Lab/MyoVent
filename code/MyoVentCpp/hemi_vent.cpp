@@ -55,6 +55,7 @@ hemi_vent::hemi_vent(circulation* set_p_parent_circulation)
 	vent_cardiac_output = GSL_NAN;
 	vent_stroke_volume = GSL_NAN;
 	vent_cardiac_output = GSL_NAN;
+	vent_power_to_mass = GSL_NAN;
 
 	// Initialise child half-sarcomere
 	p_hs = new half_sarcomere(this);
@@ -117,6 +118,7 @@ void hemi_vent::initialise_simulation(void)
 	p_cmv_results->add_results_field("vent_n_hs", &vent_n_hs);
 	p_cmv_results->add_results_field("vent_stroke_work_J", &vent_stroke_work_J);
 	p_cmv_results->add_results_field("vent_stroke_energy_used_J", &vent_stroke_energy_used_J);
+	p_cmv_results->add_results_field("vent_power_to_mass", &vent_power_to_mass);
 	p_cmv_results->add_results_field("vent_efficiency", &vent_efficiency);
 	p_cmv_results->add_results_field("vent_ejection_fraction", &vent_ejection_fraction);
 	p_cmv_results->add_results_field("vent_ATP_used_per_s", &vent_ATP_used_per_s);
@@ -129,10 +131,9 @@ bool hemi_vent::implement_time_step(double time_step_s)
 	//! Implements time-step
 	
 	// Variables
-	bool new_beat;
+	bool new_beat = false;
 
 	// Code
-
 	p_av->implement_time_step(time_step_s);
 	p_mv->implement_time_step(time_step_s);
 
@@ -306,7 +307,14 @@ void hemi_vent::update_beat_metrics()
 		gsl_vector_get(p_cmv_results->gsl_results_vectors[p_cmv_results->time_field_index],
 			p_cmv_results->last_beat_t_index);
 
-	vent_cardiac_output = 60.0 * vent_stroke_volume / cardiac_cycle_s;
+	if (cardiac_cycle_s > 0.0)
+	{
+		vent_cardiac_output = 60.0 * vent_stroke_volume / cardiac_cycle_s;
+
+		// Calculate power_to_mass
+		vent_power_to_mass = (vent_stroke_energy_used_J / cardiac_cycle_s) /
+			(vent_wall_volume);
+	}
 
 	// Backfill results
 	p_cmv_results->backfill_beat_data(
@@ -332,6 +340,10 @@ void hemi_vent::update_beat_metrics()
 	p_cmv_results->backfill_beat_data(
 		p_cmv_results->gsl_results_vectors[p_cmv_results->vent_cardiac_output_field_index],
 		vent_cardiac_output, p_parent_cmv_system->sim_t_index);
+
+	p_cmv_results->backfill_beat_data(
+		p_cmv_results->gsl_results_vectors[p_cmv_results->vent_power_to_mass_field_index],
+		vent_power_to_mass, p_parent_cmv_system->sim_t_index);
 
 	// Update hs metrics
 	p_hs->update_beat_metrics();

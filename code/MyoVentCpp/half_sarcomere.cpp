@@ -116,7 +116,7 @@ bool half_sarcomere::implement_time_step(double time_step_s)
 	//! Implements time-step
 
 	// Variables
-	bool new_beat;
+	bool new_beat = false;
 
 	// Code
 
@@ -132,7 +132,7 @@ bool half_sarcomere::implement_time_step(double time_step_s)
 	// Update the ATP
 	calculate_hs_ATP_concentration(time_step_s);
 
-		// Return new beat status
+	// Return new beat status
 	return (new_beat);
 }
 

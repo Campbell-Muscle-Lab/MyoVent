@@ -959,9 +959,10 @@ void myofilaments::move_cb_populations(double delta_hsl)
 	gsl_spline_free(spline);
 	gsl_interp_accel_free(acc);
 
-	std::free(x_calc);
-	std::free(y_calc);
-	std::free(y_temp);
+	free(x_calc);
+	free(y_calc);
+	free(y_temp);
+
 }
 
 void myofilaments::dump_cb_distributions(void)

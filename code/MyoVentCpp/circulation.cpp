@@ -71,8 +71,6 @@ circulation::circulation(cmv_system* set_p_parent_cmv_system = NULL)
 		circ_inertance[i] = p_cmv_model->circ_inertance[i];
 		circ_pressure[i] = 0.0;
 		circ_volume[i] = circ_slack_volume[i];
-		if (i == 1)
-			circ_volume[i] = 1.0 * circ_slack_volume[i];
 		circ_flow[i] = 0.0;
 
 		circ_total_slack_volume = circ_total_slack_volume +
@@ -232,9 +230,9 @@ int circ_vol_derivs(double t, const double y[], double f[], void* params)
 bool circulation::implement_time_step(double time_step_s)
 {
 	//! Code advances by 1 time-step
-	
+
 	// Variables
-	bool new_beat;
+	bool new_beat = false;
 
 	int status;
 
@@ -248,10 +246,11 @@ bool circulation::implement_time_step(double time_step_s)
 	double* flow_calc = (double*)malloc(circ_no_of_compartments * sizeof(double));
 
 	// Code
-
+/* LEAKS IN HERE
 	// Update the hemi_vent object, which includes
 	// updating the daughter objects
 	new_beat = p_hemi_vent->implement_time_step(time_step_s);
+
 
 	// Now adjust the compartment volumes by integrating flows.
 	gsl_odeiv2_system sys =
@@ -262,7 +261,9 @@ bool circulation::implement_time_step(double time_step_s)
 			0.5 * time_step_s, eps_abs, eps_rel);
 
 	status = gsl_odeiv2_driver_apply(d, &t_start_s, t_stop_s, circ_volume);
-	
+END LEAKS
+*/
+
 	// Update the hemi_vent with the new volume
 	p_hemi_vent->update_chamber_volume(circ_volume[0]);
 
@@ -272,6 +273,7 @@ bool circulation::implement_time_step(double time_step_s)
 	{
 		holder = holder + circ_volume[i];
 	}
+
 	// Any adjustment goes in veins
 	double adjustment = (circ_blood_volume - holder);
 	circ_volume[circ_no_of_compartments - 1] = 
@@ -308,6 +310,7 @@ bool circulation::implement_time_step(double time_step_s)
 	return (new_beat);
 }
 
+
 void circulation::calculate_pressures(const double v[], double p[])
 {
 	//! Function calculates pressures
@@ -316,6 +319,7 @@ void circulation::calculate_pressures(const double v[], double p[])
 	
 	p[0] = p_hemi_vent->return_pressure_for_chamber_volume(v[0]);
 
+	/*
 	// Section is for debugging
 	if (p[0] == 0.0)
 	{
@@ -325,8 +329,10 @@ void circulation::calculate_pressures(const double v[], double p[])
 			if (i == (circ_no_of_compartments - 1))
 				cout << "\n";
 		}
+		cout << "Ventricular pressure is zero - now exiting\n";
 		exit(1);
 	}
+	*/
 
 	// Calculate the other pressures
 	for (int i = 1; i < circ_no_of_compartments; i++)

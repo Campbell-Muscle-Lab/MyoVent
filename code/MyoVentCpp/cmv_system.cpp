@@ -71,7 +71,7 @@ void cmv_system::run_simulation(string options_file_string,
 	//! Code runs a simulation
 
 	// Variables
-	bool new_beat;
+	bool new_beat = false;
 
 	// Code
 	
@@ -128,7 +128,7 @@ void cmv_system::add_fields_to_cmv_results(void)
 bool cmv_system::implement_time_step(double time_step_s)
 {
 	// Variable
-	bool new_beat;
+	bool new_beat = false;
 
 	// Update system time
 	cum_time_s = cum_time_s + time_step_s;

@@ -29,7 +29,7 @@ def test():
     figures_only_flag = ''
     
     time_step = 0.001
-    no_of_time_steps = 600000
+    no_of_time_steps = 1200000
     
     baroreflex_start_s = 25
     baroreflex_stop_s = 10000
@@ -60,12 +60,12 @@ def test():
     pert.append({'test': 4,
                   'class': 'myofilaments', 'variable': 'm_state_2_trans_1_para_1',
                   't_start_s': pert_start_s, 't_stop_s': pert_stop_s,
-                  'total_change': -10})
+                  'total_change': -22})
 
     pert.append({'test': 5,
                   'class': 'mitochondria', 'variable': 'ATP_generation_rate',
                   't_start_s': pert_start_s, 't_stop_s': pert_stop_s,
-                  'total_change': -0.25})
+                  'total_change': -2})
     
     pert.append({'test': 6,
                   'class': 'half_sarcomere', 'variable': 'prop_fibrosis',
@@ -122,6 +122,12 @@ def test():
             
         # Copy the model
         new_model = copy.deepcopy(base_model)
+        
+        if (i==1):
+            # Stop shrinkage
+            new_model['growth']['shrinkage']['eccentric_rate'] = 0.0
+            new_model['growth']['shrinkage']['concentric_rate'] = 0.0            
+            
        
         # Write it
         new_model_file_string = os.path.join(sim_input_folder, 'model.json')

@@ -504,6 +504,20 @@
             }
         },
         {
+            "column": 5,
+            "y_info":
+            {
+                "label": "Vent\npower\nto mass",
+                "series":
+                [
+                    {
+                        "field": "vent_power_to_mass",
+                        "style": "line"
+                    }
+                ]
+            }
+        },
+        {
             "column": 6,
             "y_info":
             {

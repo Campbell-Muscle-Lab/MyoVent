@@ -198,6 +198,15 @@ void growth_control::set_gc_p_signal(void)
 		}
 	}
 
+	if (gc_level == "ventricle")
+	{
+		if (gc_signal == "vent_cardiac_output")
+		{
+			gc_p_signal = &p_parent_circulation->p_hemi_vent->vent_cardiac_output;
+			gc_signal_assigned = true;
+		}
+	}
+
 	if (gc_signal_assigned == false)
 	{
 		cout << "Growth control " << gc_level << ", " << gc_signal << " not assigned\n";

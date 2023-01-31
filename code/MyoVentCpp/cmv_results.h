@@ -115,6 +115,8 @@ public:
 	int vent_cardiac_output_field_index;	/**< integer holding the index for the
 													vent cardiac output volume field */
 
+	int vent_power_to_mass_field_index;
+
 
 	// Functions
 
