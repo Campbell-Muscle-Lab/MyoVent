@@ -81,6 +81,12 @@ public:
 	int pressure_veins_field_index;			/**< integer holding the index for the
 													venous pressure */
 
+	int flow_mitral_valve_field_index;		/**< integer holding the index for flow
+													through the mitral valve */
+
+	int flow_aortic_valve_field_index;		/**< integer holding the index for flow
+													through the aortic valve */
+
 	int hs_length_field_index;				/**< integer holding the index for the
 													hs length */
 

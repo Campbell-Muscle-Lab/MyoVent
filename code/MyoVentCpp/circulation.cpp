@@ -217,14 +217,15 @@ int circ_vol_derivs(double t, const double y[], double f[], void* params)
 	//! if compartments are
 	//! [0] - [1] - [2] - [3] - .... [n-1]
 	//! circ_flow[i] is flow from [i-1] to [i] through resistance i
+	//! rate of change of [i] is flow[i] - flow[i+1]
 	
-	for (int i = 0; i < p_circ->circ_no_of_compartments; i++)
+	for (int i = 0; i < (p_circ->circ_no_of_compartments-1) ; i++)
 	{
-		if (i < (p_circ->circ_no_of_compartments - 1))
-			f[i] = p_circ->circ_flow[i] - p_circ->circ_flow[i + 1];
-		else
-			f[i] = p_circ->circ_flow[i] - p_circ->circ_flow[0];
+		f[i] = p_circ->circ_flow[i] - p_circ->circ_flow[i+1];
 	}
+
+	f[p_circ->circ_no_of_compartments - 1] = p_circ->circ_flow[p_circ->circ_no_of_compartments - 1] -
+		p_circ->circ_flow[0];
 
 	// Return
 	return GSL_SUCCESS;
@@ -254,7 +255,6 @@ bool circulation::implement_time_step(double time_step_s)
 	// Update the hemi_vent object, which includes
 	// updating the daughter objects
 	new_beat = p_hemi_vent->implement_time_step(time_step_s);
-
 
 	// Now adjust the compartment volumes by integrating flows.
 	gsl_odeiv2_system sys =
@@ -289,6 +289,9 @@ bool circulation::implement_time_step(double time_step_s)
 		cout << "Blood volume mismatch\n";
 		exit(1);
 	}
+
+	// Last update to flows
+	calculate_flows(circ_volume);
 
 	// Update the baroreflex, which includes updating the daughter objects
 	if (p_baroreflex != NULL)
@@ -396,6 +399,8 @@ void circulation::calculate_flows(const double v[])
 		(circ_resistance[1] + (circ_inertance[1] / time_step_s));
 	*/
 
+	/*
+
 	s = 0.0;
 	for (int i = 0; i < circ_no_of_compartments; i++)
 	{
@@ -403,6 +408,7 @@ void circulation::calculate_flows(const double v[])
 	}
 
 	cout << "sum of flows: " << s << "\n";
+	*/
 }
 
 void circulation::update_beat_metrics(void)
@@ -411,10 +417,13 @@ void circulation::update_beat_metrics(void)
 
 	// Variables
 	stats_structure* p_stats;
+	stats_structure* p_stats_2;
 
 	// Code
 	
 	p_stats = new stats_structure;
+	p_stats_2 = new stats_structure;
+
 
 	if (p_cmv_results->pressure_arteries_field_index >= 0)
 	{
@@ -426,9 +435,40 @@ void circulation::update_beat_metrics(void)
 		cout << "Arterial pressure: " << p_stats->max_value << " / " << p_stats->min_value << "\n";
 	}
 
+	if (p_cmv_results->flow_mitral_valve_field_index >= 0)
+	{
+		p_cmv_results->calculate_sub_vector_statistics(
+			p_cmv_results->gsl_results_vectors[p_cmv_results->flow_mitral_valve_field_index],
+			p_cmv_results->last_beat_t_index, p_parent_cmv_system->sim_t_index,
+			p_stats);
+	}
+
+	if (p_cmv_results->flow_aortic_valve_field_index >= 0)
+	{
+		p_cmv_results->calculate_sub_vector_statistics(
+			p_cmv_results->gsl_results_vectors[p_cmv_results->flow_aortic_valve_field_index],
+			p_cmv_results->last_beat_t_index, p_parent_cmv_system->sim_t_index,
+			p_stats_2);
+	}
+
+	double cardiac_cycle_s = gsl_vector_get(
+		p_cmv_results->gsl_results_vectors[p_cmv_results->time_field_index],
+		p_parent_cmv_system->sim_t_index) -
+		gsl_vector_get(
+			p_cmv_results->gsl_results_vectors[p_cmv_results->time_field_index],
+			p_cmv_results->last_beat_t_index);
+
+
+	cout << "Mitral_flow: " << p_stats->mean_value << " Aortic_flow: " << p_stats_2->mean_value << "\n";
+	cout << "Cardiac cycle s: " << cardiac_cycle_s << "\n";
+	cout << "Mitral output: " << 60 * p_stats->mean_value / cardiac_cycle_s << " Aortic output: " <<
+		60 * p_stats_2->mean_value / cardiac_cycle_s << "\n";
+
+
 	p_hemi_vent->update_beat_metrics();
 
 	// Tidy up
 	delete p_stats;
+	delete p_stats_2;
 }
 

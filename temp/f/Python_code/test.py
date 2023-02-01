@@ -31,9 +31,9 @@ def test():
     figures_only_flag = ''
     
     time_step = 0.001
-    no_of_time_steps = 15000
+    no_of_time_steps = 30000
     
-    baroreflex_start_s = 25
+    baroreflex_start_s = 2500
     baroreflex_stop_s = 10000
     
     growth_start_s = 10000

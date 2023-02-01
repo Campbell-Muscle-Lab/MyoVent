@@ -1,12 +1,12 @@
 {
     "protocol": {
         "time_step": 0.001,
-        "no_of_time_steps": 15000
+        "no_of_time_steps": 30000
     },
     "activation": [
         {
             "type": "baroreflex",
-            "t_start_s": 25,
+            "t_start_s": 2500,
             "t_stop_s": 10000
         },
         {

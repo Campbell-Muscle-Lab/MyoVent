@@ -58,6 +58,8 @@ cmv_results::cmv_results(cmv_system* set_p_parent_cmv_system, int set_no_of_time
 	pressure_vent_field_index = -1;
 	pressure_veins_field_index = -1;
 	volume_vent_field_index = -1;
+	flow_mitral_valve_field_index = -1;
+	flow_aortic_valve_field_index = -1;
 	hs_length_field_index = -1;
 	myof_stress_int_pas_field_index = -1;
 	myof_ATP_flux_field_index = -1;
@@ -125,6 +127,12 @@ void cmv_results::add_results_field(std::string field_name, double* p_double)
 		to_string(p_parent_cmv_system->p_cmv_model->circ_no_of_compartments - 1);
 	if (field_name == venous_pressure)
 		pressure_veins_field_index = new_index;
+
+	if (field_name == "flow_0")
+		flow_mitral_valve_field_index = new_index;
+
+	if (field_name == "flow_1")
+		flow_aortic_valve_field_index = new_index;
 
 	if (field_name == "hs_length")
 		hs_length_field_index = new_index;
