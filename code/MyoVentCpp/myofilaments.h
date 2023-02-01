@@ -159,6 +159,7 @@ public:
 												transitions */
 
 	double max_shift;
+	int n_max_sub_steps;
 
 	double myof_mean_stress_int_pas;	/**< double holding the mean pas int
 												stress over a cardiac cycle */

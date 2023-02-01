@@ -60,7 +60,7 @@ def test():
     pert.append({'test': 4,
                   'class': 'myofilaments', 'variable': 'm_state_2_trans_1_para_1',
                   't_start_s': pert_start_s, 't_stop_s': pert_stop_s,
-                  'total_change': -22.5})
+                  'total_change': -30})
 
     pert.append({'test': 5,
                   'class': 'mitochondria', 'variable': 'ATP_generation_rate',

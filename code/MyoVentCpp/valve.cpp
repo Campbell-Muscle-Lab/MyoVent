@@ -26,6 +26,7 @@ struct cmv_model_valve_structure {
 	double mass;
 	double eta;
 	double k;
+	double leak;
 };
 
 // Constructor
@@ -50,6 +51,7 @@ valve::valve(hemi_vent* set_p_parent_hemi_vent, cmv_model_valve_structure* set_p
 	valve_mass = p_cmv_model_valve->mass;
 	valve_eta = p_cmv_model_valve->eta;
 	valve_k = p_cmv_model_valve->k;
+	valve_leak = p_cmv_model_valve->leak;
 
 	// Initialise
 	valve_pos = 0.0;
@@ -112,10 +114,16 @@ int valve_derivs(double t, const double y[], double f[], void* params)
 	// y[1] is the velocity
 
 	if (p_valve->valve_name == "aortic")
+	{
 		pressure_difference = p_circ->circ_pressure[0] - p_circ->circ_pressure[1];
+		//cout << "pd: " << pressure_difference << "\n";
+	}
 
 	if (p_valve->valve_name == "mitral")
-		pressure_difference = p_circ->circ_pressure[p_circ->circ_no_of_compartments-1] - p_circ->circ_pressure[0];
+	{
+		pressure_difference = p_circ->circ_pressure[p_circ->circ_no_of_compartments - 1] - p_circ->circ_pressure[0];
+		//cout << "pd: " << pressure_difference << "\n";
+	}
 
 	if (gsl_isnan(pressure_difference))
 	{
@@ -178,9 +186,9 @@ void valve::implement_time_step(double time_step_s)
 		valve_vel = 0.0;
 	}
 
-	if (valve_pos < 0.0)
+	if (valve_pos < valve_leak)
 	{
-		valve_pos = 0.0;
+		valve_pos = valve_leak;
 		valve_vel = 0.0;
 	}
 

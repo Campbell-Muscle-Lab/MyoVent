@@ -61,6 +61,10 @@ public:
 
 	double valve_k;									/**< Double holding the valve stiffness */
 
+	double valve_leak;								/**< double holding the valve leak
+															0 if doesn't leak
+															<0 if it does */
+
 	void initialise_simulation(void);
 	
 	void implement_time_step(double time_step_s);

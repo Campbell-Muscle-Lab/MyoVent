@@ -30,6 +30,7 @@ struct cmv_model_valve_structure {
 	double mass;
 	double eta;
 	double k;
+	double leak;
 };
 
 struct cmv_model_rc_structure {
@@ -226,6 +227,11 @@ void cmv_model::initialise_model_from_JSON_file(string JSON_model_file_string)
 	JSON_functions::check_JSON_member_number(av, "k");
 	p_av->k = av["k"].GetDouble();
 
+	if (JSON_functions::check_JSON_member_exists(av, "leak"))
+		p_av->leak = av["leak"].GetDouble();
+	else
+		p_av->leak = 0.0;
+
 	JSON_functions::check_JSON_member_object(valves, "mitral");
 	const rapidjson::Value& mv = valves["mitral"];
 
@@ -240,6 +246,11 @@ void cmv_model::initialise_model_from_JSON_file(string JSON_model_file_string)
 
 	JSON_functions::check_JSON_member_number(mv, "k");
 	p_mv->k = mv["k"].GetDouble();
+
+	if (JSON_functions::check_JSON_member_exists(mv, "leak"))
+		p_mv->leak = mv["leak"].GetDouble();
+	else
+		p_mv->leak = 0.0;
 
 	// Load the heart_rate object
 	JSON_functions::check_JSON_member_object(vent, "heart_rate");

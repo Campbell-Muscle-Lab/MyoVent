@@ -110,6 +110,7 @@ def multi_panel_from_flat_data(
     x_ticks_defined = False
     if ('ticks' in x_display):
         x_ticks_defined = True
+        x_lim = x_display['ticks']
     
     if ('ticks_rel_to_end' in x_display):
         # Set ticks relative to end
@@ -129,6 +130,8 @@ def multi_panel_from_flat_data(
 
     if 'label' not in x_display:
         x_display['label'] = x_display['global_x_field']
+        
+    print(x_lim)
 
     # Try to pull off the panel data and cycle through the panels one by one to
     # get the number of columns
@@ -215,7 +218,7 @@ def multi_panel_from_flat_data(
                 p_data['x_field'] = x_display['global_x_field']
                 
             if 'x_ticks' not in p_data:
-                p_data['x_ticks'] = x_display['ticks']
+                p_data['x_ticks'] = x_lim
 
             x = pandas_data[p_data['x_field']].to_numpy()
             vi = np.nonzero((x >= p_data['x_ticks'][0]) &
@@ -259,6 +262,8 @@ def multi_panel_from_flat_data(
             if (len(y_finite) > 0):
                 min_y = np.amin([min_y, np.amin(y_finite)])
                 max_y = np.amax([max_y, np.amax(y_finite)])
+            else:
+                continue
 
             # Down sample line if required
             if (x.size > processing['max_points_per_trace']):

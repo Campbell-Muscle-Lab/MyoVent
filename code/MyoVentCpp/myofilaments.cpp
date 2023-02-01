@@ -97,7 +97,8 @@ myofilaments::myofilaments(half_sarcomere* set_p_parent_hs)
 	no_of_bin_positions = 0;
 	y_length = 0;
 
-	max_shift = GSL_NAN;
+	max_shift = 0.0;
+	n_max_sub_steps = 0;
 
 	myof_mean_stress_int_pas = GSL_NAN;
 
@@ -139,7 +140,7 @@ myofilaments::~myofilaments(void)
 	std::free(m_pops_array);
 	std::free(m_stresses_array);
 
-	cout << "max_shift: " << max_shift << "\n";
+	cout << "max_shift: " << max_shift << " n_max_sub_steps: " << n_max_sub_steps << "\n";
 }
 
 // Other functions
@@ -843,6 +844,10 @@ void myofilaments::move_cb_populations(double delta_hsl)
 	double* y_temp;
 
 	double x_shift;
+
+	int n_sub_steps;
+	double s;
+	bool keep_going;
 	
 	const gsl_interp_type* interp_type = gsl_interp_linear;
 	gsl_interp_accel* acc = NULL;
@@ -889,17 +894,10 @@ void myofilaments::move_cb_populations(double delta_hsl)
 				x_defined = true;
 			}
 
-			if (gsl_isnan(max_shift))
-			{
-				max_shift = x_shift;
-			}
-			if (fabs(x_shift) > fabs(max_shift))
-				max_shift = x_shift;
-
 			// Subdivide if necessary
-			int n_sub_steps = 1;
-			double s = x_shift;
-			bool keep_going = true;
+			n_sub_steps = 1;
+			s = x_shift;
+			keep_going = true;
 
 			while (keep_going)
 			{
@@ -916,7 +914,7 @@ void myofilaments::move_cb_populations(double delta_hsl)
 
 			for (int repeat = 1 ; repeat <= n_sub_steps ; repeat++)
 			{
-				if (repeat== 2)
+				if ((repeat == 1) && (n_sub_steps > n_max_sub_steps))
 				{
 					cout << "n_sub_steps: " << n_sub_steps << "  x_shift: " << x_shift << "   s: " << s << "\n";
 				}
@@ -955,6 +953,12 @@ void myofilaments::move_cb_populations(double delta_hsl)
 					y_temp[ind]);
 			}
 		}
+	}
+
+	if ((fabs(x_shift) > fabs(max_shift)) && (p_parent_hs->p_cmv_system->cum_time_s > 0.001))
+	{
+		max_shift = x_shift;
+		n_max_sub_steps = n_sub_steps;
 	}
 
 	// Tidy up

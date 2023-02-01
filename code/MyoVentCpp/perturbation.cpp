@@ -14,6 +14,7 @@
 #include "cmv_system.h"
 #include "circulation.h"
 #include "hemi_vent.h"
+#include "valve.h"
 #include "half_sarcomere.h"
 #include "mitochondria.h"
 #include "myofilaments.h"
@@ -146,6 +147,67 @@ void perturbation::impose(double sim_time_s)
 				// Finally increment the vent_n_hs
 				*p_double = *p_double + increment;
 			}
+		}
+
+		if (class_name == "valve")
+		{
+			if (variable == "mv_valve_k")
+			{
+				p_double = &(p_cmv_protocol->p_cmv_sytem->p_circulation->p_hemi_vent->p_mv->valve_k);
+
+				*p_double = *p_double + increment;
+			}
+
+			if (variable == "mv_valve_mass")
+			{
+				p_double = &(p_cmv_protocol->p_cmv_sytem->p_circulation->p_hemi_vent->p_mv->valve_mass);
+
+				*p_double = *p_double + increment;
+			}
+
+			if (variable == "mv_valve_eta")
+			{
+				p_double = &(p_cmv_protocol->p_cmv_sytem->p_circulation->p_hemi_vent->p_mv->valve_eta);
+
+				*p_double = *p_double + increment;
+			}
+
+			if (variable == "mv_valve_leak")
+			{
+				p_double = &(p_cmv_protocol->p_cmv_sytem->p_circulation->p_hemi_vent->p_mv->valve_leak);
+
+				*p_double = *p_double + increment;
+			}
+
+			if (variable == "av_valve_k")
+			{
+				p_double = &(p_cmv_protocol->p_cmv_sytem->p_circulation->p_hemi_vent->p_av->valve_k);
+
+				*p_double = *p_double + increment;
+			}
+
+			if (variable == "av_valve_mass")
+			{
+				p_double = &(p_cmv_protocol->p_cmv_sytem->p_circulation->p_hemi_vent->p_av->valve_mass);
+
+				*p_double = *p_double + increment;
+			}
+
+			if (variable == "av_valve_eta")
+			{
+				p_double = &(p_cmv_protocol->p_cmv_sytem->p_circulation->p_hemi_vent->p_av->valve_eta);
+
+				*p_double = *p_double + increment;
+			}
+
+			if (variable == "av_valve_leak")
+			{
+				p_double = &(p_cmv_protocol->p_cmv_sytem->p_circulation->p_hemi_vent->p_av->valve_leak);
+
+				*p_double = *p_double + increment;
+			}
+
+
 		}
 
 		if (class_name == "half_sarcomere")

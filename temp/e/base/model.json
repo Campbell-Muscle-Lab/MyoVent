@@ -30,7 +30,7 @@
                 "name": "mitral",
                 "mass": 0.0001,
                 "eta": 0.1,
-                "k": 0.01
+                "k": 0.05
             }
         },
         "heart_rate": {
