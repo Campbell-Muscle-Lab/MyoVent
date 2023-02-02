@@ -31,6 +31,7 @@ struct stats_structure {
 	double mean_value;
 	double min_value;
 	double max_value;
+	double sum;
 };
 
 
@@ -208,6 +209,7 @@ void cmv_results::calculate_sub_vector_statistics(gsl_vector* gsl_v, int start_i
 	p_stats->min_value = GSL_POSINF;
 	p_stats->max_value = -GSL_POSINF;
 	p_stats->mean_value = GSL_NAN;
+	p_stats->sum = 0.0;
 
 	if (start_index < 0)
 		return;
@@ -219,6 +221,7 @@ void cmv_results::calculate_sub_vector_statistics(gsl_vector* gsl_v, int start_i
 		p_stats->min_value = GSL_MIN(value, p_stats->min_value);
 		p_stats->max_value = GSL_MAX(value, p_stats->max_value);
 	}
+	p_stats->sum = holder;
 	p_stats->mean_value = holder / (double)(stop_index - start_index + 1);
 }
 

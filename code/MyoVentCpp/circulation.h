@@ -93,15 +93,8 @@ public:
 																holding flows between
 																compartments */
 
-	double* circ_last_flow;								/**< pointer to array of doubles
-																holding flows between
-																compartments on last
-																time_step */
-
 	double circ_total_slack_volume;						/**< double holding total slack
 																volume in liters */
-
-	double time_step_s;
 
 	// Functions
 
@@ -111,7 +104,7 @@ public:
 
 	void calculate_pressures(const double v[], double p[]);
 
-	void calculate_flows(const double v[]);
+	void calculate_flows(const double v[], double flow[]);
 
 	void update_beat_metrics(void);
 };

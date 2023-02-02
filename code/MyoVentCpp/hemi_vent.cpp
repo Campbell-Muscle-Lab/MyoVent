@@ -25,6 +25,7 @@ struct stats_structure {
 	double mean_value;
 	double min_value;
 	double max_value;
+	double sum;
 };
 
 // Constructor

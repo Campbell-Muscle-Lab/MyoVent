@@ -26,6 +26,7 @@ struct stats_structure{
 	double mean_value;
 	double min_value;
 	double max_value;
+	double sum;
 };
 
 // Constructor
@@ -58,7 +59,6 @@ circulation::circulation(cmv_system* set_p_parent_cmv_system = NULL)
 	circ_pressure = (double*)malloc(circ_no_of_compartments * sizeof(double));
 	circ_volume = (double*)malloc(circ_no_of_compartments * sizeof(double));
 	circ_flow = (double*)malloc(circ_no_of_compartments * sizeof(double));
-	circ_last_flow = (double*)malloc(circ_no_of_compartments * sizeof(double));
 
 	// Initialise, noting total slack_volume as we go
 	// Start with the compartments at slack volume
@@ -73,7 +73,6 @@ circulation::circulation(cmv_system* set_p_parent_cmv_system = NULL)
 		circ_pressure[i] = 0.0;
 		circ_volume[i] = circ_slack_volume[i];
 		circ_flow[i] = 0.0;
-		circ_last_flow[i] = 0.0;
 
 		circ_total_slack_volume = circ_total_slack_volume +
 			circ_volume[i];
@@ -141,7 +140,6 @@ circulation::~circulation(void)
 	free(circ_pressure);
 	free(circ_volume);
 	free(circ_flow);
-	free(circ_last_flow);
 }
 
 // Other functions
@@ -208,10 +206,20 @@ int circ_vol_derivs(double t, const double y[], double f[], void* params)
 
 	circulation* p_circ = (circulation*)params;
 									// Pointer to circulation
+
+	double* flow_calc = (double*)malloc(p_circ->circ_no_of_compartments * sizeof(double));
+									// array of doubles to hold flows
+
 	// Code
+
+	// Zero flows
+	for (int i = 0; i < p_circ->circ_no_of_compartments; i++)
+	{
+		flow_calc[i] = 0.0;
+	}
 	
 	// Calculate the flows between the compartments
-	p_circ->calculate_flows(y);
+	p_circ->calculate_flows(y, flow_calc);
 
 	// Now adjust volumes
 	//! if compartments are
@@ -221,11 +229,14 @@ int circ_vol_derivs(double t, const double y[], double f[], void* params)
 	
 	for (int i = 0; i < (p_circ->circ_no_of_compartments-1) ; i++)
 	{
-		f[i] = p_circ->circ_flow[i] - p_circ->circ_flow[i+1];
+		f[i] = flow_calc[i] - flow_calc[i+1];
 	}
 
-	f[p_circ->circ_no_of_compartments - 1] = p_circ->circ_flow[p_circ->circ_no_of_compartments - 1] -
-		p_circ->circ_flow[0];
+	f[p_circ->circ_no_of_compartments - 1] = flow_calc[p_circ->circ_no_of_compartments - 1] -
+		flow_calc[0];
+
+	// Tidy up
+	free(flow_calc);
 
 	// Return
 	return GSL_SUCCESS;
@@ -247,14 +258,20 @@ bool circulation::implement_time_step(double time_step_s)
 	double eps_rel = 1e-6;
 
 	double* vol_calc = (double*)malloc(circ_no_of_compartments * sizeof(double));
-	double* flow_calc = (double*)malloc(circ_no_of_compartments * sizeof(double));
 
 	// Code
-	this->time_step_s = time_step_s;
 
 	// Update the hemi_vent object, which includes
 	// updating the daughter objects
 	new_beat = p_hemi_vent->implement_time_step(time_step_s);
+
+	// Fill the arrays
+	for (int i = 0; i < circ_no_of_compartments; i++)
+	{
+		vol_calc[i] = circ_volume[i];
+	}
+
+	calculate_pressures(circ_volume, circ_pressure);
 
 	// Now adjust the compartment volumes by integrating flows.
 	gsl_odeiv2_system sys =
@@ -264,9 +281,15 @@ bool circulation::implement_time_step(double time_step_s)
 		gsl_odeiv2_driver_alloc_y_new(&sys, gsl_odeiv2_step_rkf45,
 			0.5 * time_step_s, eps_abs, eps_rel);
 
-	status = gsl_odeiv2_driver_apply(d, &t_start_s, t_stop_s, circ_volume);
+	status = gsl_odeiv2_driver_apply(d, &t_start_s, t_stop_s, vol_calc);
 
 	gsl_odeiv2_driver_free(d);
+
+	// Unpack the arrays
+	for (int i = 0; i < circ_no_of_compartments; i++)
+	{
+		circ_volume[i] = vol_calc[i];
+	}
 
 	// Update the hemi_vent with the new volume
 	p_hemi_vent->update_chamber_volume(circ_volume[0]);
@@ -290,8 +313,8 @@ bool circulation::implement_time_step(double time_step_s)
 		exit(1);
 	}
 
-	// Last update to flows
-	calculate_flows(circ_volume);
+	// Update data flows for data
+	calculate_flows(circ_volume, circ_flow);
 
 	// Update the baroreflex, which includes updating the daughter objects
 	if (p_baroreflex != NULL)
@@ -309,20 +332,12 @@ bool circulation::implement_time_step(double time_step_s)
 		p_growth->implement_time_step(time_step_s, new_beat);
 	}
 
-	// Hold last flow
-	for (int i = 0; i < circ_no_of_compartments; i++)
-	{
-		circ_last_flow[i] = circ_flow[i];
-	}
-
 	// Tidy up
 	free(vol_calc);
-	free(flow_calc);
 
 	// Return
 	return (new_beat);
 }
-
 
 void circulation::calculate_pressures(const double v[], double p[])
 {
@@ -332,21 +347,6 @@ void circulation::calculate_pressures(const double v[], double p[])
 	
 	p[0] = p_hemi_vent->return_pressure_for_chamber_volume(v[0]);
 
-	/*
-	// Section is for debugging
-	if (p[0] == 0.0)
-	{
-		for (int i = 0; i < circ_no_of_compartments; i++)
-		{
-			cout << "v[" << i << "]: " << v[i] << "\t";
-			if (i == (circ_no_of_compartments - 1))
-				cout << "\n";
-		}
-		cout << "Ventricular pressure is zero - now exiting\n";
-		exit(1);
-	}
-	*/
-
 	// Calculate the other pressures
 	for (int i = 1; i < circ_no_of_compartments; i++)
 	{
@@ -354,7 +354,7 @@ void circulation::calculate_pressures(const double v[], double p[])
 	}
 }
 
-void circulation::calculate_flows(const double v[])
+void circulation::calculate_flows(const double v[], double flow[])
 {
 	//! Function sets the values of circ_flows[] based on an
 	//! array of compartment volumes
@@ -365,23 +365,23 @@ void circulation::calculate_flows(const double v[])
 	// Variables
 	double p_diff;
 
-	double s;
-	
+	double* p_calc = (double*)malloc(circ_no_of_compartments * sizeof(double));
+
 	// Code
 
-	calculate_pressures(v, circ_pressure);
+	calculate_pressures(v, p_calc);
 
 	// Calculate the flows
 	// These are flows from the aorta through to the veins
 	for (int i = 2; i < circ_no_of_compartments; i++)
 	{
-		p_diff = (circ_pressure[i - 1] - circ_pressure[i]);
-		circ_flow[i] = p_diff / circ_resistance[i];
+		p_diff = (p_calc[i - 1] - p_calc[i]);
+		flow[i] = p_diff / circ_resistance[i];
 	}
 
 	// Special case for flow through mitral valve
-	p_diff = (circ_pressure[circ_no_of_compartments - 1] - circ_pressure[0]);
-	circ_flow[0] = fabs(p_mv->valve_pos) * p_diff / circ_resistance[0];
+	p_diff = p_calc[circ_no_of_compartments - 1] - p_calc[0];
+	flow[0] = fabs(p_mv->valve_pos) * p_diff / circ_resistance[0];
 	
 	/*
 	circ_flow[0] = fabs(p_mv->valve_pos) *
@@ -390,25 +390,11 @@ void circulation::calculate_flows(const double v[])
 	*/
 
 	// Special case for flow through aortic va\lve
-	p_diff = (circ_pressure[0] - circ_pressure[1]);
-	circ_flow[1] = fabs(p_av->valve_pos) * p_diff / circ_resistance[1];
-	
-	/*
-	circ_flow[1] = fabs(p_av->valve_pos) *
-		(p_diff + (circ_inertance[1] * circ_last_flow[1] / time_step_s)) /
-		(circ_resistance[1] + (circ_inertance[1] / time_step_s));
-	*/
+	p_diff = p_calc[0] - p_calc[1];
+	flow[1] = fabs(p_av->valve_pos) * p_diff / circ_resistance[1];
 
-	/*
-
-	s = 0.0;
-	for (int i = 0; i < circ_no_of_compartments; i++)
-	{
-		s = s + circ_flow[i];
-	}
-
-	cout << "sum of flows: " << s << "\n";
-	*/
+	// Tidy up
+	free(p_calc);
 }
 
 void circulation::update_beat_metrics(void)
@@ -459,10 +445,12 @@ void circulation::update_beat_metrics(void)
 			p_cmv_results->last_beat_t_index);
 
 
-	cout << "Mitral_flow: " << p_stats->mean_value << " Aortic_flow: " << p_stats_2->mean_value << "\n";
-	cout << "Cardiac cycle s: " << cardiac_cycle_s << "\n";
-	cout << "Mitral output: " << 60 * p_stats->mean_value / cardiac_cycle_s << " Aortic output: " <<
-		60 * p_stats_2->mean_value / cardiac_cycle_s << "\n";
+	cout << "Mitral_flow: mean " << p_stats->sum << " peak " << p_stats->max_value << " min " << p_stats->min_value << "\n";
+	cout << "Aortic_flow: mean " << p_stats_2->sum << " peak " << p_stats_2->max_value << " min " << p_stats_2->min_value << "\n";
+
+	cout << "Cardiac cycle s: " << cardiac_cycle_s << "\n\n";
+	//cout << "Mitral output: " << 60 * p_stats->mean_value / cardiac_cycle_s << " Aortic output: " <<
+		//60 * p_stats_2->mean_value / cardiac_cycle_s << "\n";
 
 
 	p_hemi_vent->update_beat_metrics();
