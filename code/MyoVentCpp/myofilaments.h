@@ -196,6 +196,4 @@ public:
 	void move_cb_populations(double delta_hsl);
 
 	void dump_cb_distributions(void);
-
-	void update_beat_metrics(void);
 };

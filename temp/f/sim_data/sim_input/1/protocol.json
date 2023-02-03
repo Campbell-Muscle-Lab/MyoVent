@@ -1,7 +1,7 @@
 {
     "protocol": {
         "time_step": 0.001,
-        "no_of_time_steps": 2300
+        "no_of_time_steps": 2200
     },
     "activation": [
         {

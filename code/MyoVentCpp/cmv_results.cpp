@@ -98,6 +98,8 @@ void cmv_results::add_results_field(std::string field_name, double* p_double)
 	// Variables
 	int new_index;			// index of new field
 
+	bool index_set;
+
 	// Code
 
 	// Get the number of fields that have been defined already
@@ -112,64 +114,119 @@ void cmv_results::add_results_field(std::string field_name, double* p_double)
 	gsl_vector_set_all(gsl_results_vectors[new_index], GSL_NAN);
 
 	// Check for specific indices
+
+	index_set = false;
+
 	if (field_name == "time")
+	{
 		time_field_index = new_index;
+		index_set = true;
+	}
 
 	if (field_name == "hr_new_beat")
+	{
 		new_beat_field_index = new_index;
+		index_set = true;
+	}
+
 
 	if (field_name == "pressure_0")
+	{
 		pressure_vent_field_index = new_index;
+		index_set = true;
+	}
 
 	if (field_name == "volume_0")
+	{
 		volume_vent_field_index = new_index;
+		index_set = true;
+	}
 
 	string venous_pressure = "pressure_" +
 		to_string(p_parent_cmv_system->p_cmv_model->circ_no_of_compartments - 1);
 	if (field_name == venous_pressure)
+	{
 		pressure_veins_field_index = new_index;
+		index_set = true;
+	}
 
 	if (field_name == "flow_0")
+	{
 		flow_mitral_valve_field_index = new_index;
+		index_set = true;
+	}
 
 	if (field_name == "flow_1")
+	{
 		flow_aortic_valve_field_index = new_index;
+		index_set = true;
+	}
 
 	if (field_name == "hs_length")
+	{
 		hs_length_field_index = new_index;
+		index_set = true;
+	}
 
 	if (field_name == "myof_stress_int_pas")
+	{
 		myof_stress_int_pas_field_index = new_index;
-
-	if (field_name == "myof_mean_stress_int_pas")
-		myof_mean_stress_int_pas_field_index = new_index;
+		index_set = true;
+	}
 
 	if (field_name == "myof_ATP_flux")
+	{
 		myof_ATP_flux_field_index = new_index;
+		index_set = true;
+	}
 
 	if (field_name == "vent_stroke_work_J")
+	{
 		vent_stroke_work_field_index = new_index;
+		index_set = true;
+	}
 
 	if (field_name == "vent_stroke_energy_used_J")
+	{
 		vent_stroke_energy_used_field_index = new_index;
+		index_set = true;
+	}
 
 	if (field_name == "vent_efficiency")
+	{
 		vent_efficiency_field_index = new_index;
+		index_set = true;
+	}
 
 	if (field_name == "vent_ejection_fraction")
+	{
 		vent_ejection_fraction_field_index = new_index;
+		index_set = true;
+	}
 
 	if (field_name == "vent_ATP_used_per_s")
+	{
 		vent_ATP_used_per_s_field_index = new_index;
+		index_set = true;
+	}
 
 	if (field_name == "vent_stroke_volume")
+	{
 		vent_stroke_volume_field_index = new_index;
+		index_set = true;
+	}
 
 	if (field_name == "vent_cardiac_output")
+	{
 		vent_cardiac_output_field_index = new_index;
+		index_set = true;
+	}
 
 	if (field_name == "vent_power_to_mass")
+	{
 		vent_power_to_mass_field_index = new_index;
+		index_set = true;
+	}
 
 	if (p_parent_cmv_system->p_circulation->p_baroreflex != NULL)
 	{
@@ -177,11 +234,19 @@ void cmv_results::add_results_field(std::string field_name, double* p_double)
 			to_string(p_parent_cmv_system->p_circulation->p_baroreflex->
 				baro_P_compartment);
 		if (field_name == b_string)
+		{
 			pressure_arteries_field_index = new_index;
+			index_set = true;
+		}
 	}
 
 	// Update the number of defined fields
 	no_of_defined_results_fields = no_of_defined_results_fields + 1;
+
+	if (index_set == false)
+	{
+		cout << "cmv_results problem, field index not set for " << field_name << " Now exiting\n";
+	}
 }
 
 void cmv_results::update_results_vectors(int t_index)
@@ -381,11 +446,11 @@ void cmv_results::backfill_beat_data(gsl_vector* gsl_v, double value, int stop_t
 	// Code
 	
 	// Check whether there is a valid last_beat index
-		if (last_beat_t_index < 0)
-			return;
+	if (last_beat_t_index < 0)
+		return;
 
-		for (int i = last_beat_t_index; i <= stop_t_index; i++)
-		{
-			gsl_vector_set(gsl_v, i, value);
-		}
+	for (int i = last_beat_t_index; i <= stop_t_index; i++)
+	{
+		gsl_vector_set(gsl_v, i, value);
+	}
 }

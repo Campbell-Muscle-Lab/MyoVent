@@ -58,8 +58,6 @@ half_sarcomere::half_sarcomere(hemi_vent* set_p_parent_hemi_vent)
 	hs_ATP_concentration = p_cmv_model->hs_initial_ATP_concentration;
 	hs_prop_fibrosis = p_cmv_model->hs_prop_fibrosis;
 	hs_prop_myofilaments = p_cmv_model->hs_prop_myofilaments;
-
-	last_hs_length = hs_length;
 }
 
 // Destructor
@@ -290,9 +288,6 @@ void half_sarcomere::update_beat_metrics(void)
 			p_cmv_results->last_beat_t_index, p_parent_hemi_vent->p_parent_cmv_system->sim_t_index,
 			p_stats);
 	}
-
-	// Update daughter objects
-	p_myofilaments->update_beat_metrics();
 
 	// Tidy up
 	delete p_stats;

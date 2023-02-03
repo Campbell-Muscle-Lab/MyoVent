@@ -33,7 +33,7 @@ def test():
     figures_only_flag = ''
     
     time_step = 0.001
-    no_of_time_steps = 2300
+    no_of_time_steps = 2200
     
     baroreflex_start_s = 2500
     baroreflex_stop_s = 10000
@@ -43,6 +43,8 @@ def test():
     
     pert_start_s = 120
     pert_stop_s = 120.1
+    
+    nn = [1, 10]
     
     pert = []
     
@@ -56,10 +58,10 @@ def test():
                   't_start_s': pert_start_s, 't_stop_s': pert_stop_s,
                   'total_change': -0.0})
     
-    # pert.append({'test': 2,
-    #               'class': 'valve', 'variable': 'mv_valve_leak',
-    #               't_start_s': pert_start_s, 't_stop_s': pert_stop_s,
-    #               'total_change': -0.0})
+    pert.append({'test': 2,
+                  'class': 'valve', 'variable': 'mv_valve_leak',
+                  't_start_s': pert_start_s, 't_stop_s': pert_stop_s,
+                  'total_change': -0.0})
                  
     
     
@@ -161,8 +163,8 @@ def test():
         # Create a protocol
         prot = dict()
         prot['protocol'] = dict()
-        prot['protocol']['time_step'] = time_step
-        prot['protocol']['no_of_time_steps'] = no_of_time_steps
+        prot['protocol']['time_step'] = time_step / nn[i]
+        prot['protocol']['no_of_time_steps'] = nn[i] * no_of_time_steps
         
         prot['activation'] = []
         

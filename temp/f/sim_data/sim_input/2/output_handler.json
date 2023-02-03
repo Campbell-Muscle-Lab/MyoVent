@@ -1,0 +1,8 @@
+{
+    "templated_images": [
+        {
+            "template_file_string": "C:\\ken\\GitHub\\CampbellMuscleLab\\models\\MyoVent\\temp\\f\\templates\\template_circulation.json",
+            "output_file_string": "C:\\ken\\GitHub\\CampbellMuscleLab\\models\\MyoVent\\temp\\f\\sim_data\\sim_output\\output_1_2"
+        }
+    ]
+}

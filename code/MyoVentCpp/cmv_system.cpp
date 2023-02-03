@@ -134,8 +134,6 @@ bool cmv_system::implement_time_step(double time_step_s)
 	// Update system time
 	cum_time_s = cum_time_s + time_step_s;
 
-	cout << "t: " << cum_time_s << "\n";
-
 	// Impose perturbations
 	p_cmv_protocol->impose_perturbations(cum_time_s);
 

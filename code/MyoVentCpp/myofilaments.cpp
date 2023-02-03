@@ -537,6 +537,9 @@ void myofilaments::implement_time_step(double time_step_s)
 		holder = 0.0;
 		for (int i = 0; i < y_length; i++)
 		{
+			if (y_calc[i] < 0.0)
+				y_calc[i] = 0.0;
+
 			gsl_vector_set(y, i, y_calc[i]);
 
 			if (i < (y_length - 2))
@@ -551,8 +554,11 @@ void myofilaments::implement_time_step(double time_step_s)
 		int DRX_index = gsl_matrix_int_get(m_y_indices, p_m_scheme->first_DRX_state - 1, 0);
 		y_calc[DRX_index] = y_calc[DRX_index] + adjustment;
 		gsl_vector_set(y, DRX_index, y_calc[DRX_index]);
-		if (fabs(adjustment) > 0.005)
-			cout << "fast sliding: " << adjustment << "\n";
+		if (fabs(adjustment) > 0.001)
+		{
+			double t = p_parent_hs->p_cmv_system->cum_time_s;
+			cout << "t: " << t << " fast sliding : " << adjustment << "\n";
+		}
 	}
 
 	// Update class variables
@@ -1101,34 +1107,4 @@ void myofilaments::dump_cb_distributions(void)
 
 	// Update
 	cb_dump_file_defined = true;
-}
-
-void myofilaments::update_beat_metrics(void)
-{
-	//! Function updates beat metrics
-	
-	// Variables
-
-	stats_structure* p_stats;
-
-	// Code
-
-	p_stats = new stats_structure;
-
-	// Calculate the mean pas int stress
-
-	p_cmv_results->calculate_sub_vector_statistics(
-		p_cmv_results->gsl_results_vectors[p_cmv_results->myof_stress_int_pas_field_index],
-		p_cmv_results->last_beat_t_index, p_cmv_system->sim_t_index, p_stats);
-
-	// Set the class value
-	myof_mean_stress_int_pas = p_stats->mean_value;
-
-	// Backfill results
-	p_cmv_results->backfill_beat_data(
-		p_cmv_results->gsl_results_vectors[p_cmv_results->myof_mean_stress_int_pas_field_index],
-		myof_mean_stress_int_pas, p_cmv_system->sim_t_index);
-
-	// Tidy up
-	delete p_stats;
 }

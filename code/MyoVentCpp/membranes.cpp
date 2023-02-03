@@ -117,7 +117,7 @@ void membranes::implement_time_step(double time_step_s, bool new_beat)
 	//! Function updates membrane object by a time-step
 
 	// Variables
-	double eps_abs = 1e-8;
+	double eps_abs = 1e-6;
 	double eps_rel = 1e-6;
 
 	int status;

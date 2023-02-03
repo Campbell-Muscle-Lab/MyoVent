@@ -59,7 +59,6 @@ circulation::circulation(cmv_system* set_p_parent_cmv_system = NULL)
 	circ_pressure = (double*)malloc(circ_no_of_compartments * sizeof(double));
 	circ_volume = (double*)malloc(circ_no_of_compartments * sizeof(double));
 	circ_flow = (double*)malloc(circ_no_of_compartments * sizeof(double));
-	circ_last_flow = (double*)malloc(circ_no_of_compartments * sizeof(double));
 
 	// Initialise, noting total slack_volume as we go
 	// Start with the compartments at slack volume
@@ -74,7 +73,6 @@ circulation::circulation(cmv_system* set_p_parent_cmv_system = NULL)
 		circ_pressure[i] = 0.0;
 		circ_volume[i] = circ_slack_volume[i];
 		circ_flow[i] = 0.0;
-		circ_last_flow[i] = 0.0;
 
 		circ_total_slack_volume = circ_total_slack_volume +
 			circ_volume[i];
@@ -142,7 +140,6 @@ circulation::~circulation(void)
 	free(circ_pressure);
 	free(circ_volume);
 	free(circ_flow);
-	free(circ_last_flow);
 }
 
 // Other functions
@@ -335,9 +332,6 @@ bool circulation::implement_time_step(double time_step_s)
 		p_growth->implement_time_step(time_step_s, new_beat);
 	}
 
-	for (int i = 0; i < circ_no_of_compartments; i++)
-		circ_last_flow[i] = circ_flow[i];
-
 	// Tidy up
 	free(vol_calc);
 
@@ -402,8 +396,6 @@ void circulation::calculate_flows(const double v[], double flow[])
 	flow[1] = fabs(p_av->valve_pos) * p_diff / circ_resistance[1];
 
 	/*
-	//if (p_av->valve_pos > 0.99)
-		//p_av->valve_pos = 1.0;
 
 	flow[1] = fabs(p_av->valve_pos) *
 		(p_diff + (circ_inertance[1] * circ_last_flow[1] / time_step_s)) /
