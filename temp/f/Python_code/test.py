@@ -23,15 +23,17 @@ def test():
     batch_file_string = 'batch.json'
     base_model_file_string = '../base/model.json'
     base_options_file_string = '../base/options.json'
-    template_file_strings = ['../templates/template_baro.json', '../templates/template_baro_zoom.json']
+    # template_file_strings = ['../templates/template_baro.json', '../templates/template_baro_zoom.json']
     # template_file_strings = ['../templates/template_baro_zoom.json']
     # template_file_strings = ['../templates/template_baro.json']
+    template_file_strings = ['../templates/template_circulation.json']
+    
     MyoVentPy_code_dir = 'c:/ken/github/campbellmusclelab/models/myovent/code/myoventpy/myoventpy'
 
     figures_only_flag = ''
     
     time_step = 0.001
-    no_of_time_steps = 30000
+    no_of_time_steps = 2300
     
     baroreflex_start_s = 2500
     baroreflex_stop_s = 10000
@@ -52,7 +54,13 @@ def test():
     pert.append({'test': 1,
                   'class': 'valve', 'variable': 'mv_valve_leak',
                   't_start_s': pert_start_s, 't_stop_s': pert_stop_s,
-                  'total_change': -0.01})
+                  'total_change': -0.0})
+    
+    # pert.append({'test': 2,
+    #               'class': 'valve', 'variable': 'mv_valve_leak',
+    #               't_start_s': pert_start_s, 't_stop_s': pert_stop_s,
+    #               'total_change': -0.0})
+                 
     
     
     # pert.append({'test': 2,

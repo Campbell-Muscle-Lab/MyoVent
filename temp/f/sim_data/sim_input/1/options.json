@@ -17,6 +17,6 @@
         "thick_wall_approximation": "True"
     },
     "output": {
-        "skip_points": 9
+        "skip_points": 0
     }
 }

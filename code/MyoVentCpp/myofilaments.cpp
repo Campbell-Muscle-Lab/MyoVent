@@ -101,8 +101,6 @@ myofilaments::myofilaments(half_sarcomere* set_p_parent_hs)
 	max_shift = 0.0;
 	n_max_sub_steps = 0;
 
-	myof_mean_stress_int_pas = GSL_NAN;
-
 	cb_dump_file_string;
 	cb_dump_file_defined = false;
 
@@ -258,8 +256,6 @@ void myofilaments::initialise_simulation(void)
 	p_cmv_results->add_results_field("myof_stress_ext_pas", &myof_stress_ext_pas);
 	p_cmv_results->add_results_field("myof_stress_myof", &myof_stress_myof);
 	p_cmv_results->add_results_field("myof_stress_total", &myof_stress_total);
-
-	p_cmv_results->add_results_field("myof_mean_stress_int_pas", &myof_mean_stress_int_pas);
 }
 
 // This function is not a member of the myofilaments class but is used to interace

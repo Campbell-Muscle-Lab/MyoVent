@@ -197,13 +197,14 @@ double transition::calculate_rate(double x, double x_ext, double force, double h
 		double d = gsl_vector_get(rate_parameters, 1);
 		double x_wall = gsl_vector_get(rate_parameters, 2);
 		double x_smooth = gsl_vector_get(rate_parameters, 3);
+		double wall = p_cmv_options->max_rate * (1 /
+			(1 + exp(-x_smooth * (x - x_wall))));
 
 		// Code
 		rate = k0 * exp(-(F * d) /
 				(1e18 * GSL_CONST_MKSA_BOLTZMANN * temperature_K));
 
-		rate = rate + 10000.0 * (1 /
-			(1 + exp(-x_smooth * (x - x_wall))));
+		rate = GSL_MAX(rate, wall);
 	}
 
 	// Curtail at max rate

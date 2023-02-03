@@ -93,6 +93,12 @@ public:
 																holding flows between
 																compartments */
 
+	double* circ_last_flow;								/**< Pointer to array of doubles
+																holding flows between
+																compartments on last
+																time step */
+
+
 	double circ_total_slack_volume;						/**< double holding total slack
 																volume in liters */
 

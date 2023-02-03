@@ -264,6 +264,11 @@ void hemi_vent::update_chamber_volume(double new_volume)
 
 	// Code
 
+	// Store the last hs_length
+	p_hs->last_hs_length = p_hs->hs_length;
+
+	// Update
+
 	new_circumference = return_lv_circumference_for_chamber_volume(new_volume);
 
 	delta_circumference = new_circumference - vent_circumference;

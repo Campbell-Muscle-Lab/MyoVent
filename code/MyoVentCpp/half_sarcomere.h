@@ -76,6 +76,8 @@ public:
 	double hs_delta_G_ATP;							/**< double with energy in Joules
 															per mole of ATP */
 
+	double last_hs_length;
+
 	/**
 	/* function adds data fields and vectors to the results objet
 	*/
