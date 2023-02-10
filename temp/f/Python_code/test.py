@@ -33,16 +33,16 @@ def test():
     figures_only_flag = ''
     
     time_step = 0.0001
-    no_of_time_steps = 10000000
+    no_of_time_steps = 5000000
     
     baroreflex_start_s = 25
     baroreflex_stop_s = 10000
     
     growth_start_s = 100
-    growth_stop_s = 100
+    growth_stop_s = 10000
     
-    pert_start_s = 500
-    pert_stop_s = 500.1
+    pert_start_s = 250
+    pert_stop_s = 250.1
     
     # nn = [1, 10]
     
@@ -56,12 +56,12 @@ def test():
     pert.append({'test': 2,
                   'class': 'valve', 'variable': 'av_valve_leak',
                   't_start_s': pert_start_s, 't_stop_s': pert_stop_s,
-                  'total_change': -0.005})
+                  'total_change': -0.0025})
     
     pert.append({'test': 3,
                   'class': 'valve', 'variable': 'mv_valve_leak',
                   't_start_s': pert_start_s, 't_stop_s': pert_stop_s,
-                  'total_change': -0.001})
+                  'total_change': -0.0005})
     
     pert.append({'test': 4,
                   'class': 'baroreflex', 'variable': 'baro_P_set',
@@ -71,17 +71,17 @@ def test():
     pert.append({'test': 5,
                   'class': 'myofilaments', 'variable': 'm_state_2_trans_1_para_1',
                   't_start_s': pert_start_s, 't_stop_s': pert_stop_s,
-                  'total_change': -30})
+                  'total_change': -40})
 
     pert.append({'test': 6,
                   'class': 'mitochondria', 'variable': 'ATP_generation_rate',
                   't_start_s': pert_start_s, 't_stop_s': pert_stop_s,
-                  'total_change': -1})
+                  'total_change': -0.25})
     
     pert.append({'test': 7,
                   'class': 'half_sarcomere', 'variable': 'prop_fibrosis',
                   't_start_s': pert_start_s, 't_stop_s': pert_stop_s,
-                  'total_change': 0.05})
+                  'total_change': 0.075})
 
     
     no_of_jobs = len(pert)

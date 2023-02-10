@@ -166,7 +166,7 @@
     },
     "baroreflex":
     {
-        "baro_P_set": 90,
+        "baro_P_set": 85,
         "baro_S": 0.01,
         "baro_k_drive": 10,
         "baro_k_recov": 0.1,

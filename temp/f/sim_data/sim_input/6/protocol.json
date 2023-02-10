@@ -1,7 +1,7 @@
 {
     "protocol": {
         "time_step": 0.0001,
-        "no_of_time_steps": 10000000
+        "no_of_time_steps": 5000000
     },
     "activation": [
         {
@@ -12,7 +12,7 @@
         {
             "type": "growth",
             "t_start_s": 100,
-            "t_stop_s": 100
+            "t_stop_s": 10000
         }
     ],
     "perturbation": [
@@ -20,9 +20,9 @@
             "test": 6,
             "class": "mitochondria",
             "variable": "ATP_generation_rate",
-            "t_start_s": 500,
-            "t_stop_s": 500.1,
-            "total_change": -1
+            "t_start_s": 250,
+            "t_stop_s": 250.1,
+            "total_change": -0.25
         }
     ]
 }
