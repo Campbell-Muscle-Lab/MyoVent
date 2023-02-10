@@ -129,7 +129,6 @@ void cmv_results::add_results_field(std::string field_name, double* p_double)
 		index_set = true;
 	}
 
-
 	if (field_name == "pressure_0")
 	{
 		pressure_vent_field_index = new_index;

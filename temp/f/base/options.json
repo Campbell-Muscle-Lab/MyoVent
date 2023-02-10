@@ -1,11 +1,11 @@
 {
     "MyoSim":
     {
-        "bin_min": -15.0,
+        "bin_min": -25.0,
         "bin_max": 15.0,
         "bin_width": 1.0,
         "max_rate": 1000.0,
-         "xrates_dump":
+        "rates_dump":
         {
             "relative_to": "this_file",
             "file_string": "../../sim_output/1/rates.json"
@@ -22,6 +22,6 @@
     },
     "output":
     {
-        "skip_points": 0
+        "skip_points": 99
     }
 }

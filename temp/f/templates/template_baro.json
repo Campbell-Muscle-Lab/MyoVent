@@ -612,7 +612,7 @@
                 "series":
                 [
                     {
-                        "field": "myof_mean_stress_int_pas"
+                        "field": "myof_stress_int_pas"
                     },
                     {
                         "reference": 150

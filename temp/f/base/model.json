@@ -6,7 +6,7 @@
         "blood_volume": 4.5,
         "compartments":
         {
-            "resistance": [10, 21, 40, 800, 250, 50, 20],
+            "resistance": [10, 20, 40, 800, 250, 50, 20],
             "compliance": [0, 4e-4, 8e-4, 1e-3, 1e-4, 0.03, 0.08],
             "slack_volume": [0.065, 0.3, 0.3, 0.1, 0.25, 0.5, 2.0],
             "inertance": [0.0, 0.0, 100, 100, 100, 100, 100]
@@ -34,7 +34,7 @@
             }
         },
         "heart_rate": {
-            "t_RR_interval_s": 0.8
+            "t_RR_interval_s": 0.95
         },
         "half_sarcomere":{
             "reference_hs_length": 1100,
@@ -135,7 +135,7 @@
                             "new_state": 4,
                             "rate_type": "constant",
                             "rate_parameters": [
-                                400
+                                300
                             ]
                             }
                         ]
@@ -168,7 +168,7 @@
     {
         "baro_P_set": 90,
         "baro_S": 0.01,
-        "baro_k_drive": 5,
+        "baro_k_drive": 10,
         "baro_k_recov": 0.1,
         "baro_P_compartment": 2,
         "control":
@@ -233,7 +233,7 @@
     },
     "growth":
     {
-        "master_rate": 0.05,
+        "master_rate": 0.5,
         "shrinkage":
         {
             "eccentric_rate": -0.0,

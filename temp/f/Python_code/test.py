@@ -23,35 +23,30 @@ def test():
     batch_file_string = 'batch.json'
     base_model_file_string = '../base/model.json'
     base_options_file_string = '../base/options.json'
-    # template_file_strings = ['../templates/template_baro.json', '../templates/template_baro_zoom.json']
+    template_file_strings = ['../templates/template_baro.json', '../templates/template_baro_zoom.json']
     # template_file_strings = ['../templates/template_baro_zoom.json']
     # template_file_strings = ['../templates/template_baro.json']
-    template_file_strings = ['../templates/template_circulation.json']
+    # template_file_strings = ['../templates/template_circulation.json']
     
     MyoVentPy_code_dir = 'c:/ken/github/campbellmusclelab/models/myovent/code/myoventpy/myoventpy'
 
     figures_only_flag = ''
     
-    time_step = 0.001
-    no_of_time_steps = 2200
+    time_step = 0.0001
+    no_of_time_steps = 10000000
     
-    baroreflex_start_s = 2500
+    baroreflex_start_s = 25
     baroreflex_stop_s = 10000
     
-    growth_start_s = 10000
-    growth_stop_s = 10000
+    growth_start_s = 100
+    growth_stop_s = 100
     
-    pert_start_s = 120
-    pert_stop_s = 120.1
+    pert_start_s = 500
+    pert_stop_s = 500.1
     
-    nn = [1, 10]
+    # nn = [1, 10]
     
     pert = []
-    
-    # pert.append({'test': 1,
-    #              'class': 'valve', 'variable': 'av_valve_leak',
-    #              't_start_s': pert_start_s, 't_stop_s': pert_stop_s,
-    #              'total_change': -0.01})
     
     pert.append({'test': 1,
                   'class': 'valve', 'variable': 'mv_valve_leak',
@@ -59,36 +54,34 @@ def test():
                   'total_change': -0.0})
     
     pert.append({'test': 2,
+                  'class': 'valve', 'variable': 'av_valve_leak',
+                  't_start_s': pert_start_s, 't_stop_s': pert_stop_s,
+                  'total_change': -0.005})
+    
+    pert.append({'test': 3,
                   'class': 'valve', 'variable': 'mv_valve_leak',
                   't_start_s': pert_start_s, 't_stop_s': pert_stop_s,
-                  'total_change': -0.0})
-                 
+                  'total_change': -0.001})
     
+    pert.append({'test': 4,
+                  'class': 'baroreflex', 'variable': 'baro_P_set',
+                  't_start_s': pert_start_s, 't_stop_s': pert_stop_s,
+                  'total_change': 40})
+
+    pert.append({'test': 5,
+                  'class': 'myofilaments', 'variable': 'm_state_2_trans_1_para_1',
+                  't_start_s': pert_start_s, 't_stop_s': pert_stop_s,
+                  'total_change': -30})
+
+    pert.append({'test': 6,
+                  'class': 'mitochondria', 'variable': 'ATP_generation_rate',
+                  't_start_s': pert_start_s, 't_stop_s': pert_stop_s,
+                  'total_change': -1})
     
-    # pert.append({'test': 2,
-    #               'class': 'baroreflex', 'variable': 'baro_P_set',
-    #               't_start_s': pert_start_s, 't_stop_s': pert_stop_s,
-    #               'total_change': 40})
-
-    # pert.append({'test': 3,
-    #               'class': 'circulation', 'variable': 'resistance_2',
-    #               't_start_s': pert_start_s, 't_stop_s': pert_stop_s,
-    #               'total_change': 200})
-
-    # pert.append({'test': 4,
-    #               'class': 'myofilaments', 'variable': 'm_state_2_trans_1_para_1',
-    #               't_start_s': pert_start_s, 't_stop_s': pert_stop_s,
-    #               'total_change': -30})
-
-    # pert.append({'test': 5,
-    #               'class': 'mitochondria', 'variable': 'ATP_generation_rate',
-    #               't_start_s': pert_start_s, 't_stop_s': pert_stop_s,
-    #               'total_change': -2})
-    
-    # pert.append({'test': 6,
-    #               'class': 'half_sarcomere', 'variable': 'prop_fibrosis',
-    #               't_start_s': pert_start_s, 't_stop_s': pert_stop_s,
-    #               'total_change': 0.1})
+    pert.append({'test': 7,
+                  'class': 'half_sarcomere', 'variable': 'prop_fibrosis',
+                  't_start_s': pert_start_s, 't_stop_s': pert_stop_s,
+                  'total_change': 0.05})
 
     
     no_of_jobs = len(pert)
@@ -155,6 +148,12 @@ def test():
         # Copy the options
         new_options = copy.deepcopy(base_options)
         
+        # new_options['MyoSim']['rates_dump']['file_string'] = \
+        #     ('../../sim_output/%i/rates.json' % (i+1))
+        
+        # new_options['MyoSim']['cb_dump']['file_string'] = \
+        #     ('../../sim_output/%i/cb.txt' % (i+1))
+        
         # Write it
         new_options_file_string = os.path.join(sim_input_folder, 'options.json')
         with open(new_options_file_string, 'w') as f:
@@ -163,8 +162,8 @@ def test():
         # Create a protocol
         prot = dict()
         prot['protocol'] = dict()
-        prot['protocol']['time_step'] = time_step / nn[i]
-        prot['protocol']['no_of_time_steps'] = nn[i] * no_of_time_steps
+        prot['protocol']['time_step'] = time_step
+        prot['protocol']['no_of_time_steps'] = no_of_time_steps
         
         prot['activation'] = []
         

@@ -17,12 +17,12 @@
     ],
     "perturbation": [
         {
-            "test": 1,
-            "class": "valve",
-            "variable": "mv_valve_leak",
+            "test": 6,
+            "class": "mitochondria",
+            "variable": "ATP_generation_rate",
             "t_start_s": 500,
             "t_stop_s": 500.1,
-            "total_change": -0.0
+            "total_change": -1
         }
     ]
 }

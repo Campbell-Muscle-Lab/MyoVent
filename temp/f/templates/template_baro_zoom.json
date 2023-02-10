@@ -11,8 +11,8 @@
     },
     "x_display":{
         "global_x_field": "time",
-        "ticks": [10, 12.5],
-        "label": "Time (s)"
+        "label": "Time (s)",
+        "ticks": [97, 103]
     },
     "processing":{
         "line_rel_width": 0.01
@@ -448,28 +448,6 @@
             }
         },
         {
-            "column": 4,
-            "y_info":
-            {
-                "label": "Pressure",
-                "series":
-                [
-                    {
-                        "field": "pressure_0",
-                        "field_label": "Ventricle"
-                    },
-                    {
-                        "field": "pressure_1",
-                        "field_label": "Aora"
-                    },
-                    {
-                        "field": "pressure_6",
-                        "field_label": "Veins"
-                    }
-                ]
-            }
-        },
-        {
             "column": 5,
             "y_info":
             {
@@ -635,7 +613,7 @@
                 "series":
                 [
                     {
-                        "field": "myof_mean_stress_int_pas"
+                        "field": "myof_stress_int_pas"
                     },
                     {
                         "reference": 150

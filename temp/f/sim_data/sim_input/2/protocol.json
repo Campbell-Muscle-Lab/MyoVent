@@ -1,28 +1,28 @@
 {
     "protocol": {
         "time_step": 0.0001,
-        "no_of_time_steps": 22000
+        "no_of_time_steps": 10000000
     },
     "activation": [
         {
             "type": "baroreflex",
-            "t_start_s": 2500,
+            "t_start_s": 25,
             "t_stop_s": 10000
         },
         {
             "type": "growth",
-            "t_start_s": 10000,
-            "t_stop_s": 10000
+            "t_start_s": 100,
+            "t_stop_s": 100
         }
     ],
     "perturbation": [
         {
             "test": 2,
             "class": "valve",
-            "variable": "mv_valve_leak",
-            "t_start_s": 120,
-            "t_stop_s": 120.1,
-            "total_change": -0.0
+            "variable": "av_valve_leak",
+            "t_start_s": 500,
+            "t_stop_s": 500.1,
+            "total_change": -0.005
         }
     ]
 }
