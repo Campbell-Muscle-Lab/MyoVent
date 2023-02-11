@@ -186,7 +186,7 @@
         }
     },
     "baroreflex": {
-        "baro_P_set": 85,
+        "baro_P_set": 90,
         "baro_S": 0.01,
         "baro_k_drive": 10,
         "baro_k_recov": 0.1,
@@ -261,7 +261,7 @@
                 "type": "eccentric",
                 "level": "myofilaments",
                 "signal": "myof_stress_int_pas",
-                "set_point": 150,
+                "set_point": 850,
                 "prop_gain": 0.02,
                 "max_rate": 0.02
             },

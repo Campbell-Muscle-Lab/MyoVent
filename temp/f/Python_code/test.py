@@ -33,7 +33,7 @@ def test():
     figures_only_flag = ''
     
     time_step = 0.0001
-    no_of_time_steps = 5000000
+    no_of_time_steps = 2500000
     
     baroreflex_start_s = 25
     baroreflex_stop_s = 10000
@@ -45,6 +45,7 @@ def test():
     pert_stop_s = 250.1
     
     # nn = [1, 10]
+    pf_factor = [700, 350, 0]
     
     pert = []
     
@@ -52,36 +53,47 @@ def test():
                   'class': 'valve', 'variable': 'mv_valve_leak',
                   't_start_s': pert_start_s, 't_stop_s': pert_stop_s,
                   'total_change': -0.0})
-    
+
     pert.append({'test': 2,
-                  'class': 'valve', 'variable': 'av_valve_leak',
-                  't_start_s': pert_start_s, 't_stop_s': pert_stop_s,
-                  'total_change': -0.0025})
-    
+                 'class': 'valve', 'variable': 'mv_valve_leak',
+                 't_start_s': pert_start_s, 't_stop_s': pert_stop_s,
+                 'total_change': -0.0})
+
     pert.append({'test': 3,
-                  'class': 'valve', 'variable': 'mv_valve_leak',
-                  't_start_s': pert_start_s, 't_stop_s': pert_stop_s,
-                  'total_change': -0.0005})
-    
-    pert.append({'test': 4,
-                  'class': 'baroreflex', 'variable': 'baro_P_set',
-                  't_start_s': pert_start_s, 't_stop_s': pert_stop_s,
-                  'total_change': 40})
+                 'class': 'valve', 'variable': 'mv_valve_leak',
+                 't_start_s': pert_start_s, 't_stop_s': pert_stop_s,
+                 'total_change': -0.0})
 
-    pert.append({'test': 5,
-                  'class': 'myofilaments', 'variable': 'm_state_2_trans_1_para_1',
-                  't_start_s': pert_start_s, 't_stop_s': pert_stop_s,
-                  'total_change': -40})
-
-    pert.append({'test': 6,
-                  'class': 'mitochondria', 'variable': 'ATP_generation_rate',
-                  't_start_s': pert_start_s, 't_stop_s': pert_stop_s,
-                  'total_change': -0.25})
     
-    pert.append({'test': 7,
-                  'class': 'half_sarcomere', 'variable': 'prop_fibrosis',
-                  't_start_s': pert_start_s, 't_stop_s': pert_stop_s,
-                  'total_change': 0.075})
+    # pert.append({'test': 2,
+    #               'class': 'valve', 'variable': 'av_valve_leak',
+    #               't_start_s': pert_start_s, 't_stop_s': pert_stop_s,
+    #               'total_change': -0.0025})
+    
+    # pert.append({'test': 3,
+    #               'class': 'valve', 'variable': 'mv_valve_leak',
+    #               't_start_s': pert_start_s, 't_stop_s': pert_stop_s,
+    #               'total_change': -0.0005})
+    
+    # pert.append({'test': 4,
+    #               'class': 'baroreflex', 'variable': 'baro_P_set',
+    #               't_start_s': pert_start_s, 't_stop_s': pert_stop_s,
+    #               'total_change': 40})
+
+    # pert.append({'test': 5,
+    #               'class': 'myofilaments', 'variable': 'm_state_2_trans_1_para_1',
+    #               't_start_s': pert_start_s, 't_stop_s': pert_stop_s,
+    #               'total_change': -40})
+
+    # pert.append({'test': 6,
+    #               'class': 'mitochondria', 'variable': 'ATP_generation_rate',
+    #               't_start_s': pert_start_s, 't_stop_s': pert_stop_s,
+    #               'total_change': -0.25})
+    
+    # pert.append({'test': 7,
+    #               'class': 'half_sarcomere', 'variable': 'prop_fibrosis',
+    #               't_start_s': pert_start_s, 't_stop_s': pert_stop_s,
+    #               'total_change': 0.075})
 
     
     no_of_jobs = len(pert)
@@ -134,11 +146,11 @@ def test():
         # Copy the model
         new_model = copy.deepcopy(base_model)
         
-        if (i==1):
-            # Stop shrinkage
-            new_model['growth']['shrinkage']['eccentric_rate'] = 0.0
-            new_model['growth']['shrinkage']['concentric_rate'] = 0.0            
-            
+        # Adjust the growth gain
+        y = new_model['growth']['control'][0]['set_point']
+        new_model['growth']['control'][0]['set_point'] = \
+            y + pf_factor[i]
+                
        
         # Write it
         new_model_file_string = os.path.join(sim_input_folder, 'model.json')

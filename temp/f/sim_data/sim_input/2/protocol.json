@@ -1,7 +1,7 @@
 {
     "protocol": {
         "time_step": 0.0001,
-        "no_of_time_steps": 5000000
+        "no_of_time_steps": 2500000
     },
     "activation": [
         {
@@ -19,10 +19,10 @@
         {
             "test": 2,
             "class": "valve",
-            "variable": "av_valve_leak",
+            "variable": "mv_valve_leak",
             "t_start_s": 250,
             "t_stop_s": 250.1,
-            "total_change": -0.0025
+            "total_change": -0.0
         }
     ]
 }

@@ -186,7 +186,7 @@
         }
     },
     "baroreflex": {
-        "baro_P_set": 85,
+        "baro_P_set": 90,
         "baro_S": 0.01,
         "baro_k_drive": 10,
         "baro_k_recov": 0.1,
@@ -253,15 +253,15 @@
     "growth": {
         "master_rate": 0.5,
         "shrinkage": {
-            "eccentric_rate": 0.0,
-            "concentric_rate": 0.0
+            "eccentric_rate": -0.0,
+            "concentric_rate": -0.0
         },
         "control": [
             {
                 "type": "eccentric",
                 "level": "myofilaments",
                 "signal": "myof_stress_int_pas",
-                "set_point": 150,
+                "set_point": 500,
                 "prop_gain": 0.02,
                 "max_rate": 0.02
             },
