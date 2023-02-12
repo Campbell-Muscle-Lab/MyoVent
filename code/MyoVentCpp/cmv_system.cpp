@@ -31,7 +31,7 @@ struct stats_structure {
 };
 
 // Constructor
-cmv_system::cmv_system(string JSON_model_file_string)
+cmv_system::cmv_system(string JSON_model_file_string, int set_system_id)
 {
 	// Initialise
 
@@ -39,6 +39,8 @@ cmv_system::cmv_system(string JSON_model_file_string)
 
 	// Code creates a cmv_model object
 	p_cmv_model = new cmv_model(JSON_model_file_string);
+
+	system_id = set_system_id;
 
 	// Sets other pointers to safety
 	p_cmv_options = NULL;
@@ -146,7 +148,7 @@ void cmv_system::update_beat_metrics(void)
 {
 	//! Updates beat metrics in daughter objects
 
-	cout << "New beat at: " << cum_time_s << " s\n";
+	cout << "System [" << system_id << "], new beat at : " << cum_time_s << " s\n";
 	p_circulation->update_beat_metrics();
 
 	p_cmv_results->last_beat_t_index = sim_t_index;

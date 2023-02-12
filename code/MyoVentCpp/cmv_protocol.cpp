@@ -38,7 +38,7 @@ cmv_protocol::cmv_protocol(cmv_system* set_p_cmv_system, string set_protocol_fil
 	// Code
 
 	// Initialise variables
-	p_cmv_sytem = set_p_cmv_system;
+	p_cmv_system = set_p_cmv_system;
 
 	protocol_file_string = set_protocol_file_string;
 	time_step_s = 0.0;

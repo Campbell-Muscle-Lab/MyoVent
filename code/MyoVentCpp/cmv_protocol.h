@@ -39,7 +39,7 @@ public:
 	~cmv_protocol(void);
 
 	// Variables
-	cmv_system* p_cmv_sytem;				/**< pointer to the parent system */
+	cmv_system* p_cmv_system;				/**< pointer to the parent system */
 
 	string protocol_file_string;			/**< string for the protocol file */
 

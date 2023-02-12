@@ -25,7 +25,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	cmv_system(string JSON_model_file_string);
+	cmv_system(string JSON_model_file_string, int system_id);
 
 	/**
 	* Destructor
@@ -46,6 +46,8 @@ public:
 	int sim_t_index;						/**< integer holding index in the simulation */
 
 	double cum_time_s;						/**< double, with system time in s */
+
+	int system_id;
 
 	// Functions
 

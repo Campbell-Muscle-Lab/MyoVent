@@ -28,15 +28,17 @@ int main(int argc, char* argv[])
     string options_file_string;
     string protocol_file_string;
     string results_file_string;
+    string system_id;
 
     // Set inputs
     model_file_string = argv[1];
     options_file_string = argv[2];
     protocol_file_string = argv[3];
     results_file_string = argv[4];
+    system_id = argv[5];
 
     // Initialize
-    p_cmv_system = new cmv_system(model_file_string);
+    p_cmv_system = new cmv_system(model_file_string, stoi(system_id));
 
     p_cmv_system->run_simulation(options_file_string,
         protocol_file_string, results_file_string);

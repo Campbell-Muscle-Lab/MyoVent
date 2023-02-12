@@ -24,6 +24,13 @@
                 "protocol_file": "C:\\ken\\GitHub\\CampbellMuscleLab\\models\\MyoVent\\temp\\f\\sim_data\\sim_input\\3\\protocol.json",
                 "results_file": "C:\\ken\\GitHub\\CampbellMuscleLab\\models\\MyoVent\\temp\\f\\sim_data\\sim_output\\3\\results.txt",
                 "output_handler_file": "C:\\ken\\GitHub\\CampbellMuscleLab\\models\\MyoVent\\temp\\f\\sim_data\\sim_input\\3\\output_handler.json"
+            },
+            {
+                "model_file": "C:\\ken\\GitHub\\CampbellMuscleLab\\models\\MyoVent\\temp\\f\\sim_data\\sim_input\\4\\model.json",
+                "options_file": "C:\\ken\\GitHub\\CampbellMuscleLab\\models\\MyoVent\\temp\\f\\sim_data\\sim_input\\4\\options.json",
+                "protocol_file": "C:\\ken\\GitHub\\CampbellMuscleLab\\models\\MyoVent\\temp\\f\\sim_data\\sim_input\\4\\protocol.json",
+                "results_file": "C:\\ken\\GitHub\\CampbellMuscleLab\\models\\MyoVent\\temp\\f\\sim_data\\sim_output\\4\\results.txt",
+                "output_handler_file": "C:\\ken\\GitHub\\CampbellMuscleLab\\models\\MyoVent\\temp\\f\\sim_data\\sim_input\\4\\output_handler.json"
             }
         ]
     }

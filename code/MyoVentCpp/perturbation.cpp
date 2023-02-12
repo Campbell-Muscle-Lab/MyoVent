@@ -86,7 +86,7 @@ void perturbation::impose(double sim_time_s)
 		{
 			if (variable == "baro_P_set")
 			{
-				p_double = &(p_cmv_protocol->p_cmv_sytem->p_circulation->p_baroreflex->baro_P_set);
+				p_double = &(p_cmv_protocol->p_cmv_system->p_circulation->p_baroreflex->baro_P_set);
 
 				*p_double = *p_double + increment;
 			}
@@ -108,7 +108,7 @@ void perturbation::impose(double sim_time_s)
 
 				compartment_index = digits[0] - 1;
 
-				p_double = &(p_cmv_protocol->p_cmv_sytem->p_circulation->circ_resistance[compartment_index]);
+				p_double = &(p_cmv_protocol->p_cmv_system->p_circulation->circ_resistance[compartment_index]);
 
 				*p_double = *p_double + increment;
 			}
@@ -118,14 +118,14 @@ void perturbation::impose(double sim_time_s)
 		{
 			if (variable == "vent_wall_volume")
 			{
-				p_double = &(p_cmv_protocol->p_cmv_sytem->p_circulation->p_hemi_vent->vent_wall_volume);
+				p_double = &(p_cmv_protocol->p_cmv_system->p_circulation->p_hemi_vent->vent_wall_volume);
 
 				*p_double = *p_double + increment;
 			}
 
 			if (variable == "vent_n_hs")
 			{
-				p_double = &(p_cmv_protocol->p_cmv_sytem->p_circulation->p_hemi_vent->vent_n_hs);
+				p_double = &(p_cmv_protocol->p_cmv_system->p_circulation->p_hemi_vent->vent_n_hs);
 
 				// When we change vent_n_hs, we need to adjust the length of the existing half-sarcomeres
 				// and the wall volume as well
@@ -133,16 +133,16 @@ void perturbation::impose(double sim_time_s)
 				delta_n_hs = increment;
 
 				// Work out how far half-sarcomeres move using chain rule
-				delta_hs_length = -(delta_n_hs * p_cmv_protocol->p_cmv_sytem->p_circulation->p_hemi_vent->p_hs->hs_length) /
-					p_cmv_protocol->p_cmv_sytem->p_circulation->p_hemi_vent->vent_n_hs;
+				delta_hs_length = -(delta_n_hs * p_cmv_protocol->p_cmv_system->p_circulation->p_hemi_vent->p_hs->hs_length) /
+					p_cmv_protocol->p_cmv_system->p_circulation->p_hemi_vent->vent_n_hs;
 
 				// Apply to half-sarcomere
-				p_cmv_protocol->p_cmv_sytem->p_circulation->p_hemi_vent->p_hs->change_hs_length(delta_hs_length);
+				p_cmv_protocol->p_cmv_system->p_circulation->p_hemi_vent->p_hs->change_hs_length(delta_hs_length);
 
 				// And the wall volume
-				p_cmv_protocol->p_cmv_sytem->p_circulation->p_hemi_vent->vent_wall_volume =
-					p_cmv_protocol->p_cmv_sytem->p_circulation->p_hemi_vent->vent_wall_volume *
-					(1.0 + (delta_n_hs / p_cmv_protocol->p_cmv_sytem->p_circulation->p_hemi_vent->vent_n_hs));
+				p_cmv_protocol->p_cmv_system->p_circulation->p_hemi_vent->vent_wall_volume =
+					p_cmv_protocol->p_cmv_system->p_circulation->p_hemi_vent->vent_wall_volume *
+					(1.0 + (delta_n_hs / p_cmv_protocol->p_cmv_system->p_circulation->p_hemi_vent->vent_n_hs));
 
 				// Finally increment the vent_n_hs
 				*p_double = *p_double + increment;
@@ -153,68 +153,66 @@ void perturbation::impose(double sim_time_s)
 		{
 			if (variable == "mv_valve_k")
 			{
-				p_double = &(p_cmv_protocol->p_cmv_sytem->p_circulation->p_hemi_vent->p_mv->valve_k);
+				p_double = &(p_cmv_protocol->p_cmv_system->p_circulation->p_hemi_vent->p_mv->valve_k);
 
 				*p_double = *p_double + increment;
 			}
 
 			if (variable == "mv_valve_mass")
 			{
-				p_double = &(p_cmv_protocol->p_cmv_sytem->p_circulation->p_hemi_vent->p_mv->valve_mass);
+				p_double = &(p_cmv_protocol->p_cmv_system->p_circulation->p_hemi_vent->p_mv->valve_mass);
 
 				*p_double = *p_double + increment;
 			}
 
 			if (variable == "mv_valve_eta")
 			{
-				p_double = &(p_cmv_protocol->p_cmv_sytem->p_circulation->p_hemi_vent->p_mv->valve_eta);
+				p_double = &(p_cmv_protocol->p_cmv_system->p_circulation->p_hemi_vent->p_mv->valve_eta);
 
 				*p_double = *p_double + increment;
 			}
 
 			if (variable == "mv_valve_leak")
 			{
-				p_double = &(p_cmv_protocol->p_cmv_sytem->p_circulation->p_hemi_vent->p_mv->valve_leak);
+				p_double = &(p_cmv_protocol->p_cmv_system->p_circulation->p_hemi_vent->p_mv->valve_leak);
 
 				*p_double = *p_double + increment;
 			}
 
 			if (variable == "av_valve_k")
 			{
-				p_double = &(p_cmv_protocol->p_cmv_sytem->p_circulation->p_hemi_vent->p_av->valve_k);
+				p_double = &(p_cmv_protocol->p_cmv_system->p_circulation->p_hemi_vent->p_av->valve_k);
 
 				*p_double = *p_double + increment;
 			}
 
 			if (variable == "av_valve_mass")
 			{
-				p_double = &(p_cmv_protocol->p_cmv_sytem->p_circulation->p_hemi_vent->p_av->valve_mass);
+				p_double = &(p_cmv_protocol->p_cmv_system->p_circulation->p_hemi_vent->p_av->valve_mass);
 
 				*p_double = *p_double + increment;
 			}
 
 			if (variable == "av_valve_eta")
 			{
-				p_double = &(p_cmv_protocol->p_cmv_sytem->p_circulation->p_hemi_vent->p_av->valve_eta);
+				p_double = &(p_cmv_protocol->p_cmv_system->p_circulation->p_hemi_vent->p_av->valve_eta);
 
 				*p_double = *p_double + increment;
 			}
 
 			if (variable == "av_valve_leak")
 			{
-				p_double = &(p_cmv_protocol->p_cmv_sytem->p_circulation->p_hemi_vent->p_av->valve_leak);
+				p_double = &(p_cmv_protocol->p_cmv_system->p_circulation->p_hemi_vent->p_av->valve_leak);
 
 				*p_double = *p_double + increment;
 			}
-
-
 		}
 
 		if (class_name == "half_sarcomere")
 		{
 			if (variable == "prop_fibrosis")
 			{
-				p_double = &(p_cmv_protocol->p_cmv_sytem->p_circulation->p_hemi_vent->p_hs->hs_prop_fibrosis);
+				p_double = &(p_cmv_protocol->p_cmv_system->p_circulation->p_hemi_vent->p_hs->hs_prop_fibrosis);
 
 				*p_double = *p_double + increment;
 			}
@@ -224,7 +222,7 @@ void perturbation::impose(double sim_time_s)
 		{
 			if (variable == "ATP_generation_rate")
 			{
-				p_double = &(p_cmv_protocol->p_cmv_sytem->p_circulation->p_hemi_vent->p_hs->
+				p_double = &(p_cmv_protocol->p_cmv_system->p_circulation->p_hemi_vent->p_hs->
 					p_mitochondria->mito_ATP_generation_rate);
 
 				*p_double = *p_double + increment;
@@ -252,7 +250,7 @@ void perturbation::impose(double sim_time_s)
 				parameter_index = digits[2] - 1;
 
 				// This is tricky because the variable is stored in a gsl_vector
-				gsl_vector* p_gsl_v = p_cmv_protocol->p_cmv_sytem->p_circulation->p_hemi_vent->
+				gsl_vector* p_gsl_v = p_cmv_protocol->p_cmv_system->p_circulation->p_hemi_vent->
 					p_hs->p_myofilaments->p_m_scheme->p_m_states[state_index]->p_transitions[transition_index]->rate_parameters;
 				
 				gsl_vector_set(p_gsl_v, parameter_index,

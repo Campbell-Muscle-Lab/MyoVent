@@ -261,7 +261,7 @@
                 "type": "eccentric",
                 "level": "myofilaments",
                 "signal": "myof_stress_int_pas",
-                "set_point": 150,
+                "set_point": 457,
                 "prop_gain": 0.02,
                 "max_rate": 0.02
             },
@@ -278,8 +278,8 @@
                 "type": "eccentric",
                 "level": "ventricle",
                 "signal": "vent_cardiac_output",
-                "set_point": 4.69,
-                "prop_gain": -0.2,
+                "set_point": 4.32,
+                "prop_gain": -0.0,
                 "max_rate": 0.02
             }
         ]

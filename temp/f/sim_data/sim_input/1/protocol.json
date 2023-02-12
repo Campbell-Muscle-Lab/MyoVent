@@ -1,7 +1,7 @@
 {
     "protocol": {
         "time_step": 0.0001,
-        "no_of_time_steps": 2500000
+        "no_of_time_steps": 7000000
     },
     "activation": [
         {
@@ -18,11 +18,11 @@
     "perturbation": [
         {
             "test": 1,
-            "class": "valve",
-            "variable": "mv_valve_leak",
-            "t_start_s": 250,
-            "t_stop_s": 250.1,
-            "total_change": -0.0
+            "class": "baroreflex",
+            "variable": "baro_P_set",
+            "t_start_s": 350,
+            "t_stop_s": 350.1,
+            "total_change": 25.0
         }
     ]
 }

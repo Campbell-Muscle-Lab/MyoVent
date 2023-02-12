@@ -63,6 +63,9 @@ def run_batch(json_batch_file_string, figures_only=False):
 
             com_string = '%s "%s"' % (com_string, fs)
 
+        # Add in the system_id
+        com_string = ('%s %i') % (com_string, (i+1))
+
         command_strings.append(com_string)
 
     # Check the batch to see if max threads have been specified
