@@ -1,0 +1,28 @@
+{
+    "protocol": {
+        "time_step": 0.0001,
+        "no_of_time_steps": 10000000
+    },
+    "activation": [
+        {
+            "type": "baroreflex",
+            "t_start_s": 0.1,
+            "t_stop_s": 10000
+        },
+        {
+            "type": "growth",
+            "t_start_s": 100,
+            "t_stop_s": 10000
+        }
+    ],
+    "perturbation": [
+        {
+            "test": 6,
+            "class": "valve",
+            "variable": "av_valve_leak",
+            "t_start_s": 550,
+            "t_stop_s": 550.1,
+            "total_change": -0.004
+        }
+    ]
+}

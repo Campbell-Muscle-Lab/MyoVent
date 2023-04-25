@@ -71,6 +71,10 @@ public:
 	double hs_length;
 	double hs_reference_hs_length;						
 	double hs_stress;
+
+	double hs_ATP_used_per_liter_per_s;				/**< double with ATP used in moles
+															per liter per s */
+
 	double hs_ATP_concentration;					/**< double with ATP concentration */
 
 	double hs_delta_G_ATP;							/**< double with energy in Joules

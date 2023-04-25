@@ -27,13 +27,19 @@ def default_formatting():
     formatting['y_label_rotation'] = 0
     formatting['y_label_fontsize'] = 12
     formatting['y_label_pad'] = 30
+    formatting['y_label_loc'] = []
     formatting['legend_location'] = 'upper left'
     formatting['legend_bbox_to_anchor'] = [1.05, 1]
     formatting['legend_fontsize'] = 9
     formatting['legend_handlelength'] = 1
+    formatting['legend_labelspacing'] = 0.5
+    formatting['legend_columnspacing'] = 2
+    formatting['legend_handletextpad'] = 0.8
+    formatting['legend_borderaxespad'] = 0.5
     formatting['tick_fontsize'] = 11
     formatting['patch_alpha'] = 0.3
     formatting['max_rows_per_legend'] = 4
+    formatting['tight_layout'] = []
 
     return formatting
 
@@ -238,9 +244,17 @@ def multi_panel_from_flat_data(
                     if y_d['log_display'] == 'on':
                         y = np.log10(y)
                         
+                if 'smooth_n' in y_d:
+                    kernel = np.ones(y_d['smooth_n']) / y_d['smooth_n']
+                    y = np.convolve(y, kernel, mode='same')
+                    
+                        
             if ('reference' in y_d):
                 # Set y to reference value
                 y = y_d['reference'] * np.ones(len(x))
+                
+                if 'scaling_factor' in y_d:
+                    y = y * y_d['scaling_factor']
 
             # Track min and max y
             if (j == 0):
@@ -340,16 +354,21 @@ def multi_panel_from_flat_data(
         
         # Set y limits
         if ('ticks' in p_data['y_info']):
-            ylim = tuple(p_data['y_info']['ticks'])
+            temp  = np.asarray(p_data['y_info']['ticks'])
+            ylim = (temp[0], temp[-1])
+            ax[i].set_yticks(p_data['y_info']['ticks'])
+            if ('tick_labels' in p_data['y_info']):
+                ax[i].set_yticklabels(p_data['y_info']['tick_labels'])
         else:
             ylim = (min_y, max_y)
             scaling_type = []
             if ('scaling_type' in p_data['y_info']):
                 scaling_type = p_data['y_info']['scaling_type']
             ylim = deduce_axis_limits(ylim, mode_string=scaling_type)
+            ax[i].set_yticks(tuple(ylim))
 
         ax[i].set_ylim(ylim)
-        ax[i].set_yticks(ylim)
+        
 
         # Update axes, tick font and size
         for a in ['left', 'bottom']:
@@ -389,12 +408,27 @@ def multi_panel_from_flat_data(
 
         # Add legend if it exists
         if legend_symbols:
+            
+            if ('legend_bbox_to_anchor' not in p_data['y_info']):
+                bbox = (formatting['legend_bbox_to_anchor'][0],
+                        formatting['legend_bbox_to_anchor'][1])
+            else:
+                bbox = (p_data['y_info']['legend_bbox_to_anchor'][0],
+                        p_data['y_info']['legend_bbox_to_anchor'][1])
+                
+            if ('legend_location' not in p_data['y_info']):
+                locat = formatting['legend_location']
+            else:
+                locat = p_data['y_info']['legend_location']
+            
             ax[i].legend(legend_symbols, legend_strings,
-                         loc=formatting['legend_location'],
+                         loc=locat,
+                         borderaxespad=formatting['legend_borderaxespad'],
                          handlelength=formatting['legend_handlelength'],
-                         bbox_to_anchor=(
-                             formatting['legend_bbox_to_anchor'][0],
-                             formatting['legend_bbox_to_anchor'][1]),
+                         columnspacing=formatting['legend_columnspacing'],
+                         labelspacing=formatting['legend_labelspacing'],
+                         handletextpad=formatting['legend_handletextpad'],
+                         bbox_to_anchor=bbox,
                          prop={'family': formatting['fontname'],
                                'size': formatting['legend_fontsize']},
                          ncol=int(np.ceil(len(legend_symbols) /
@@ -412,9 +446,14 @@ def multi_panel_from_flat_data(
     hei = (fig_height - 0*layout['bottom_margin'] -
            layout['top_margin']) / fig_height
     r = [lhs, bot, wid, hei]
-    spec.tight_layout(fig, rect=r)
+    if formatting['tight_layout']:
+        spec.tight_layout(fig, rect=r)
 
-    fig.align_labels()
+    if not formatting['y_label_loc']:
+        fig.align_labels()
+    else:
+        for i, p_data in enumerate(panel_data):
+            ax[i].yaxis.set_label_coords(formatting['y_label_loc'], 0.5)
 
     # Save if required
     if output_image_file_string:
@@ -432,9 +471,8 @@ def handle_annotations(template_data, ax, panel_index, formatting):
     if not ('annotations' in template_data):
         return
 
-    annotation_data = template_data['annotations']
-    for an in annotation_data['annotation']:
-        if ((an['panel'] == 'all') or (panel_index in list([an['panel']]))):
+    for an in template_data['annotations']:
+        if ((an['panel'] == 'all') or (panel_index in np.asarray(list([an['panel']])))):
             if (an['type'] == 'v_line'):
                 ax.plot(an['x_value']*np.array([1, 1]),
                         ax.get_ylim(),

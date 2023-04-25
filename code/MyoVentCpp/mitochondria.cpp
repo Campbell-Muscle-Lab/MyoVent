@@ -34,6 +34,8 @@ mitochondria::mitochondria(half_sarcomere* set_p_parent_hs)
 	mito_volume = 0.001 * p_parent_hs->p_parent_hemi_vent->vent_wall_volume *
 		(1.0 - p_parent_hs->hs_prop_fibrosis) *
 		(1.0 - p_parent_hs->hs_prop_myofilaments);
+
+	mito_ATP_generated_M_per_liter_per_s = 0.0;
 }
 
 // Destructor
@@ -62,7 +64,7 @@ void mitochondria::initialise_simulation(void)
 	// Now add the results fields
 	
 	p_cmv_results->add_results_field("mito_volume", &mito_volume);
-	p_cmv_results->add_results_field("mito_ATP_generated_M_per_s", &mito_ATP_generated_M_per_s);
+	p_cmv_results->add_results_field("mito_ATP_generated_M_per_liter_per_s", &mito_ATP_generated_M_per_liter_per_s);
 }
 
 void mitochondria::implement_time_step(double time_step_s)
@@ -75,5 +77,5 @@ void mitochondria::implement_time_step(double time_step_s)
 		(1.0 - p_parent_hs->hs_prop_fibrosis) *
 		(1.0 - p_parent_hs->hs_prop_myofilaments);
 
-	mito_ATP_generated_M_per_s = mito_volume * mito_ATP_generation_rate;
+	mito_ATP_generated_M_per_liter_per_s = mito_volume * mito_ATP_generation_rate;
 }

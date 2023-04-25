@@ -113,12 +113,14 @@ def run_batch(json_batch_file_string, figures_only=False):
                 base_directory = j['relative_to']
                 fs = os.path.join(base_directory, fs)
 
-            try:
-                oh.output_handler(fs,
-                              sim_results_file_string=results_file_strings[i])
-            except:
-                print('Could not implement output_handler for: %s' %
-                      results_file_strings[i])
+            oh.output_handler(fs,
+                   sim_results_file_string=results_file_strings[i])
+            # try:
+            #     oh.output_handler(fs,
+            #                   sim_results_file_string=results_file_strings[i])
+            # except:
+            #     print('Could not implement output_handler for: %s' %
+            #           results_file_strings[i])
     
 def worker(cmd):
     subprocess.call(cmd)

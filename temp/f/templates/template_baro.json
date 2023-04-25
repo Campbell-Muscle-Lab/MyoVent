@@ -450,11 +450,16 @@
             "column": 5,
             "y_info":
             {
-                "label": "myosin ATP\nflux\n(s^-1)",
+                "label": "Half-sarcomere\nATP",
                 "series":
                 [
                     {
-                        "field": "myof_ATP_flux"
+                        "field": "hs_ATP_used_per_liter_per_s",
+                        "field_label": "Myofilaments"
+                    },
+                    {
+                        "field": "mito_ATP_generated_M_per_liter_per_s",
+                        "field_label": "Mitochondria"
                     }
                 ]
             }
@@ -665,24 +670,6 @@
                 [
                     {
                         "field": "vent_wall_volume"
-                    }
-                ]
-            }
-        },
-        {
-            "column": 6,
-            "y_info":
-            {
-                "label": "Shrinkage",
-                "series":
-                [
-                    {
-                        "field": "gr_shrink_concentric_output",
-                        "field_label": "Conc"
-                    },
-                    {
-                        "field": "gr_shrink_eccentric_output",
-                        "field_label": "Ecc"
                     }
                 ]
             }

@@ -52,6 +52,7 @@ half_sarcomere::half_sarcomere(hemi_vent* set_p_parent_hemi_vent)
 
 	// Initialise
 	hs_stress = 0.0;
+	hs_ATP_used_per_liter_per_s = 0.0;
 	hs_length = p_cmv_model->hs_reference_hs_length;
 	hs_reference_hs_length = p_cmv_model->hs_reference_hs_length;
 	hs_delta_G_ATP = p_cmv_model->hs_delta_G_ATP;
@@ -93,6 +94,7 @@ void half_sarcomere::initialise_simulation(void)
 	// Now add the results fields
 	p_cmv_results->add_results_field("hs_length", &hs_length);
 	p_cmv_results->add_results_field("hs_stress", &hs_stress);
+	p_cmv_results->add_results_field("hs_ATP_used_per_liter_per_s", &hs_ATP_used_per_liter_per_s);
 	p_cmv_results->add_results_field("hs_ATP_concentration", &hs_ATP_concentration);
 
 	// Now initialise daughter objects
@@ -261,13 +263,15 @@ void half_sarcomere::calculate_hs_ATP_concentration(double time_step_s)
 			p_myofilaments->myof_cb_number_density *
 			(1.0 / (1e-9 * hs_reference_hs_length));
 
+	hs_ATP_used_per_liter_per_s = -d_heads * p_myofilaments->myof_ATP_flux /
+								GSL_CONST_NUM_AVOGADRO;
+
 	// Euler step
 
 	hs_ATP_concentration = hs_ATP_concentration +
 		(time_step_s *
-			((-d_heads * p_myofilaments->myof_ATP_flux /
-				GSL_CONST_NUM_AVOGADRO) +
-				p_mitochondria->mito_ATP_generated_M_per_s));
+			(hs_ATP_used_per_liter_per_s +
+				p_mitochondria->mito_ATP_generated_M_per_liter_per_s));
 }
 
 void half_sarcomere::update_beat_metrics(void)

@@ -1,12 +1,12 @@
 {
     "protocol": {
         "time_step": 0.0001,
-        "no_of_time_steps": 7000000
+        "no_of_time_steps": 10000000
     },
     "activation": [
         {
             "type": "baroreflex",
-            "t_start_s": 25,
+            "t_start_s": 0.1,
             "t_stop_s": 10000
         },
         {
@@ -20,9 +20,9 @@
             "test": 4,
             "class": "half_sarcomere",
             "variable": "prop_fibrosis",
-            "t_start_s": 350,
-            "t_stop_s": 350.1,
-            "total_change": 0.13
+            "t_start_s": 550,
+            "t_stop_s": 550.1,
+            "total_change": 0.15
         }
     ]
 }

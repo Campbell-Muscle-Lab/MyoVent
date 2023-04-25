@@ -357,18 +357,6 @@ void hemi_vent::calculate_vent_ATP_used_per_s()
 	//! Function updates vent_ATP_used_per_s
 
 	// Variables
-	double d_heads;				// density of heads per m^3
-	double v_myocardium;
-
-	// Code
-	d_heads = (1.0 - p_hs->hs_prop_fibrosis) *
-		p_hs->hs_prop_myofilaments *
-		p_hs->p_myofilaments->myof_cb_number_density *
-		(1.0 / (1e-9 * p_hs->hs_reference_hs_length));
-
-	v_myocardium = 0.001 * vent_wall_volume;
-
-	vent_ATP_used_per_s = -d_heads * v_myocardium *
-		p_hs->p_myofilaments->myof_ATP_flux /
-		GSL_CONST_NUM_AVOGADRO;
+	vent_ATP_used_per_s = vent_wall_volume *
+		p_hs->hs_ATP_used_per_liter_per_s;
 }

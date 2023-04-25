@@ -33,17 +33,16 @@ def test():
     figures_only_flag = ''
     
     time_step = 0.0001
-    no_of_time_steps = 7000000
-    # no_of_time_steps = 4000000
+    no_of_time_steps = 10000000
     
-    baroreflex_start_s = 25
+    baroreflex_start_s = 0.1
     baroreflex_stop_s = 10000
     
     growth_start_s = 100
     growth_stop_s = 10000
     
-    pert_start_s = 350
-    pert_stop_s = 350.1
+    pert_start_s = 550
+    pert_stop_s = 550.1
     
     pert = []
     
@@ -65,7 +64,37 @@ def test():
     pert.append({'test': 4,
                   'class': 'half_sarcomere', 'variable': 'prop_fibrosis',
                   't_start_s': pert_start_s, 't_stop_s': pert_stop_s,
-                  'total_change': 0.13})
+                  'total_change': 0.15})
+    
+    pert.append({'test': 5,
+                  'class': 'valve', 'variable': 'av_valve_leak',
+                  't_start_s': pert_start_s, 't_stop_s': pert_stop_s,
+                  'total_change': -0.001})
+    
+    pert.append({'test': 6,
+                  'class': 'valve', 'variable': 'av_valve_leak',
+                  't_start_s': pert_start_s, 't_stop_s': pert_stop_s,
+                  'total_change': -0.004})
+
+    pert.append({'test': 7,
+                  'class': 'valve', 'variable': 'av_valve_leak',
+                  't_start_s': pert_start_s, 't_stop_s': pert_stop_s,
+                  'total_change': -0.007})
+
+    pert.append({'test': 8,
+                  'class': 'valve', 'variable': 'mv_valve_leak',
+                  't_start_s': pert_start_s, 't_stop_s': pert_stop_s,
+                  'total_change': -0.003})
+
+    pert.append({'test': 9,
+                  'class': 'valve', 'variable': 'mv_valve_leak',
+                  't_start_s': pert_start_s, 't_stop_s': pert_stop_s,
+                  'total_change': -0.006})
+
+    pert.append({'test': 10,
+                  'class': 'valve', 'variable': 'mv_valve_leak',
+                  't_start_s': pert_start_s, 't_stop_s': pert_stop_s,
+                  'total_change': -0.009})
 
     
     no_of_jobs = len(pert)
@@ -126,11 +155,8 @@ def test():
         # Copy the options
         new_options = copy.deepcopy(base_options)
         
-        # new_options['MyoSim']['rates_dump']['file_string'] = \
-        #     ('../../sim_output/%i/rates.json' % (i+1))
-        
-        # new_options['MyoSim']['cb_dump']['file_string'] = \
-        #     ('../../sim_output/%i/cb.txt' % (i+1))
+        new_options['MyoSim']['rates_dump']['file_string'] = \
+            ('../../sim_output/%i/rates.json' % (i+1))
         
         # Write it
         new_options_file_string = os.path.join(sim_input_folder, 'options.json')

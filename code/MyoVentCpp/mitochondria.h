@@ -47,8 +47,10 @@ public:
 	double mito_volume;					/**< double holding the mitochondrial
 												volume in m^3 */
 
-	double mito_ATP_generated_M_per_s;	/**< double holding the moles of ATP
-												generated per s */
+	double mito_ATP_generated_M_per_liter_per_s;
+										/**< double holding the moles of ATP
+												generated per liter of tissue
+												per s */
 
 	/**
 	/* function adds data fields and vectors to the results objet

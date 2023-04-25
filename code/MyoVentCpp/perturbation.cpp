@@ -112,6 +112,15 @@ void perturbation::impose(double sim_time_s)
 
 				*p_double = *p_double + increment;
 			}
+
+			if (variable == "blood_volume")
+			{
+				p_double = &(p_cmv_protocol->p_cmv_system->p_circulation->circ_blood_volume);
+
+				*p_double = *p_double + increment;
+			}
+
+
 		}
 
 		if (class_name == "ventricle")
