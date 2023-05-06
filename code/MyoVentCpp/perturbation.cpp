@@ -265,6 +265,14 @@ void perturbation::impose(double sim_time_s)
 				gsl_vector_set(p_gsl_v, parameter_index,
 					gsl_vector_get(p_gsl_v, parameter_index) + increment);
 			}
+
+			if (variable == "a_k_on")
+			{
+				p_double = &(p_cmv_protocol->p_cmv_system->p_circulation->p_hemi_vent->p_hs->
+					p_myofilaments->myof_a_k_on);
+
+				*p_double = *p_double + increment;
+			}
 		}
 	}
 }

@@ -429,17 +429,6 @@ void cmv_model::initialise_model_from_JSON_file(string JSON_model_file_string)
 		JSON_functions::check_JSON_member_number(grow, "master_rate");
 		gr_master_rate = grow["master_rate"].GetDouble();
 
-		// Shrinkage
-
-		JSON_functions::check_JSON_member_exists(grow, "shrinkage");
-		const rapidjson::Value& shrink = grow["shrinkage"];
-
-		JSON_functions::check_JSON_member_number(shrink, "eccentric_rate");
-		gr_shrink_eccentric_rate = shrink["eccentric_rate"].GetDouble();
-
-		JSON_functions::check_JSON_member_number(shrink, "concentric_rate");
-		gr_shrink_concentric_rate = shrink["concentric_rate"].GetDouble();
-
 		// Growth controls
 
 		JSON_functions::check_JSON_member_array(grow, "control");
