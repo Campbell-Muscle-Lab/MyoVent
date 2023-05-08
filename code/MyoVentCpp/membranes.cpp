@@ -28,7 +28,7 @@ membranes::membranes(half_sarcomere* set_p_parent_hs)
 	p_cmv_model = p_parent_hs->p_cmv_model;
 
 	// Set other pointers safe
-	p_cmv_results = NULL;
+	p_cmv_results_beat = NULL;
 	p_cmv_options = NULL;
 
 	// Initialize
@@ -68,18 +68,18 @@ void membranes::initialise_simulation(void)
 	p_cmv_options = p_parent_hs->p_cmv_options;
 
 	// Set the pointer to the results object
-	p_cmv_results = p_parent_hs->p_cmv_results;
+	p_cmv_results_beat = p_parent_hs->p_cmv_results_beat;
 
 	// Now add the results fields
-	p_cmv_results->add_results_field("memb_Ca_cytosol", &memb_Ca_cytosol);
-	p_cmv_results->add_results_field("memb_Ca_sr", &memb_Ca_sr);
-	p_cmv_results->add_results_field("memb_activation", &memb_activation);
-	p_cmv_results->add_results_field("memb_t_open_left_s", &memb_t_open_left_s);
-	p_cmv_results->add_results_field("memb_k_serca", &memb_k_serca);
-	p_cmv_results->add_results_field("memb_k_leak", &memb_k_leak);
-	p_cmv_results->add_results_field("memb_k_active", &memb_k_active);
-	p_cmv_results->add_results_field("memb_J_release", &memb_J_release);
-	p_cmv_results->add_results_field("memb_J_uptake", &memb_J_uptake);
+	p_cmv_results_beat->add_results_field("memb_Ca_cytosol", &memb_Ca_cytosol);
+	p_cmv_results_beat->add_results_field("memb_Ca_sr", &memb_Ca_sr);
+	p_cmv_results_beat->add_results_field("memb_activation", &memb_activation);
+	p_cmv_results_beat->add_results_field("memb_t_open_left_s", &memb_t_open_left_s);
+	p_cmv_results_beat->add_results_field("memb_k_serca", &memb_k_serca);
+	p_cmv_results_beat->add_results_field("memb_k_leak", &memb_k_leak);
+	p_cmv_results_beat->add_results_field("memb_k_active", &memb_k_active);
+	p_cmv_results_beat->add_results_field("memb_J_release", &memb_J_release);
+	p_cmv_results_beat->add_results_field("memb_J_uptake", &memb_J_uptake);
 
 	std::cout << "finished prepare for membrane results\n";
 }

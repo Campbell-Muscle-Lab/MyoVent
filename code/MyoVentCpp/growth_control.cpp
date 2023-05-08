@@ -56,7 +56,7 @@ growth_control::growth_control(growth* set_p_parent_growth, int set_gc_number,
 	p_cmv_model = p_parent_circulation->p_cmv_model;
 
 	// Initialise with safe options
-	p_cmv_results = NULL;
+	p_cmv_results_beat = NULL;
 	p_cmv_options = NULL;
 
 	gc_p_signal = NULL;
@@ -119,7 +119,7 @@ void growth_control::initialise_simulation(void)
 	p_cmv_options = p_parent_circulation->p_cmv_options;
 
 	// Now add in the results
-	p_cmv_results = p_parent_circulation->p_cmv_results;
+	p_cmv_results_beat = p_parent_circulation->p_cmv_results_beat;
 
 	// Find the controlled variable
 	set_gc_p_signal();
@@ -136,16 +136,16 @@ void growth_control::initialise_simulation(void)
 
 	// Add fields
 	temp_string = "gc_" + to_string(gc_number) + "_prop_signal";
-	p_cmv_results->add_results_field(temp_string, &gc_prop_signal);
+	p_cmv_results_beat->add_results_field(temp_string, &gc_prop_signal);
 
 	temp_string = "gc_" + to_string(gc_number) + "_deriv_signal";
-	p_cmv_results->add_results_field(temp_string, &gc_deriv_signal);
+	p_cmv_results_beat->add_results_field(temp_string, &gc_deriv_signal);
 
 	temp_string = "gc_" + to_string(gc_number) + "_output";
-	p_cmv_results->add_results_field(temp_string, &gc_output);
+	p_cmv_results_beat->add_results_field(temp_string, &gc_output);
 
 	temp_string = "gc_" + to_string(gc_number) + "_slope";
-	p_cmv_results->add_results_field(temp_string, &gc_slope);
+	p_cmv_results_beat->add_results_field(temp_string, &gc_slope);
 }
 
 void growth_control::implement_time_step(double time_step_s, bool new_beat)

@@ -50,7 +50,7 @@ myofilaments::myofilaments(half_sarcomere* set_p_parent_hs)
 	p_m_scheme = p_cmv_model->p_m_scheme;
 	
 	// Set other pointers safe
-	p_cmv_results = NULL;
+	p_cmv_results_beat = NULL;
 	p_cmv_options = NULL;
 	x = NULL;
 	y = NULL;
@@ -230,32 +230,32 @@ void myofilaments::initialise_simulation(void)
 	myof_a_on = gsl_vector_get(y, a_on_index);
 
 	// Set the pointer to the results object
-	p_cmv_results = p_parent_hs->p_cmv_results;
+	p_cmv_results_beat = p_parent_hs->p_cmv_results_beat;
 
 	// Now add the results fields
-	p_cmv_results->add_results_field("myof_a_off", &myof_a_off);
-	p_cmv_results->add_results_field("myof_a_on", &myof_a_on);
-	p_cmv_results->add_results_field("myof_f_overlap", &myof_f_overlap);
-	p_cmv_results->add_results_field("myof_m_bound", &myof_m_bound);
-	p_cmv_results->add_results_field("myof_ATP_flux", &myof_ATP_flux);
+	p_cmv_results_beat->add_results_field("myof_a_off", &myof_a_off);
+	p_cmv_results_beat->add_results_field("myof_a_on", &myof_a_on);
+	p_cmv_results_beat->add_results_field("myof_f_overlap", &myof_f_overlap);
+	p_cmv_results_beat->add_results_field("myof_m_bound", &myof_m_bound);
+	p_cmv_results_beat->add_results_field("myof_ATP_flux", &myof_ATP_flux);
 
 	for (int i = 0; i < p_m_scheme->no_of_states; i++)
 	{
 		string label = string("myof_m_pop_") + to_string(i);
-		p_cmv_results->add_results_field(label, &m_pops_array[i]);
+		p_cmv_results_beat->add_results_field(label, &m_pops_array[i]);
 	}
 
 	for (int i = 0; i < p_m_scheme->no_of_states; i++)
 	{
 		string label = string("myof_m_stress_") + to_string(i);
-		p_cmv_results->add_results_field(label, &m_stresses_array[i]);
+		p_cmv_results_beat->add_results_field(label, &m_stresses_array[i]);
 	}
 
-	p_cmv_results->add_results_field("myof_stress_cb", &myof_stress_cb);
-	p_cmv_results->add_results_field("myof_stress_int_pas", &myof_stress_int_pas);
-	p_cmv_results->add_results_field("myof_stress_ext_pas", &myof_stress_ext_pas);
-	p_cmv_results->add_results_field("myof_stress_myof", &myof_stress_myof);
-	p_cmv_results->add_results_field("myof_stress_total", &myof_stress_total);
+	p_cmv_results_beat->add_results_field("myof_stress_cb", &myof_stress_cb);
+	p_cmv_results_beat->add_results_field("myof_stress_int_pas", &myof_stress_int_pas);
+	p_cmv_results_beat->add_results_field("myof_stress_ext_pas", &myof_stress_ext_pas);
+	p_cmv_results_beat->add_results_field("myof_stress_myof", &myof_stress_myof);
+	p_cmv_results_beat->add_results_field("myof_stress_total", &myof_stress_total);
 }
 
 // This function is not a member of the myofilaments class but is used to interace

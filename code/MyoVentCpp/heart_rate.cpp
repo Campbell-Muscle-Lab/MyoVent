@@ -40,11 +40,11 @@ heart_rate::~heart_rate(void)
 void heart_rate::initialise_simulation(void)
 {
 	// Set the pointer to the results object
-	p_cmv_results = p_parent_hs->p_cmv_results;
+	p_cmv_results_beat = p_parent_hs->p_cmv_results_beat;
 
 	// Now add the results fields
-	p_cmv_results->add_results_field("hr_new_beat", &hr_new_beat);
-	p_cmv_results->add_results_field("hr_heart_rate_bpm", &hr_heart_rate_bpm);
+	p_cmv_results_beat->add_results_field("hr_new_beat", &hr_new_beat);
+	p_cmv_results_beat->add_results_field("hr_heart_rate_bpm", &hr_heart_rate_bpm);
 }
 
 bool heart_rate::implement_time_step(double time_step)

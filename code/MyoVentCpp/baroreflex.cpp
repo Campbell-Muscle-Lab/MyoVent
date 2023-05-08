@@ -33,7 +33,7 @@ baroreflex::baroreflex(circulation* set_p_parent_circulation)
 	p_parent_cmv_system = p_parent_circulation->p_parent_cmv_system;
 
 	// Initialise with safe options
-	p_cmv_results = NULL;
+	p_cmv_results_beat = NULL;
 	p_cmv_options = NULL;
 
 	for (int i = 0; i < MAX_NO_OF_REFLEX_CONTROLS; i++)
@@ -87,7 +87,7 @@ void baroreflex::initialise_simulation(void)
 	p_cmv_options = p_parent_circulation->p_cmv_options;
 
 	// Now add in the results
-	p_cmv_results = p_parent_circulation->p_cmv_results;
+	p_cmv_results_beat = p_parent_circulation->p_cmv_results_beat;
 
 	// And now daughter objects
 	for (int i = 0; i < no_of_reflex_controls; i++)
@@ -96,10 +96,10 @@ void baroreflex::initialise_simulation(void)
 	}
 
 	// Add fields
-	p_cmv_results->add_results_field("baro_active", &baro_active);
-	p_cmv_results->add_results_field("baro_P_set", &baro_P_set);
-	p_cmv_results->add_results_field("baro_A", &baro_A);
-	p_cmv_results->add_results_field("baro_B", &baro_B);
+	p_cmv_results_beat->add_results_field("baro_active", &baro_active);
+	p_cmv_results_beat->add_results_field("baro_P_set", &baro_P_set);
+	p_cmv_results_beat->add_results_field("baro_A", &baro_A);
+	p_cmv_results_beat->add_results_field("baro_B", &baro_B);
 }
 
 void baroreflex::implement_time_step(double time_step_s)

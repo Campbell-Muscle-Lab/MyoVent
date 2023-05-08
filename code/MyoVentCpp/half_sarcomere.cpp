@@ -48,7 +48,7 @@ half_sarcomere::half_sarcomere(hemi_vent* set_p_parent_hemi_vent)
 
 	// Set safe values
 	p_cmv_options = NULL;
-	p_cmv_results = NULL;
+	p_cmv_results_beat = NULL;
 
 	// Initialise
 	hs_stress = 0.0;
@@ -89,13 +89,13 @@ void half_sarcomere::initialise_simulation(void)
 	p_cmv_options = p_parent_hemi_vent->p_cmv_options;
 
 	// Set results from parent
-	p_cmv_results = p_parent_hemi_vent->p_cmv_results;
+	p_cmv_results_beat = p_parent_hemi_vent->p_cmv_results_beat;
 
 	// Now add the results fields
-	p_cmv_results->add_results_field("hs_length", &hs_length);
-	p_cmv_results->add_results_field("hs_stress", &hs_stress);
-	p_cmv_results->add_results_field("hs_ATP_used_per_liter_per_s", &hs_ATP_used_per_liter_per_s);
-	p_cmv_results->add_results_field("hs_ATP_concentration", &hs_ATP_concentration);
+	p_cmv_results_beat->add_results_field("hs_length", &hs_length);
+	p_cmv_results_beat->add_results_field("hs_stress", &hs_stress);
+	p_cmv_results_beat->add_results_field("hs_ATP_used_per_liter_per_s", &hs_ATP_used_per_liter_per_s);
+	p_cmv_results_beat->add_results_field("hs_ATP_concentration", &hs_ATP_concentration);
 
 	// Now initialise daughter objects
 	p_heart_rate->initialise_simulation();
@@ -285,11 +285,11 @@ void half_sarcomere::update_beat_metrics(void)
 
 	p_stats = new stats_structure;
 
-	if (p_cmv_results->hs_length_field_index >= 0)
+	if (p_cmv_results_beat->hs_length_field_index >= 0)
 	{
-		p_cmv_results->calculate_sub_vector_statistics(
-			p_cmv_results->gsl_results_vectors[p_cmv_results->hs_length_field_index],
-			p_cmv_results->last_beat_t_index, p_parent_hemi_vent->p_parent_cmv_system->sim_t_index,
+		p_cmv_results_beat->calculate_sub_vector_statistics(
+			p_cmv_results_beat->gsl_results_vectors[p_cmv_results_beat->hs_length_field_index],
+			0, p_parent_hemi_vent->p_parent_cmv_system->beat_t_index,
 			p_stats);
 	}
 

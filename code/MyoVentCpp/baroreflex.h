@@ -40,7 +40,9 @@ public:
 
 	cmv_model* p_cmv_model;					/**< pointer to cmv_model object */
 
-	cmv_results* p_cmv_results;				/**< pointer to cmv_results object */
+	cmv_results* p_cmv_results_beat;		/**< pointer to cmv_results object
+													holding data at full time
+													resolution for one beat */
 
 	cmv_options* p_cmv_options;				/**< pointer to cmv_options object */
 

@@ -42,7 +42,7 @@ valve::valve(hemi_vent* set_p_parent_hemi_vent, cmv_model_valve_structure* set_p
 
 	// Set safe values
 	p_cmv_options = NULL;
-	p_cmv_results = NULL;
+	p_cmv_results_beat = NULL;
 
 	// Update from cmv_model
 	p_cmv_model_valve = set_p_cmv_model_structure;
@@ -82,12 +82,12 @@ void valve::initialise_simulation(void)
 	p_cmv_options = p_parent_hemi_vent->p_cmv_options;
 
 	// Set results from parent
-	p_cmv_results = p_parent_hemi_vent->p_cmv_results;
+	p_cmv_results_beat = p_parent_hemi_vent->p_cmv_results_beat;
 
 	// Now add the results fields
 	label_string = valve_name + "_valve_pos";
 
-	p_cmv_results->add_results_field(label_string, &valve_pos);
+	p_cmv_results_beat->add_results_field(label_string, &valve_pos);
 }
 
 // This function is not a member of the valve class but is used to interace

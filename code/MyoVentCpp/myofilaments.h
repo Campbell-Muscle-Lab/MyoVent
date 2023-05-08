@@ -45,7 +45,9 @@ public:
 
 	cmv_options* p_cmv_options;				/**< Pointer to cmv_options */
 
-	cmv_results* p_cmv_results;				/**< Pointer to cmv_results */
+	cmv_results* p_cmv_results_beat;		/**< Pointer to cmv_results holding
+													data at full time resolution
+													for one beat */
 
 	cmv_system* p_cmv_system;				/**< Pointer to the cmv_system */
 

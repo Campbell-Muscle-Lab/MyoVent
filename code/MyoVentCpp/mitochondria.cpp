@@ -25,7 +25,7 @@ mitochondria::mitochondria(half_sarcomere* set_p_parent_hs)
 	p_cmv_model = p_parent_hs->p_cmv_model;
 
 	// Set other pointers safe
-	p_cmv_results = NULL;
+	p_cmv_results_beat = NULL;
 	p_cmv_options = NULL;
 
 	// Initialize
@@ -59,12 +59,12 @@ void mitochondria::initialise_simulation(void)
 	p_cmv_options = p_parent_hs->p_cmv_options;
 
 	// Set the pointer to the results object
-	p_cmv_results = p_parent_hs->p_cmv_results;
+	p_cmv_results_beat = p_parent_hs->p_cmv_results_beat;
 
 	// Now add the results fields
 	
-	p_cmv_results->add_results_field("mito_volume", &mito_volume);
-	p_cmv_results->add_results_field("mito_ATP_generated_M_per_liter_per_s", &mito_ATP_generated_M_per_liter_per_s);
+	p_cmv_results_beat->add_results_field("mito_volume", &mito_volume);
+	p_cmv_results_beat->add_results_field("mito_ATP_generated_M_per_liter_per_s", &mito_ATP_generated_M_per_liter_per_s);
 }
 
 void mitochondria::implement_time_step(double time_step_s)

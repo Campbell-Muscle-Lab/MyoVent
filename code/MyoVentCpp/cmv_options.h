@@ -60,8 +60,22 @@ public:
 													If True, use thick-wall approximation
 													otherwise, use thin-wall */
 
-	int output_skip_points;					/**< int defining time points to skip in the
-													output file */
+	double beat_length_s;					/**< double defining the length in s
+													of a cmv_results object
+													for a beat */
+
+	int beat_length_points;					/**< int defining number of time-points
+													in the cmv_results object for
+													a beat */
+
+	double summary_time_step_s;				/**< double defining the time-step
+													in seconds between points in
+													the summary output */
+
+	int summary_points;						/**< int defining the number of
+													time-points in the
+													cmv_results object for the
+													summary output */
 
 	/**
 	/* Function initialises protocol object from file

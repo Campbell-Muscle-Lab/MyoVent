@@ -103,6 +103,12 @@ def multi_panel_from_flat_data(
         else:
             pandas_data = pd.read_csv(data_file_string,
                                       sep='\t')
+            
+    # Drop all rows where time is NaN
+    t = pandas_data['time']
+    t = pd.to_numeric(t, errors='coerce')
+    pandas_data['time'] = t
+    pandas_data = pandas_data.dropna(subset=['time'])
 
     # Try to work out x data
     if 'x_display' in template_data:

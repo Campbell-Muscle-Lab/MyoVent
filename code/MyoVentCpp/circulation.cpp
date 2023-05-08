@@ -44,7 +44,7 @@ circulation::circulation(cmv_system* set_p_parent_cmv_system = NULL)
 
 	// Set pointers to safety
 	p_cmv_options = NULL;
-	p_cmv_results = NULL;
+	p_cmv_results_beat = NULL;
 
 	// Now initialise other objects
 	circ_blood_volume = p_cmv_model->circ_blood_volume;
@@ -156,7 +156,7 @@ void circulation::initialise_simulation(void)
 	p_cmv_options = p_parent_cmv_system->p_cmv_options;
 
 	// Set the results
-	p_cmv_results = p_parent_cmv_system->p_cmv_results;
+	p_cmv_results_beat = p_parent_cmv_system->p_cmv_results_beat;
 
 	// Set the protocol
 	p_cmv_protocol = p_parent_cmv_system->p_cmv_protocol;
@@ -171,24 +171,24 @@ void circulation::initialise_simulation(void)
 		p_growth->initialise_simulation();
 
 	// Add data fields
-	p_cmv_results->add_results_field("circ_blood_volume", &circ_blood_volume);
+	p_cmv_results_beat->add_results_field("circ_blood_volume", &circ_blood_volume);
 
 	for (int i = 0; i < circ_no_of_compartments; i++)
 	{
 		string label = string("pressure_") + to_string(i);
-		p_cmv_results->add_results_field(label, &circ_pressure[i]);
+		p_cmv_results_beat->add_results_field(label, &circ_pressure[i]);
 	}
 
 	for (int i = 0; i < circ_no_of_compartments; i++)
 	{
 		string label = string("volume_") + to_string(i);
-		p_cmv_results->add_results_field(label, &circ_volume[i]);
+		p_cmv_results_beat->add_results_field(label, &circ_volume[i]);
 	}
 
 	for (int i = 0; i < circ_no_of_compartments; i++)
 	{
 		string label = string("flow_") + to_string(i);
-		p_cmv_results->add_results_field(label, &circ_flow[i]);
+		p_cmv_results_beat->add_results_field(label, &circ_flow[i]);
 	}
 }
 
@@ -418,38 +418,38 @@ void circulation::update_beat_metrics(void)
 	p_stats_2 = new stats_structure;
 
 
-	if (p_cmv_results->pressure_arteries_field_index >= 0)
+	if (p_cmv_results_beat->pressure_arteries_field_index >= 0)
 	{
-		p_cmv_results->calculate_sub_vector_statistics(
-			p_cmv_results->gsl_results_vectors[p_cmv_results->pressure_arteries_field_index],
-			p_cmv_results->last_beat_t_index, p_parent_cmv_system->sim_t_index,
+		p_cmv_results_beat->calculate_sub_vector_statistics(
+			p_cmv_results_beat->gsl_results_vectors[p_cmv_results_beat->pressure_arteries_field_index],
+			0, p_parent_cmv_system->beat_t_index,
 			p_stats);
 
 		cout << "Arterial pressure: " << p_stats->max_value << " / " << p_stats->min_value << "\n";
 	}
 
-	if (p_cmv_results->flow_mitral_valve_field_index >= 0)
+	if (p_cmv_results_beat->flow_mitral_valve_field_index >= 0)
 	{
-		p_cmv_results->calculate_sub_vector_statistics(
-			p_cmv_results->gsl_results_vectors[p_cmv_results->flow_mitral_valve_field_index],
-			p_cmv_results->last_beat_t_index, p_parent_cmv_system->sim_t_index,
+		p_cmv_results_beat->calculate_sub_vector_statistics(
+			p_cmv_results_beat->gsl_results_vectors[p_cmv_results_beat->flow_mitral_valve_field_index],
+			0, p_parent_cmv_system->beat_t_index,
 			p_stats);
 	}
 
-	if (p_cmv_results->flow_aortic_valve_field_index >= 0)
+	if (p_cmv_results_beat->flow_aortic_valve_field_index >= 0)
 	{
-		p_cmv_results->calculate_sub_vector_statistics(
-			p_cmv_results->gsl_results_vectors[p_cmv_results->flow_aortic_valve_field_index],
-			p_cmv_results->last_beat_t_index, p_parent_cmv_system->sim_t_index,
+		p_cmv_results_beat->calculate_sub_vector_statistics(
+			p_cmv_results_beat->gsl_results_vectors[p_cmv_results_beat->flow_aortic_valve_field_index],
+			0, p_parent_cmv_system->beat_t_index,
 			p_stats_2);
 	}
 
 	double cardiac_cycle_s = gsl_vector_get(
-		p_cmv_results->gsl_results_vectors[p_cmv_results->time_field_index],
-		p_parent_cmv_system->sim_t_index) -
+		p_cmv_results_beat->gsl_results_vectors[p_cmv_results_beat->time_field_index],
+		p_parent_cmv_system->beat_t_index) -
 		gsl_vector_get(
-			p_cmv_results->gsl_results_vectors[p_cmv_results->time_field_index],
-			p_cmv_results->last_beat_t_index);
+			p_cmv_results_beat->gsl_results_vectors[p_cmv_results_beat->time_field_index],
+			0);
 
 
 	cout << "Mitral_flow: mean " << p_stats->sum << " peak " << p_stats->max_value << " min " << p_stats->min_value << "\n";

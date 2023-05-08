@@ -39,7 +39,9 @@ public:
 
 	cmv_options* p_cmv_options;			/**< pointer to cmv_options object */
 
-	cmv_results* p_cmv_results;			/**< pointer to cmv_results object */
+	cmv_results* p_cmv_results_beat;	/**< pointer to cmv_results object
+												holding data at full time
+												resolution for one beat */
 
 	double memb_Ca_cytosol;				/**< double with cytosolic Ca_conc in M */
 

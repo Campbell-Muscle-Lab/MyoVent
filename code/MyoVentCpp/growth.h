@@ -42,7 +42,9 @@ public:
 
 	cmv_model* p_cmv_model;					/**< pointer to cmv_model object */
 
-	cmv_results* p_cmv_results;				/**< pointer to cmv_results object */
+	cmv_results* p_cmv_results_beat;		/**< pointer to cmv_results object
+													holding data at full time
+													resolution for one beat */
 
 	cmv_options* p_cmv_options;				/**< pointer to cmv_options object */
 
@@ -60,16 +62,8 @@ public:
 
 	double gr_master_rate;
 
-	double gr_shrink_concentric_rate;
-	double gr_shrink_eccentric_rate;
-
-	double gr_shrink_concentric_output;
-	double gr_shrink_eccentric_output;
-
 	// Other functions
 	void initialise_simulation(void);
 
 	void implement_time_step(double time_step_s, bool new_beat);
-
-	//void set_p_gr_shrink_signal(void);
 };
