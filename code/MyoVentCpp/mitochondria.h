@@ -39,7 +39,9 @@ public:
 
 	cmv_options* p_cmv_options;			/**< pointer to cmv_options object */
 
-	cmv_results* p_cmv_results;			/**< pointer to cmv_results object */
+	cmv_results* p_cmv_results_beat;	/**< pointer to cmv_results object
+												holding data at full time
+												resolution for one beat */
 
 	double mito_ATP_generation_rate;	/**< double with rate mitochondria
 												generate ATP, in M s^-1 m^-3 */

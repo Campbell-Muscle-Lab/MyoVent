@@ -54,7 +54,7 @@ reflex_control::reflex_control(baroreflex* set_p_parent_baroreflex, int set_rc_n
 	p_cmv_model = p_parent_circulation->p_cmv_model;
 
 	// Initialise with safe options
-	p_cmv_results = NULL;
+	p_cmv_results_beat = NULL;
 	p_cmv_options = NULL;
 
 	// Other variables
@@ -89,17 +89,17 @@ void reflex_control::initialise_simulation(void)
 	p_cmv_options = p_parent_circulation->p_cmv_options;
 
 	// Now add in the results
-	p_cmv_results = p_parent_circulation->p_cmv_results;
+	p_cmv_results_beat = p_parent_circulation->p_cmv_results_beat;
 
 	// Find the controlled variable
 	set_controlled_variable();
 
 	// Add fields
 	temp_string = "rc_" + to_string(rc_number) + "_C";
-	p_cmv_results->add_results_field(temp_string, &rc_baro_C);
+	p_cmv_results_beat->add_results_field(temp_string, &rc_baro_C);
 
 	temp_string = "rc_" + rc_level + "_" + rc_variable;
-	p_cmv_results->add_results_field(temp_string, p_controlled_variable);
+	p_cmv_results_beat->add_results_field(temp_string, p_controlled_variable);
 }
 
 void reflex_control::implement_time_step(double time_step_s)

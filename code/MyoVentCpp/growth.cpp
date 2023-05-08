@@ -34,7 +34,7 @@ growth::growth(circulation* set_p_parent_circulation)
 	p_parent_cmv_system = p_parent_circulation->p_parent_cmv_system;
 
 	// Initialise with safe options
-	p_cmv_results = NULL;
+	p_cmv_results_beat = NULL;
 	p_cmv_options = NULL;
 
 	for (int i = 0; i < MAX_NO_OF_GROWTH_CONTROLS; i++)
@@ -47,12 +47,6 @@ growth::growth(circulation* set_p_parent_circulation)
 	// Set from model
 
 	gr_master_rate = p_cmv_model->gr_master_rate;
-	
-	gr_shrink_concentric_rate = p_cmv_model->gr_shrink_concentric_rate;
-	gr_shrink_eccentric_rate = p_cmv_model->gr_shrink_eccentric_rate;
-
-	gr_shrink_concentric_output = GSL_NAN;
-	gr_shrink_eccentric_output = GSL_NAN;
 
 	// Set the controls
 	no_of_growth_controls = p_cmv_model->no_of_gc_controls;
@@ -87,7 +81,7 @@ void growth::initialise_simulation(void)
 	p_cmv_options = p_parent_circulation->p_cmv_options;
 
 	// Now add in the results
-	p_cmv_results = p_parent_circulation->p_cmv_results;
+	p_cmv_results_beat = p_parent_circulation->p_cmv_results_beat;
 
 	// And now daughter objects
 	for (int i = 0; i < no_of_growth_controls; i++)
@@ -96,9 +90,7 @@ void growth::initialise_simulation(void)
 	}
 
 	// Add fields
-	p_cmv_results->add_results_field("growth_active", &growth_active);
-	p_cmv_results->add_results_field("gr_shrink_concentric_output", &gr_shrink_concentric_output);
-	p_cmv_results->add_results_field("gr_shrink_eccentric_output", &gr_shrink_eccentric_output);
+	p_cmv_results_beat->add_results_field("growth_active", &growth_active);
 }
 
 void growth::implement_time_step(double time_step_s, bool new_beat)
@@ -120,24 +112,8 @@ void growth::implement_time_step(double time_step_s, bool new_beat)
 	// Zero relative changes
 	delta_relative_wall_thickness = 0.0;
 	delta_relative_n_hs = 0.0;
-
-	// Handle shrinkage
-	if (growth_active)
-	{
-		// Finally shrinkage
-
-		// Concentric
-		gr_shrink_concentric_output = time_step_s * gr_master_rate * gr_shrink_concentric_rate;
-
-		delta_relative_wall_thickness = gr_shrink_concentric_output;
-
-		// Eccentric
-		gr_shrink_eccentric_output = time_step_s * gr_master_rate * gr_shrink_eccentric_rate;
-
-		delta_relative_n_hs = gr_shrink_eccentric_output;
-	}
 	
-	// And now daughter objects
+	// Handle daughter objects
 	for (int i = 0; i < no_of_growth_controls; i++)
 	{
 		p_gc[i]->implement_time_step(time_step_s, new_beat);
@@ -194,26 +170,3 @@ void growth::implement_time_step(double time_step_s, bool new_beat)
 			p_parent_circulation->p_hemi_vent->vent_n_hs + delta_n_hs;
 	}
 }
-
-/*
-void growth::set_p_gr_shrink_signal(void)
-{
-	//! Sets the pointer to the growth signal
-
-	// Variables
-
-	// Code
-	if (gr_shrink_level == "ventricle")
-	{
-		if (gr_shrink_signal == "vent_stroke_energy_used_J")
-		{
-			p_gr_shrink_signal = &(p_parent_circulation->p_hemi_vent->vent_stroke_energy_used_J);
-		}
-
-		if (gr_shrink_signal == "vent_wall_volume")
-		{
-			p_gr_shrink_signal = &(p_parent_circulation->p_hemi_vent->vent_wall_volume);
-		}
-	}
-}
-*/

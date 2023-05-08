@@ -47,7 +47,10 @@ public:
 
 	cmv_options* p_cmv_options;							/**< Pointer to cmv_options */
 
-	cmv_results*  p_cmv_results;						/**< Pointer to cmv_results */
+	cmv_results*  p_cmv_results_beat;					/**< Pointer to cmv_results object
+																holding data at full
+																time resolution for the last
+																beat */
 
 	hemi_vent* p_hemi_vent;								/**< Pointer to a hemi_vent object */
 

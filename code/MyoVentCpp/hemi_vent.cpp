@@ -42,7 +42,7 @@ hemi_vent::hemi_vent(circulation* set_p_parent_circulation)
 	p_parent_cmv_system = p_parent_circulation->p_parent_cmv_system;
 
 	// Initialise with safe options
-	p_cmv_results = NULL;
+	p_cmv_results_beat = NULL;
 	p_cmv_options = NULL;
 
 	vent_wall_density = p_cmv_model->vent_wall_density;
@@ -95,7 +95,7 @@ void hemi_vent::initialise_simulation(void)
 		vent_thick_wall_multiplier = 0.0;
 
 	// Now add in the results
-	p_cmv_results = p_parent_circulation->p_cmv_results;
+	p_cmv_results_beat = p_parent_circulation->p_cmv_results_beat;
 
 	// And now daughter objects
 
@@ -114,17 +114,16 @@ void hemi_vent::initialise_simulation(void)
 	vent_n_hs = 1e9 * vent_circumference / p_hs->hs_length;
 
 	// Add fields
-	p_cmv_results->add_results_field("vent_wall_volume", &vent_wall_volume);
-	p_cmv_results->add_results_field("vent_wall_thickness", &vent_wall_thickness);
-	p_cmv_results->add_results_field("vent_n_hs", &vent_n_hs);
-	p_cmv_results->add_results_field("vent_stroke_work_J", &vent_stroke_work_J);
-	p_cmv_results->add_results_field("vent_stroke_energy_used_J", &vent_stroke_energy_used_J);
-	p_cmv_results->add_results_field("vent_power_to_mass", &vent_power_to_mass);
-	p_cmv_results->add_results_field("vent_efficiency", &vent_efficiency);
-	p_cmv_results->add_results_field("vent_ejection_fraction", &vent_ejection_fraction);
-	p_cmv_results->add_results_field("vent_ATP_used_per_s", &vent_ATP_used_per_s);
-	p_cmv_results->add_results_field("vent_stroke_volume", &vent_stroke_volume);
-	p_cmv_results->add_results_field("vent_cardiac_output", &vent_cardiac_output);
+	p_cmv_results_beat->add_results_field("vent_wall_volume", &vent_wall_volume);
+	p_cmv_results_beat->add_results_field("vent_wall_thickness", &vent_wall_thickness);
+	p_cmv_results_beat->add_results_field("vent_n_hs", &vent_n_hs);
+	p_cmv_results_beat->add_results_field("vent_stroke_work_J", &vent_stroke_work_J);
+	p_cmv_results_beat->add_results_field("vent_stroke_energy_used_J", &vent_stroke_energy_used_J);
+	p_cmv_results_beat->add_results_field("vent_efficiency", &vent_efficiency);
+	p_cmv_results_beat->add_results_field("vent_ejection_fraction", &vent_ejection_fraction);
+	p_cmv_results_beat->add_results_field("vent_ATP_used_per_s", &vent_ATP_used_per_s);
+	p_cmv_results_beat->add_results_field("vent_stroke_volume", &vent_stroke_volume);
+	p_cmv_results_beat->add_results_field("vent_cardiac_output", &vent_cardiac_output);
 }
 
 bool hemi_vent::implement_time_step(double time_step_s)
@@ -289,17 +288,17 @@ void hemi_vent::update_beat_metrics()
 	double cardiac_cycle_s;
 
 	// Update beat values
-	vent_stroke_work_J = p_cmv_results->return_stroke_work(p_parent_cmv_system->sim_t_index);
-	vent_stroke_energy_used_J = p_cmv_results->return_energy_used(p_parent_cmv_system->sim_t_index);
+	vent_stroke_work_J = p_cmv_results_beat->return_stroke_work(0, p_parent_cmv_system->beat_t_index);
+	vent_stroke_energy_used_J = p_cmv_results_beat->return_energy_used(0, p_parent_cmv_system->beat_t_index);
 	vent_efficiency = -vent_stroke_work_J / vent_stroke_energy_used_J;
 
 	// Calculate the ejection fraction
 	stats_structure* p_v_stats = new stats_structure;
 
 	// Calculate stroke volume
-	p_cmv_results->calculate_sub_vector_statistics(
-		p_cmv_results->gsl_results_vectors[p_cmv_results->volume_vent_field_index],
-		p_cmv_results->last_beat_t_index, p_parent_cmv_system->sim_t_index, p_v_stats);
+	p_cmv_results_beat->calculate_sub_vector_statistics(
+		p_cmv_results_beat->gsl_results_vectors[p_cmv_results_beat->volume_vent_field_index],
+		0, p_parent_cmv_system->beat_t_index, p_v_stats);
 
 	vent_stroke_volume = p_v_stats->max_value - p_v_stats->min_value;
 
@@ -307,8 +306,7 @@ void hemi_vent::update_beat_metrics()
 
 	// Calculate period of cardiac cycle to get cardiac output
 	cardiac_cycle_s = p_parent_cmv_system->cum_time_s -
-		gsl_vector_get(p_cmv_results->gsl_results_vectors[p_cmv_results->time_field_index],
-			p_cmv_results->last_beat_t_index);
+		gsl_vector_get(p_cmv_results_beat->gsl_results_vectors[p_cmv_results_beat->time_field_index], 0);
 
 	if (cardiac_cycle_s > 0.0)
 	{
@@ -320,33 +318,29 @@ void hemi_vent::update_beat_metrics()
 	}
 
 	// Backfill results
-	p_cmv_results->backfill_beat_data(
-		p_cmv_results->gsl_results_vectors[p_cmv_results->vent_stroke_work_field_index],
-		vent_stroke_work_J, p_parent_cmv_system->sim_t_index);
+	p_cmv_results_beat->backfill_beat_data(
+		p_cmv_results_beat->gsl_results_vectors[p_cmv_results_beat->vent_stroke_work_field_index],
+		vent_stroke_work_J, 0, p_parent_cmv_system->beat_t_index);
 
-	p_cmv_results->backfill_beat_data(
-		p_cmv_results->gsl_results_vectors[p_cmv_results->vent_stroke_energy_used_field_index],
-		vent_stroke_energy_used_J, p_parent_cmv_system->sim_t_index);
+	p_cmv_results_beat->backfill_beat_data(
+		p_cmv_results_beat->gsl_results_vectors[p_cmv_results_beat->vent_stroke_energy_used_field_index],
+		vent_stroke_energy_used_J, 0, p_parent_cmv_system->beat_t_index);
 
-	p_cmv_results->backfill_beat_data(
-		p_cmv_results->gsl_results_vectors[p_cmv_results->vent_efficiency_field_index],
-		vent_efficiency, p_parent_cmv_system->sim_t_index);
+	p_cmv_results_beat->backfill_beat_data(
+		p_cmv_results_beat->gsl_results_vectors[p_cmv_results_beat->vent_efficiency_field_index],
+		vent_efficiency, 0, p_parent_cmv_system->beat_t_index);
 
-	p_cmv_results->backfill_beat_data(
-		p_cmv_results->gsl_results_vectors[p_cmv_results->vent_ejection_fraction_field_index],
-		vent_ejection_fraction, p_parent_cmv_system->sim_t_index);
+	p_cmv_results_beat->backfill_beat_data(
+		p_cmv_results_beat->gsl_results_vectors[p_cmv_results_beat->vent_ejection_fraction_field_index],
+		vent_ejection_fraction, 0, p_parent_cmv_system->beat_t_index);
 
-	p_cmv_results->backfill_beat_data(
-		p_cmv_results->gsl_results_vectors[p_cmv_results->vent_stroke_volume_field_index],
-		vent_stroke_volume, p_parent_cmv_system->sim_t_index);
+	p_cmv_results_beat->backfill_beat_data(
+		p_cmv_results_beat->gsl_results_vectors[p_cmv_results_beat->vent_stroke_volume_field_index],
+		vent_stroke_volume, 0, p_parent_cmv_system->beat_t_index);
 
-	p_cmv_results->backfill_beat_data(
-		p_cmv_results->gsl_results_vectors[p_cmv_results->vent_cardiac_output_field_index],
-		vent_cardiac_output, p_parent_cmv_system->sim_t_index);
-
-	p_cmv_results->backfill_beat_data(
-		p_cmv_results->gsl_results_vectors[p_cmv_results->vent_power_to_mass_field_index],
-		vent_power_to_mass, p_parent_cmv_system->sim_t_index);
+	p_cmv_results_beat->backfill_beat_data(
+		p_cmv_results_beat->gsl_results_vectors[p_cmv_results_beat->vent_cardiac_output_field_index],
+		vent_cardiac_output, 0, p_parent_cmv_system->beat_t_index);
 
 	// Update hs metrics
 	p_hs->update_beat_metrics();

@@ -38,7 +38,9 @@ public:
 
 	cmv_model* p_cmv_model;					/**< pointer to cmv_model object */
 
-	cmv_results* p_cmv_results;				/**< pointer to cmv_results object */
+	cmv_results* p_cmv_results_beat;		/**< pointer to cmv_results object
+													holding data at full time
+													resolution for one beat */
 
 	half_sarcomere* p_parent_hs;			/**< pointer to parent half-sarcomere */
 

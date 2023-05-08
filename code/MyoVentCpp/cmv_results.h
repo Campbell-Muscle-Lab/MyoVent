@@ -135,15 +135,17 @@ public:
 	int write_data_to_file(string output_file_string);
 											/**< write data to file */
 
-	void calculate_beat_metrics(int t_beat_index);
+	//void calculate_beat_metrics(int t_beat_index);
 
-	void calculate_sub_vector_statistics(gsl_vector* gsl_v, int start_index, int stop_index,
+	void calculate_sub_vector_statistics(gsl_vector* gsl_v,
+		int start_index, int stop_index,
 		stats_structure* p_stats_structure);
 
-	double return_stroke_work(int stop_t_index);
+	double return_stroke_work(int start_t_index, int stop_t_index);
 
-	double return_energy_used(int stop_t_index);
+	double return_energy_used(int start_t_index, int stop_t_index);
 
-	void backfill_beat_data(gsl_vector* gsl_v, double value, int stop_t_index);
+	void backfill_beat_data(gsl_vector* gsl_v, double value,
+		int start_t_index, int stop_t_index);
 
 };

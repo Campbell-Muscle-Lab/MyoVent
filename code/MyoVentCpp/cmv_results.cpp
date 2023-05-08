@@ -241,11 +241,6 @@ void cmv_results::add_results_field(std::string field_name, double* p_double)
 
 	// Update the number of defined fields
 	no_of_defined_results_fields = no_of_defined_results_fields + 1;
-
-	if (index_set == false)
-	{
-		cout << "cmv_results problem, field index not set for " << field_name << " Now exiting\n";
-	}
 }
 
 void cmv_results::update_results_vectors(int t_index)
@@ -297,8 +292,7 @@ int cmv_results::write_data_to_file(std::string output_file_string)
 	FILE* output_file;
 
 	// Code
-	cout << "Writing simulation results to: " << output_file_string <<
-		" skipping every " << p_cmv_options->output_skip_points << " points \n";
+	cout << "Writing simulation results to: " << output_file_string << " points \n";
 
 	// Make sure results directory exists
 	path output_file_path(output_file_string);
@@ -336,7 +330,7 @@ int cmv_results::write_data_to_file(std::string output_file_string)
 	}
 
 	// Now data
-	for (int i = 0; i < no_of_time_points; i = i + (1+p_cmv_options->output_skip_points))
+	for (int i = 0; i < no_of_time_points; i = i + 1)
 	{
 		for (int j = 0; j < no_of_defined_results_fields; j++)
 		{
@@ -356,7 +350,7 @@ int cmv_results::write_data_to_file(std::string output_file_string)
 	return(1);
 }
 
-double cmv_results::return_stroke_work(int stop_t_index)
+double cmv_results::return_stroke_work(int start_t_index, int stop_t_index)
 {
 	//! Calculate stroke work via Shoelace formula
 	
@@ -372,11 +366,11 @@ double cmv_results::return_stroke_work(int stop_t_index)
 		return (GSL_NAN);
 
 	// Implement Shoelace
-	for (int i = last_beat_t_index; i <= stop_t_index; i++)
+	for (int i = start_t_index; i <= stop_t_index; i++)
 	{
 		int j = i + 1;
 		if (j > stop_t_index)
-			j = last_beat_t_index;
+			j = 0;
 
 		holder = holder +
 			(gsl_vector_get(gsl_results_vectors[pressure_vent_field_index], i) +
@@ -396,7 +390,7 @@ double cmv_results::return_stroke_work(int stop_t_index)
 	return holder;
 }
 
-double cmv_results::return_energy_used(int stop_t_index)
+double cmv_results::return_energy_used(int start_t_index, int stop_t_index)
 {
 	//! Returns energy used as the integral of the ATP used over
 	//! the cycle in moles multipled by the energy from ATP
@@ -423,7 +417,7 @@ double cmv_results::return_energy_used(int stop_t_index)
 	delta_t = gsl_vector_get(gsl_results_vectors[time_field_index], stop_t_index) -
 		gsl_vector_get(gsl_results_vectors[time_field_index], stop_t_index - 1);
 
-	for (int i = last_beat_t_index; i <= stop_t_index; i++)
+	for (int i = start_t_index; i <= stop_t_index; i++)
 	{
 		holder = holder +
 			gsl_vector_get(gsl_results_vectors[vent_ATP_used_per_s_field_index], i);
@@ -436,7 +430,7 @@ double cmv_results::return_energy_used(int stop_t_index)
 	return energy_used;
 }
 
-void cmv_results::backfill_beat_data(gsl_vector* gsl_v, double value, int stop_t_index)
+void cmv_results::backfill_beat_data(gsl_vector* gsl_v, double value, int start_t_index, int stop_t_index)
 {
 	//! Backfills data for a cardiac cycle
 	
@@ -448,7 +442,7 @@ void cmv_results::backfill_beat_data(gsl_vector* gsl_v, double value, int stop_t
 	if (last_beat_t_index < 0)
 		return;
 
-	for (int i = last_beat_t_index; i <= stop_t_index; i++)
+	for (int i = start_t_index; i <= stop_t_index; i++)
 	{
 		gsl_vector_set(gsl_v, i, value);
 	}
