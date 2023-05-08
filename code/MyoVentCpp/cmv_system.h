@@ -81,4 +81,6 @@ public:
 	void update_beat_metrics();
 
 	void update_cmv_results_summary();
+
+	bool sim_time_dumps_to_summary(double sim_time);
 };

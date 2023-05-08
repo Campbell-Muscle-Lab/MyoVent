@@ -110,7 +110,7 @@ void cmv_system::run_simulation(string options_file_string,
 	double sim_t = 0.0;
 	for (sim_t_index = 0; sim_t_index < p_cmv_protocol->no_of_time_steps; sim_t_index++)
 	{
-		if (abs(remainder(sim_t, p_cmv_options->summary_time_step_s)) < 1e-6)
+		if (sim_time_dumps_to_summary(sim_t))
 		{
 			p_cmv_options->summary_points = p_cmv_options->summary_points + 1;
 		}
@@ -227,7 +227,6 @@ void cmv_system::update_cmv_results_summary(void)
 	//! the appropriate row on cmv_results_summary
 	
 	// Variables
-	double y;
 
 	// Code
 	
@@ -237,9 +236,8 @@ void cmv_system::update_cmv_results_summary(void)
 	for (int b_ind = 0; b_ind < beat_t_index; b_ind++)
 	{
 		// Work out whether this is a time we need
-		if (abs(remainder(gsl_vector_get(
-			p_cmv_results_beat->gsl_results_vectors[p_cmv_results_beat->time_field_index], b_ind),
-			p_cmv_options->summary_time_step_s)) < 1e-6)
+		if (sim_time_dumps_to_summary(
+				gsl_vector_get(p_cmv_results_beat->gsl_results_vectors[p_cmv_results_beat->time_field_index], b_ind)))
 		{
 			for (int f_ind = 0; f_ind < p_cmv_results_beat->no_of_defined_results_fields; f_ind++)
 			{
@@ -255,5 +253,20 @@ void cmv_system::update_cmv_results_summary(void)
 
 			summary_t_index = summary_t_index + 1;
 		}
+	}
+}
+
+bool cmv_system::sim_time_dumps_to_summary(double sim_time)
+{
+	//! Returns true if sim_time should be sumped to summary
+	//! False otherwise
+	
+	if (abs(remainder(sim_time, p_cmv_options->summary_time_step_s)) < 1e-6)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
 	}
 }
