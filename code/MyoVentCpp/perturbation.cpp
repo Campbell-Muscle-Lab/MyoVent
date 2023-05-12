@@ -273,6 +273,22 @@ void perturbation::impose(double sim_time_s)
 
 				*p_double = *p_double + increment;
 			}
+
+			if (variable == "a_k_coop")
+			{
+				p_double = &(p_cmv_protocol->p_cmv_system->p_circulation->p_hemi_vent->p_hs->
+					p_myofilaments->myof_a_k_coop);
+
+				*p_double = *p_double + increment;
+			}
+
+			if (variable == "int_pas_L")
+			{
+				p_double = &(p_cmv_protocol->p_cmv_system->p_circulation->p_hemi_vent->p_hs->
+					p_myofilaments->myof_int_pas_L);
+
+				*p_double = *p_double + increment;
+			}
 		}
 	}
 }

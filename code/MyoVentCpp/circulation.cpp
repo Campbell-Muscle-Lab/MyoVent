@@ -275,7 +275,7 @@ bool circulation::implement_time_step(double time_step_s)
 
 	// Now adjust the compartment volumes by integrating flows.
 	gsl_odeiv2_system sys =
-		{ circ_vol_derivs, NULL, circ_no_of_compartments, this };
+		{ circ_vol_derivs, NULL, (size_t)circ_no_of_compartments, this };
 
 	gsl_odeiv2_driver* d =
 		gsl_odeiv2_driver_alloc_y_new(&sys, gsl_odeiv2_step_rkf45,
