@@ -60,9 +60,6 @@ public:
 	int no_of_beats;						/**< integer counting number of beats
 													written to record */
 
-	int last_beat_t_index;					/**< integer holding the t_index of the
-													last new beat */
-
 	int time_field_index;					/**< integer holding the index for the
 													time field */
 
@@ -120,9 +117,6 @@ public:
 
 	int vent_cardiac_output_field_index;	/**< integer holding the index for the
 													vent cardiac output volume field */
-
-	int vent_power_to_mass_field_index;
-
 
 	// Functions
 

@@ -92,8 +92,6 @@ public:
 	double vent_cardiac_output;				/**< double with vent cardiac output
 													in liter per minute */
 
-	double vent_power_to_mass;
-
 	// Other functions
 	void initialise_simulation(void);
 

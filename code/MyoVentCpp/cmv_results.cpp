@@ -52,8 +52,6 @@ cmv_results::cmv_results(cmv_system* set_p_parent_cmv_system, int set_no_of_time
 
 	no_of_beats = 0;
 
-	last_beat_t_index = -1;
-
 	time_field_index = -1;
 	new_beat_field_index = -1;
 	pressure_vent_field_index = -1;
@@ -71,7 +69,6 @@ cmv_results::cmv_results(cmv_system* set_p_parent_cmv_system, int set_no_of_time
 	vent_ATP_used_per_s_field_index = -1;
 	vent_stroke_volume_field_index = -1;
 	vent_cardiac_output_field_index = -1;
-	vent_power_to_mass_field_index = -1;
 
 	// Special case
 	pressure_arteries_field_index = -1;
@@ -221,12 +218,6 @@ void cmv_results::add_results_field(std::string field_name, double* p_double)
 		index_set = true;
 	}
 
-	if (field_name == "vent_power_to_mass")
-	{
-		vent_power_to_mass_field_index = new_index;
-		index_set = true;
-	}
-
 	if (p_parent_cmv_system->p_circulation->p_baroreflex != NULL)
 	{
 		string b_string = "pressure_" +
@@ -361,10 +352,6 @@ double cmv_results::return_stroke_work(int start_t_index, int stop_t_index)
 
 	holder = 0.0;
 
-	// Check whether there is a valid last_beat index
-	if (last_beat_t_index < 0)
-		return (GSL_NAN);
-
 	// Implement Shoelace
 	for (int i = start_t_index; i <= stop_t_index; i++)
 	{
@@ -405,10 +392,6 @@ double cmv_results::return_energy_used(int start_t_index, int stop_t_index)
 
 	// Code
 
-	// Check whether there is a valid last_beat index
-	if (last_beat_t_index < 0)
-		return (GSL_NAN);
-
 	holder = 0.0;
 
 	// Integrate energy used over time
@@ -437,10 +420,6 @@ void cmv_results::backfill_beat_data(gsl_vector* gsl_v, double value, int start_
 	// Variables
 
 	// Code
-	
-	// Check whether there is a valid last_beat index
-	if (last_beat_t_index < 0)
-		return;
 
 	for (int i = start_t_index; i <= stop_t_index; i++)
 	{

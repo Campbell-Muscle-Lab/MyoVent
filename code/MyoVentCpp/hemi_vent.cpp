@@ -56,7 +56,6 @@ hemi_vent::hemi_vent(circulation* set_p_parent_circulation)
 	vent_cardiac_output = GSL_NAN;
 	vent_stroke_volume = GSL_NAN;
 	vent_cardiac_output = GSL_NAN;
-	vent_power_to_mass = GSL_NAN;
 
 	// Initialise child half-sarcomere
 	p_hs = new half_sarcomere(this);
@@ -311,10 +310,6 @@ void hemi_vent::update_beat_metrics()
 	if (cardiac_cycle_s > 0.0)
 	{
 		vent_cardiac_output = 60.0 * vent_stroke_volume / cardiac_cycle_s;
-
-		// Calculate power_to_mass
-		vent_power_to_mass = (vent_stroke_energy_used_J / cardiac_cycle_s) /
-			(vent_wall_volume);
 	}
 
 	// Backfill results

@@ -381,27 +381,9 @@ void circulation::calculate_flows(const double v[], double flow[])
 	p_diff = circ_pressure[circ_no_of_compartments - 1] - circ_pressure[0];
 	flow[0] = fabs(p_mv->valve_pos) * p_diff / circ_resistance[0];
 
-	/*
-	//if (p_mv->valve_pos > 0.99)
-		//p_mv->valve_pos = 1.0;
-
-	
-	flow[0] = fabs(p_mv->valve_pos) *
-		(p_diff + (circ_inertance[0] * circ_last_flow[0] / time_step_s)) /
-		(circ_resistance[0] + (circ_inertance[0] / time_step_s));
-*/
-
 	// Special case for flow through aortic valve
 	p_diff = circ_pressure[0] - circ_pressure[1];
 	flow[1] = fabs(p_av->valve_pos) * p_diff / circ_resistance[1];
-
-	/*
-
-	flow[1] = fabs(p_av->valve_pos) *
-		(p_diff + (circ_inertance[1] * circ_last_flow[1] / time_step_s)) /
-		(circ_resistance[1] + (circ_inertance[1] / time_step_s));
-
-	*/
 }
 
 void circulation::update_beat_metrics(void)
@@ -427,38 +409,6 @@ void circulation::update_beat_metrics(void)
 
 		cout << "Arterial pressure: " << p_stats->max_value << " / " << p_stats->min_value << "\n";
 	}
-
-	if (p_cmv_results_beat->flow_mitral_valve_field_index >= 0)
-	{
-		p_cmv_results_beat->calculate_sub_vector_statistics(
-			p_cmv_results_beat->gsl_results_vectors[p_cmv_results_beat->flow_mitral_valve_field_index],
-			0, p_parent_cmv_system->beat_t_index,
-			p_stats);
-	}
-
-	if (p_cmv_results_beat->flow_aortic_valve_field_index >= 0)
-	{
-		p_cmv_results_beat->calculate_sub_vector_statistics(
-			p_cmv_results_beat->gsl_results_vectors[p_cmv_results_beat->flow_aortic_valve_field_index],
-			0, p_parent_cmv_system->beat_t_index,
-			p_stats_2);
-	}
-
-	double cardiac_cycle_s = gsl_vector_get(
-		p_cmv_results_beat->gsl_results_vectors[p_cmv_results_beat->time_field_index],
-		p_parent_cmv_system->beat_t_index) -
-		gsl_vector_get(
-			p_cmv_results_beat->gsl_results_vectors[p_cmv_results_beat->time_field_index],
-			0);
-
-
-	cout << "Mitral_flow: mean " << p_stats->sum << " peak " << p_stats->max_value << " min " << p_stats->min_value << "\n";
-	cout << "Aortic_flow: mean " << p_stats_2->sum << " peak " << p_stats_2->max_value << " min " << p_stats_2->min_value << "\n";
-
-	cout << "Cardiac cycle s: " << cardiac_cycle_s << "\n\n";
-	//cout << "Mitral output: " << 60 * p_stats->mean_value / cardiac_cycle_s << " Aortic output: " <<
-		//60 * p_stats_2->mean_value / cardiac_cycle_s << "\n";
-
 
 	p_hemi_vent->update_beat_metrics();
 

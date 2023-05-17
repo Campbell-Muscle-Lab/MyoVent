@@ -16,6 +16,7 @@
 #include "hemi_vent.h"
 #include "valve.h"
 #include "half_sarcomere.h"
+#include "membranes.h"
 #include "mitochondria.h"
 #include "myofilaments.h"
 #include "kinetic_scheme.h"
@@ -226,6 +227,23 @@ void perturbation::impose(double sim_time_s)
 				*p_double = *p_double + increment;
 			}
 		}
+		if (class_name == "membranes")
+		{
+			if (variable == "t_open")
+			{
+				p_double = &(p_cmv_protocol->p_cmv_system->p_circulation->p_hemi_vent->p_hs->p_membranes->memb_t_open_s);
+
+				*p_double = *p_double + increment;
+			}
+
+			if (variable == "k_leak")
+			{
+				p_double = &(p_cmv_protocol->p_cmv_system->p_circulation->p_hemi_vent->p_hs->p_membranes->memb_k_leak);
+
+				*p_double = *p_double + increment;
+			}
+		}
+
 
 		if (class_name == "mitochondria")
 		{
@@ -270,6 +288,14 @@ void perturbation::impose(double sim_time_s)
 			{
 				p_double = &(p_cmv_protocol->p_cmv_system->p_circulation->p_hemi_vent->p_hs->
 					p_myofilaments->myof_a_k_on);
+
+				*p_double = *p_double + increment;
+			}
+
+			if (variable == "a_k_off")
+			{
+				p_double = &(p_cmv_protocol->p_cmv_system->p_circulation->p_hemi_vent->p_hs->
+					p_myofilaments->myof_a_k_off);
 
 				*p_double = *p_double + increment;
 			}

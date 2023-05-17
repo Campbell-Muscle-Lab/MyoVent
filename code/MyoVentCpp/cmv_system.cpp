@@ -228,6 +228,8 @@ void cmv_system::update_cmv_results_summary(void)
 	
 	// Variables
 
+	bool new_beat_flag = false;
+
 	// Code
 	
 	// We have to run through the entire beat to capture the fields that
@@ -241,14 +243,26 @@ void cmv_system::update_cmv_results_summary(void)
 		{
 			for (int f_ind = 0; f_ind < p_cmv_results_beat->no_of_defined_results_fields; f_ind++)
 			{
-				double temp;
+				if ((p_cmv_results_beat->results_fields[f_ind] == "hr_new_beat") &&
+					(new_beat_flag == false))
+				{
+					// Mark the new beat
+					gsl_vector_set(p_cmv_results_summary->gsl_results_vectors[f_ind],
+						summary_t_index, 1.0);
+					new_beat_flag = true;
+				}
+				else
+				{
+					// Update the array
+					double temp;
 
-				// Pull data from results_beat
-				temp = gsl_vector_get(p_cmv_results_beat->gsl_results_vectors[f_ind], b_ind);
+					// Pull data from results_beat
+					temp = gsl_vector_get(p_cmv_results_beat->gsl_results_vectors[f_ind], b_ind);
 
-				// Write data to results_summary
-				gsl_vector_set(p_cmv_results_summary->gsl_results_vectors[f_ind],
-					summary_t_index, temp);
+					// Write data to results_summary
+					gsl_vector_set(p_cmv_results_summary->gsl_results_vectors[f_ind],
+						summary_t_index, temp);
+				}
 			}
 
 			summary_t_index = summary_t_index + 1;
