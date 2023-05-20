@@ -17,6 +17,8 @@
 #include "cmv_results.h"
 #include "cmv_options.h"
 
+#include "gsl_errno.h"
+#include "gsl_roots.h"
 #include "gsl_math.h"
 #include "gsl_const_mksa.h"
 #include "gsl_const_num.h"
@@ -47,6 +49,10 @@ hemi_vent::hemi_vent(circulation* set_p_parent_circulation)
 
 	vent_wall_density = p_cmv_model->vent_wall_density;
 	vent_wall_volume = p_cmv_model->vent_wall_volume;
+
+//	vent_chamber_height = p_cmv_model->vent_chamber_height;
+	vent_z_scale = p_cmv_model->vent_z_scale;
+	vent_z_exp = p_cmv_model->vent_z_exp;
 
 	vent_stroke_work_J = GSL_NAN;
 	vent_stroke_energy_used_J = GSL_NAN;
@@ -82,9 +88,9 @@ hemi_vent::~hemi_vent(void)
 void hemi_vent::initialise_simulation(void)
 {
 	//! Code initialises simulation
-	
+
 	// Variables
-	
+
 	// Initialise options
 	p_cmv_options = p_parent_circulation->p_cmv_options;
 
@@ -112,9 +118,18 @@ void hemi_vent::initialise_simulation(void)
 
 	vent_n_hs = 1e9 * vent_circumference / p_hs->hs_length;
 
+	double vent_diam = vent_circumference / 3.14159;
+
+	cout << "\n\nvent_circum: " << vent_circumference << " vent_z_scale: " << vent_z_scale <<
+		" vent_volume: " << p_parent_circulation->circ_slack_volume[0] <<
+		" vent_diam:" << vent_diam << "\n\n\n";
+	//exit(1);
+
 	// Add fields
 	p_cmv_results_beat->add_results_field("vent_wall_volume", &vent_wall_volume);
 	p_cmv_results_beat->add_results_field("vent_wall_thickness", &vent_wall_thickness);
+	p_cmv_results_beat->add_results_field("vent_chamber_radius", &vent_chamber_radius);
+	p_cmv_results_beat->add_results_field("vent_chamber_height", &vent_chamber_height);
 	p_cmv_results_beat->add_results_field("vent_n_hs", &vent_n_hs);
 	p_cmv_results_beat->add_results_field("vent_stroke_work_J", &vent_stroke_work_J);
 	p_cmv_results_beat->add_results_field("vent_stroke_energy_used_J", &vent_stroke_energy_used_J);
@@ -128,7 +143,7 @@ void hemi_vent::initialise_simulation(void)
 bool hemi_vent::implement_time_step(double time_step_s)
 {
 	//! Implements time-step
-	
+
 	// Variables
 	bool new_beat = false;
 
@@ -145,20 +160,135 @@ bool hemi_vent::implement_time_step(double time_step_s)
 	return (new_beat);
 }
 
+struct gsl_thickness_root_params
+{
+	hemi_vent* p_hemi_vent_temp;
+	double chamber_volume;
+	double wall_volume_target;
+};
+
+double hemi_vent_thickness_root_finder(double x, void* params)
+{
+	//! Function for the root finder
+	
+	// Variables
+	double external_volume;
+	double inner_radius;
+	double inner_height;
+	double calculated_wall_volume;
+	double volume_difference;
+
+	// Code
+
+	// Unpack the pointer
+	struct gsl_thickness_root_params* p = (struct gsl_thickness_root_params*)(params);
+
+	// Get the chamber dimensions
+
+	inner_radius = p->p_hemi_vent_temp->return_internal_radius_for_chamber_volume(p->chamber_volume);
+
+	inner_height = p->p_hemi_vent_temp->return_chamber_height(inner_radius);
+
+//	cout << "\n\nx: " << x << "\n";
+//	cout << "inner_volume: " << p->chamber_volume << "\n";
+//	cout << "inner radius: " << inner_radius << " inner_height: " << inner_height << "\n";
+
+	
+	// Calculate external_volume
+	external_volume = 1000.0 * (2.0 / 3.0) * M_PI * pow(inner_radius + x, 2.0) * (inner_height + x);
+
+	// Estimated wall volume
+	calculated_wall_volume = external_volume - p->chamber_volume;
+
+//	cout << "external_volume: " << external_volume << " calculated_wall_volume: " << calculated_wall_volume << "\n";
+//	exit(1);
+
+	// How far off are we
+	volume_difference = calculated_wall_volume - p->wall_volume_target;
+
+	// Return the difference
+	return volume_difference;
+}
+
+double hemi_vent::wall_thickness_root_finder(double cv)
+{
+	// Function uses an iterative technique to find the thickness of an elliptical ventricle
+
+	// Variables
+	double x_lo = 0;
+	double x_hi = 0.05;
+	double x;
+
+	const gsl_root_fsolver_type* T;
+	gsl_root_fsolver* s;
+
+	gsl_function F;
+	struct gsl_thickness_root_params params = { this, cv, vent_wall_volume };
+
+	int status;
+	int iter = 0;
+	int max_iter = 100;
+
+	double epsabs = 1e-5;
+	double epsrel = 1e-5;
+
+	// Code
+
+	F.function = &hemi_vent_thickness_root_finder;
+	F.params = &params;
+
+	T = gsl_root_fsolver_brent;
+	s = gsl_root_fsolver_alloc(T);
+	gsl_root_fsolver_set(s, &F, x_lo, x_hi);
+
+	do
+	{
+		iter++;
+		status = gsl_root_fsolver_iterate(s);
+
+		x = gsl_root_fsolver_root(s);
+		x_lo = gsl_root_fsolver_x_lower(s);
+		x_hi = gsl_root_fsolver_x_upper(s);
+		status = gsl_root_test_interval(x_lo, x_hi, epsabs, epsrel);
+	} while ((status == GSL_CONTINUE) && (iter < max_iter));
+
+	gsl_root_fsolver_free(s);
+
+	// Return thickness
+	return x;
+}
+
 double hemi_vent::return_wall_thickness_for_chamber_volume(double cv)
 {
 	//! Code sets object value of wall thickness
 	//! Volumes are in liters, dimensions are in m
+	
+	// Variables
+
+	double thickness;
+
+	// Code
+
+	thickness = wall_thickness_root_finder(cv);
+
+	/*
 
 	// Variables
 	double internal_r;
+
+	double h;
+
 	double thickness;
 
 	// Code
 	internal_r = return_internal_radius_for_chamber_volume(cv);
 
-	thickness = pow((0.001 * (cv + vent_wall_volume)) / ((2.0 / 3.0) * M_PI), (1.0 / 3.0)) -
+	h = return_chamber_height(internal_r);
+
+	thickness = pow((0.001 * (cv + vent_wall_volume)) / ((2.0 / 3.0) * h * M_PI), (1.0 / 2.0)) -
 		internal_r;
+
+	*/
 
 	return thickness;
 }
@@ -189,12 +319,17 @@ double hemi_vent::return_internal_radius_for_chamber_volume(double cv)
 	// Variables
 	double r;
 
+	double rel_hsl;
+
 	// Code
 
 	if (cv < 0.0)
 		cv = 0.0;
 
-	r = pow((3.0 * 0.001 * cv) / (2.0 * M_PI), (1.0 / 3.0));
+	rel_hsl = (p_hs->hs_length / p_hs->hs_reference_hs_length);
+
+	r = pow(((3.0 * 0.001 * cv) /
+		(2.0 * M_PI * pow(rel_hsl, vent_z_exp) * vent_z_scale)), (1.0 / 3.0));
 
 	return r;
 }
@@ -254,7 +389,7 @@ double hemi_vent::return_pressure_for_chamber_volume(double cv)
 void hemi_vent::update_chamber_volume(double new_volume)
 {
 	//! Function updates the chamber volume
-	
+
 	// Variables
 	double new_circumference;
 	double delta_circumference;
@@ -282,7 +417,7 @@ void hemi_vent::update_chamber_volume(double new_volume)
 void hemi_vent::update_beat_metrics()
 {
 	//! Code updates beat metrics
-	
+
 	// Variables
 	double cardiac_cycle_s;
 
@@ -339,6 +474,21 @@ void hemi_vent::update_beat_metrics()
 
 	// Update hs metrics
 	p_hs->update_beat_metrics();
+}
+
+double hemi_vent::return_chamber_height(double r)
+{
+	//! Function returns chamber height
+	
+	// Variables
+	
+	double h;
+
+	// Code
+
+	h = r * vent_z_scale * pow((p_hs->hs_length / p_hs->hs_reference_hs_length), vent_z_exp);
+
+	return h;
 }
 
 void hemi_vent::calculate_vent_ATP_used_per_s()

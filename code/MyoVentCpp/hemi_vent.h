@@ -60,9 +60,21 @@ public:
 
 	double vent_wall_volume;				/**< double with wall volume in liters */
 
+	double vent_chamber_height;				/**< double with internal base to apex distance
+													in meters calculated so that
+													h = radius * vent_z_scale * 
+														(hsl/hsl_ref)^vent_z_exp
+											*/
+
+	double vent_z_scale;					/**< double for chamber height as above */
+
+	double vent_z_exp;						/**< double for chamber height as above */
+
 	double vent_chamber_volume;				/**< double with chamner volume in liters */
 
 	double vent_chamber_pressure;			/**< double with pressure in the ventricle in mm Hg */
+
+	double vent_chamber_radius;				/**< double with chamber inner radius in m */
 
 	double vent_wall_thickness;				/**< double with wall thickness in m */
 
@@ -99,7 +111,11 @@ public:
 
 	double return_wall_thickness_for_chamber_volume(double cv);
 
+	double wall_thickness_root_finder(double cv);
+
 	double return_internal_radius_for_chamber_volume(double cv);
+
+	double return_chamber_height(double r);
 
 	double return_lv_circumference_for_chamber_volume(double cv);
 

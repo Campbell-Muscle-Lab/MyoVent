@@ -208,6 +208,15 @@ void cmv_model::initialise_model_from_JSON_file(string JSON_model_file_string)
 	JSON_functions::check_JSON_member_number(vent, "wall_volume");
 	vent_wall_volume = vent["wall_volume"].GetDouble();
 
+	//JSON_functions::check_JSON_member_number(vent, "chamber_height");
+	//vent_chamber_height = vent["chamber_height"].GetDouble();
+
+	JSON_functions::check_JSON_member_number(vent, "z_scale");
+	vent_z_scale = vent["z_scale"].GetDouble();
+
+	JSON_functions::check_JSON_member_number(vent, "z_exp");
+	vent_z_exp = vent["z_exp"].GetDouble();
+
 	// Load the valves
 	JSON_functions::check_JSON_member_object(vent, "valves");
 	const rapidjson::Value& valves = vent["valves"];

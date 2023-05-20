@@ -101,6 +101,15 @@ public:
 
 	double vent_wall_volume;			/**< double with wall volume in liters */
 
+	//double vent_chamber_height;			/**< double with base to apex height in m */
+	
+	double vent_z_scale;				/**< doubles such that chamber height is
+												calculated as
+												h = r * vent_z_scale * (hsl / hsl_ref)^vent_z_exp
+											*/
+
+	double vent_z_exp;				/**< as above */
+
 	cmv_model_valve_structure* p_av;	/**< pointer to aortic valve structure */
 
 	cmv_model_valve_structure* p_mv;	/**< pointer to mitral valve structure */
