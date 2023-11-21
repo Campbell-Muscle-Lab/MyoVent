@@ -141,10 +141,20 @@ void growth::implement_time_step(double time_step_s, bool new_beat)
 			return_internal_radius_for_chamber_volume(p_parent_circulation->circ_volume[0]);
 		wall_thickness = p_parent_circulation->p_hemi_vent->
 			return_wall_thickness_for_chamber_volume(p_parent_circulation->circ_volume[0]);
-
-		p_parent_circulation->p_hemi_vent->vent_wall_volume =
+		
+		// Equation below is for hemisphere
+		/*p_parent_circulation->p_hemi_vent->vent_wall_volume =
 			1000 * ((2.0 / 3.0) * M_PI *
 				pow((internal_r + (wall_thickness * (1.0 + delta_relative_wall_thickness))), 3.0)) -
+			p_parent_circulation->circ_volume[0];
+		*/
+
+		// This is for ellipsoid
+		p_parent_circulation->p_hemi_vent->vent_wall_volume =
+			1000 * ((2.0 / 3.0) * M_PI * 
+				pow((internal_r + (wall_thickness * (1.0 + delta_relative_wall_thickness))), 2.0) *
+				(p_parent_circulation->p_hemi_vent->vent_chamber_height  + 
+					(wall_thickness * (1.0 + delta_relative_wall_thickness)))) -
 			p_parent_circulation->circ_volume[0];
 	}
 
