@@ -71,6 +71,14 @@ namespace JSON_functions {
     int is_JSON_member(const rapidjson::Value& doc, const char mem_name[]);
 
     /**
+    * a function that checks whether mem_name is an array
+    * @param doc a pointer to a rapidjson::Document
+    * @param memname[] a character array
+    * @return int, 0 for does not exist, 1 for does exist
+    */
+    int is_JSON_array(const rapidjson::Value& doc, const char mem_name[]);
+
+    /**
     * a function that checks whether an entry is a number
     * @param doc a pointer to a rapidjson::Document
     * @param memname[] a character array

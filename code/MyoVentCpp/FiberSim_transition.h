@@ -6,16 +6,17 @@
 * @author	Ken Campbell
 */
 
-//#include "half_sarcomere.h"
-#include "FiberSim_m_state.h"
+//#include "FiberSim_half_sarcomere.h"
+//#include "FiberSim_m_state.h"
+
 #include "rapidjson/document.h"
 #include "JSON_functions.h"
-//#include "FiberSim_options.h"
 
 #include "gsl_vector.h"
 
 // Forward declaration
-class half_sarcomere;
+class FiberSim_half_sarcomere;
+class FiberSim_m_state;
 
 class FiberSim_transition
 {
@@ -60,10 +61,8 @@ public:
 	* @param x double defining the cb_x position - the bs_x position
 	* @return the rate in units of s^-1
 	*/
-/*
 	double calculate_rate(double x, double x_ext, double node_force,
 							int mybpc_state, int mybpc_iso,
 							short int active_neigh,
-							half_sarcomere* p_hs);
-*/
+							FiberSim_half_sarcomere* p_fs_hs);
 };

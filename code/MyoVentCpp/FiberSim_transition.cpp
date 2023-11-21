@@ -11,7 +11,10 @@
 #include "FiberSim_m_state.h"
 #include "FiberSim_kinetic_scheme.h"
 #include "FiberSim_model.h"
-//#include "half_sarcomere.h"
+#include "FiberSim_half_sarcomere.h"
+
+#include "half_sarcomere.h"
+
 //#include "muscle.h"
 #include "global_definitions.h"
 #include "JSON_functions.h"
@@ -26,7 +29,6 @@
 // Constructor
 FiberSim_transition::FiberSim_transition(const rapidjson::Value& tr, FiberSim_m_state* set_p_parent_m_state)
 {
-/*
 	// Set p_parent_m_state
 	p_parent_m_state = set_p_parent_m_state;
 
@@ -50,19 +52,16 @@ FiberSim_transition::FiberSim_transition(const rapidjson::Value& tr, FiberSim_m_
 	{
 		gsl_vector_set(rate_parameters, i, rp[i].GetDouble());
 	}
-*/
 }
 
 FiberSim_transition::FiberSim_transition()
 {
-/*
 	// Default constructor - used if there is no defined transition
 	new_state = 0;
 	transition_type = 'x';
 	sprintf_s(rate_type, _MAX_PATH, "");
 	rate_parameters = gsl_vector_alloc(MAX_NO_OF_RATE_PARAMETERS);
 	gsl_vector_set_all(rate_parameters, GSL_NAN);
-	*/
 }
 
 // Destructor
@@ -73,9 +72,8 @@ FiberSim_transition::~FiberSim_transition(void)
 }
 
 // Functions
-/*
-double transition::calculate_rate(double x, double x_ext, double node_force,
-	int mybpc_state, int mybpc_iso, short int active_neigh, half_sarcomere* p_hs)
+double FiberSim_transition::calculate_rate(double x, double x_ext, double node_force,
+	int mybpc_state, int mybpc_iso, short int active_neigh, FiberSim_half_sarcomere* p_fs_hs)
 {
 	//! Returns the rate for a transition with a given x
 	//! 
@@ -114,6 +112,7 @@ double transition::calculate_rate(double x, double x_ext, double node_force,
 			(1.0 + (gsl_max(node_force, 0.0) * gsl_vector_get(rate_parameters, 1)));
 	}
 
+/*
 	// Force and adjacent hs dependent
 	if (!strcmp(rate_type, "force_and_adjacent_hs_dependent"))
 	{
@@ -187,6 +186,7 @@ double transition::calculate_rate(double x, double x_ext, double node_force,
 		//printf("hs_index: %i  titin_f: %g\t\tnode_f: %g\t\tf_across_Z: %g\t\tf_across_M: %g\n",
 			//hs_ind, p_hs->hs_titin_force, node_force_factor, factor_across_Z, factor_across_M);
 	}
+*/
 
 	// Force and MyBPC-dependent
 	if (!strcmp(rate_type, "force_and_mybpc_dependent"))
@@ -268,10 +268,10 @@ double transition::calculate_rate(double x, double x_ext, double node_force,
 
 		y_ref = ((2.0 / 3.0) * 37.0) - r_thick - r_thin;
 
-		if (p_hs == NULL)
+		if (p_fs_hs == NULL)
 			hs_length = 1100.0;
 		else
-			hs_length = p_hs->hs_length;
+			hs_length = p_fs_hs->p_hs->hs_length;
 
 		y_actual = (2.0 / 3.0) * (37.0 / sqrt(hs_length / 1100.0)) - r_thick - r_thin;
 
@@ -433,4 +433,3 @@ double transition::calculate_rate(double x, double x_ext, double node_force,
 	// Return
 	return rate;
 }
-*/

@@ -102,6 +102,9 @@
     <ClCompile Include="FiberSim_transition.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="FiberSim_half_sarcomere.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cmv_system.h">
@@ -189,6 +192,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FiberSim_transition.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FiberSim_half_sarcomere.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

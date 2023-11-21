@@ -59,24 +59,22 @@ public:
 	* transition constructor as these are built in sequence with each state
 	* @return void
 	*/
-	//void set_transition_types(void);
+	void set_transition_types(void);
 
 	/**
 	* void write_kinetic_scheme_to_file(char output_file_string)
 	* writes kinetic_scheme to specified file in JSON format
 	* @return void
 	*/
-	//void write_kinetic_scheme_to_file(char output_file_string[]);
+	void write_kinetic_scheme_to_file(char output_file_string[]);
 
 	/**
 	* void write_myosin_rate_functions_to_file(char output_file_string)
 	* as a tab-delimited file
 	* @return void
 	*/
-	/*
 	void write_rate_functions_to_file(char output_file_string[], char file_write_mode[],
 										char JSON_append_string[],
-										FiberSim_half_sarcomere* p_hs = NULL);
+										FiberSim_half_sarcomere* p_fs_hs);
 
-	*/
 };

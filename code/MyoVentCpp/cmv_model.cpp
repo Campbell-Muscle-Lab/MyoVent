@@ -418,8 +418,6 @@ void cmv_model::initialise_model_from_JSON_file(string JSON_model_file_string)
 		p_fs_model = new FiberSim_model();
 
 		p_fs_model->set_FiberSim_model_parameters(model);
-
-
 	}
 
 	// Now try the baroreflex

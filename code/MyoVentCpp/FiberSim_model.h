@@ -237,5 +237,5 @@ public:
     * a function that creates a kinetic scheme
     * @param
     */
-//  FiberSim_kinetic_scheme* create_kinetic_scheme(const rapidjson::Value& ks);
+    FiberSim_kinetic_scheme* create_kinetic_scheme(const rapidjson::Value& ks);
 };

@@ -9,9 +9,9 @@
 #include "FiberSim_model.h"
 #include "FiberSim_options.h"
 
-//#include "FiberSim_kinetic_scheme.h"
-//#include "FiberSim_m_state.h"
-//#include "FiberSimtransition.h"
+#include "FiberSim_kinetic_scheme.h"
+#include "FiberSim_m_state.h"
+#include "FiberSim_transition.h"
 
 #include "JSON_functions.h"
 
@@ -359,12 +359,9 @@ void FiberSim_model::set_FiberSim_model_parameters(const rapidjson::Value& doc)
     JSON_functions::check_JSON_member_number(extracellular_parameters, "e_slack_length");
     e_slack_length = extracellular_parameters["e_slack_length"].GetDouble();
 
-printf("FiberSim_model: e_slack_length: %g\n", e_slack_length);
-/*
-
     // Kinetic scheme for myosin - this is complicated so it's done in a different file
     JSON_functions::check_JSON_member_array(doc, "m_kinetics");
-    const rapidjson::Value& m_ks = doc["m_kinetics"].GetArray();
+    const rapidjson::Value& m_ks = doc["m_kinetics"];
 
     for (rapidjson::SizeType i = 0; i < m_ks.Size(); i++)
     {
@@ -373,50 +370,29 @@ printf("FiberSim_model: e_slack_length: %g\n", e_slack_length);
 
     // Kinetic scheme for MyBPC
     JSON_functions::check_JSON_member_array(doc, "c_kinetics");
-    const rapidjson::Value& c_ks = doc["c_kinetics"].GetArray();
+    const rapidjson::Value& c_ks = doc["c_kinetics"];
 
     for (rapidjson::SizeType i = 0; i < c_ks.Size(); i++)
     {
         p_c_scheme[i] = create_kinetic_scheme(c_ks[i]);
     }
 
-    // Try to load the half-sarcomere variation
-    if (JSON_functions::check_JSON_member_exists(doc, "half_sarcomere_variation"))
-    {
-        JSON_functions::check_JSON_member_array(doc, "half_sarcomere_variation");
-        const rapidjson::Value& hsv = doc["half_sarcomere_variation"].GetArray();
-
-        no_of_model_hs_variations = hsv.Size();
-
-        for (rapidjson::SizeType i = 0; i < hsv.Size(); i++)
-        {
-            p_model_hs_variation[i] = new model_hs_variation(this, hsv[i]);
-        }
-    }
-
-    if (p_fs_options->log_mode > 0)
-    {
-        fprintf_s(p_fs_options->log_file, "Finished setting model data\n");
-    }
-
-    */
+    printf("trans_par: %g\n", gsl_vector_get(p_c_scheme[0]->p_m_states[0]->p_transitions[0]->rate_parameters, 0));
 }
 
-/*
-kinetic_scheme* FiberSim_model::create_kinetic_scheme(const rapidjson::Value& ks)
+FiberSim_kinetic_scheme* FiberSim_model::create_kinetic_scheme(const rapidjson::Value& ks)
 {
     //! Loads kinetic scheme
 
     // Variables
-    kinetic_scheme* p_scheme;
+    FiberSim_kinetic_scheme* p_scheme;
 
     // Create the kinetic scheme
-    p_scheme = new kinetic_scheme(ks, this, p_fs_options);
+    p_scheme = new FiberSim_kinetic_scheme(ks, this, p_fs_options);
 
     // Return the pointer
     return p_scheme;
 }
-*/
 
 /*
 void FiberSim_model::write_FiberSim_model_to_file(void)

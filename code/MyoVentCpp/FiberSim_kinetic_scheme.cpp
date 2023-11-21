@@ -14,6 +14,7 @@
 #include "FiberSim_kinetic_scheme.h"
 #include "FiberSim_m_state.h"
 #include "FiberSim_transition.h"
+#include "FiberSim_half_sarcomere.h"
 
 #include "JSON_functions.h"
 #include "rapidjson\document.h"
@@ -25,7 +26,7 @@ FiberSim_kinetic_scheme::FiberSim_kinetic_scheme(const rapidjson::Value& m_ks,
 	FiberSim_model* set_p_fs_model, FiberSim_options * set_p_fs_options)
 {
 	// Initialise
-/*
+
 	// Set the pointer to the model
 	p_fs_model = set_p_fs_model;
 
@@ -39,26 +40,26 @@ FiberSim_kinetic_scheme::FiberSim_kinetic_scheme(const rapidjson::Value& m_ks,
 	JSON_functions::check_JSON_member_int(m_ks, "max_no_of_transitions");
 	max_no_of_transitions = m_ks["max_no_of_transitions"].GetInt();
 
+	printf("FiberSim_kinetic_scheme: max_no_of_transitions: %i\n", max_no_of_transitions);
+
 	// Pull array
 	JSON_functions::check_JSON_member_array(m_ks, "scheme");
 	const rapidjson::Value& scheme = m_ks["scheme"];
 
 	for (rapidjson::SizeType i = 0; i < scheme.Size(); i++)
 	{
-		p_m_states[i] = new m_state(scheme[i], this);
+		p_m_states[i] = new FiberSim_m_state(scheme[i], this);
 	}
 
 	// Now that we know the state properties, set the transition types
 	set_transition_types();
-
-*/
 }
 
 // Destructor
 FiberSim_kinetic_scheme::~FiberSim_kinetic_scheme(void)
 {
 	//! Destructor
-/*
+
 	// Tidy up
 
 	// Delete the kinetic states
@@ -67,12 +68,11 @@ FiberSim_kinetic_scheme::~FiberSim_kinetic_scheme(void)
 	{
 		delete p_m_states[state_counter];
 	}
-*/
 }
 
 // Functions
-/*
-void kinetic_scheme::set_transition_types(void)
+
+void FiberSim_kinetic_scheme::set_transition_types(void)
 {
 	//! Cycle through the states, identifying the transition type for each one
 
@@ -144,8 +144,8 @@ void kinetic_scheme::set_transition_types(void)
 	}
 }
 
-void kinetic_scheme::write_rate_functions_to_file(char output_file_string[], char file_write_mode[],
-	char JSON_append_string[], half_sarcomere* p_hs)
+void FiberSim_kinetic_scheme::write_rate_functions_to_file(char output_file_string[], char file_write_mode[],
+	char JSON_append_string[], FiberSim_half_sarcomere* p_fs_hs)
 {
 	//! Writes rate functions to output file
 
@@ -155,8 +155,8 @@ void kinetic_scheme::write_rate_functions_to_file(char output_file_string[], cha
 	double x_limit = 10;
 	double x_bin = 0.5;
 
-	m_state* p_m_state;			// pointer to an m_state
-	transition* p_trans;		// pointer to a transition
+	FiberSim_m_state* p_m_state;			// pointer to an m_state
+	FiberSim_transition* p_trans;		// pointer to a transition
 
 	int new_state;				// integer for new state
 
@@ -236,7 +236,7 @@ void kinetic_scheme::write_rate_functions_to_file(char output_file_string[], cha
 				{
 					// It's a transition
 					double x_ext = p_m_state->extension;
-					double rate = p_trans->calculate_rate(x, x_ext, 0, 0, 0, 0, p_hs);
+					double rate = p_trans->calculate_rate(x, x_ext, 0, 0, 0, 0, p_fs_hs);
 
 					fprintf_s(output_file, "\t%8g", rate);
 				}
@@ -251,7 +251,7 @@ void kinetic_scheme::write_rate_functions_to_file(char output_file_string[], cha
 	fclose(output_file);
 }
 
-void kinetic_scheme::write_kinetic_scheme_to_file(char output_file_string[])
+void FiberSim_kinetic_scheme::write_kinetic_scheme_to_file(char output_file_string[])
 {
 	//! Writes kinetics scheme to output file
 
@@ -344,4 +344,3 @@ void kinetic_scheme::write_kinetic_scheme_to_file(char output_file_string[])
 	// Tidy up
 	fclose(output_file);
 }
-*/

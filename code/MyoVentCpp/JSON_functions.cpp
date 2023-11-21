@@ -160,6 +160,16 @@ namespace JSON_functions {
             return 0;
     }
 
+    //! Checks for existence of JSON member rray
+    int is_JSON_array(const rapidjson::Value& doc, const char mem_name[])
+    {
+        const rapidjson::Value& a = doc[mem_name];
+        if (a.IsArray())
+            return 1;
+        else
+            return 0;
+    }
+
     //! Writes gsl_vector to JSON file
     void write_gsl_vector_as_JSON_array(gsl_vector* p_v, FILE* output_file,
         char label_string[], bool is_last_entry, int precision)

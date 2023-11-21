@@ -16,7 +16,6 @@
 // Constructor
 FiberSim_m_state::FiberSim_m_state(const rapidjson::Value& m_st, FiberSim_kinetic_scheme* set_p_parent_scheme)
 {
-	/*
 	char temp_string[_MAX_PATH];
 
 	p_parent_scheme = set_p_parent_scheme;
@@ -30,32 +29,30 @@ FiberSim_m_state::FiberSim_m_state(const rapidjson::Value& m_st, FiberSim_kineti
 
 	JSON_functions::check_JSON_member_number(m_st, "extension");
 	extension = m_st["extension"].GetDouble();
-
+	
 	// Pull array of transitions
 	JSON_functions::check_JSON_member_array(m_st, "transition");
 	const rapidjson::Value& trans = m_st["transition"];
 
 	for (int i = 0; i < (int)trans.Size(); i++)
 	{
-		p_transitions[i] = new transition(trans[i],this);
+		p_transitions[i] = new FiberSim_transition(trans[i],this);
 	}
 	// Fill in gaps if not all transitions are set
 	if (trans.Size() < (size_t)(p_parent_scheme->max_no_of_transitions))
 	{
 		for (int i = trans.Size(); i < p_parent_scheme->max_no_of_transitions; i++)
 		{
-			p_transitions[i] = new transition();
+			p_transitions[i] = new FiberSim_transition();
 		}
 	}
-	*/
 }
 
 // Destructor
 FiberSim_m_state::~FiberSim_m_state(void)
 {
 	// Tidy up
-	/*
+
 	for (int i = 0; i < p_parent_scheme->max_no_of_transitions; i++)
 		delete p_transitions[i];
-	*/
 }
