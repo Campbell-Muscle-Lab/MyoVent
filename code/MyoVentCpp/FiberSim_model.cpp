@@ -358,6 +358,8 @@ void FiberSim_model::set_FiberSim_model_parameters(const rapidjson::Value& doc)
 
     JSON_functions::check_JSON_member_number(extracellular_parameters, "e_slack_length");
     e_slack_length = extracellular_parameters["e_slack_length"].GetDouble();
+
+printf("FiberSim_model: e_slack_length: %g\n", e_slack_length);
 /*
 
     // Kinetic scheme for myosin - this is complicated so it's done in a different file
