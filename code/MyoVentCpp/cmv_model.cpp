@@ -149,6 +149,9 @@ void cmv_model::initialise_model_from_JSON_file(string JSON_model_file_string)
 
 	fclose(fp);
 
+	// Variables
+	char temp_string[_MAX_PATH];
+
 	// Now trying to read file
 	cout << "Parse JSON model file: " << JSON_model_file_string << "\n";
 
@@ -318,64 +321,82 @@ void cmv_model::initialise_model_from_JSON_file(string JSON_model_file_string)
 	JSON_functions::check_JSON_member_exists(hs, "myofilaments");
 	const rapidjson::Value& myof = hs["myofilaments"];
 
-	JSON_functions::check_JSON_member_number(myof, "cb_number_density");
-	myof_cb_number_density = myof["cb_number_density"].GetDouble();
+	// Now check if it is a MyoSim model
+	JSON_functions::check_JSON_member_string(myof, "model_type");
+	sprintf_s(temp_string, _MAX_PATH, myof["model_type"].GetString());
 
-	JSON_functions::check_JSON_member_number(myof, "int_pas_sigma");
-	myof_int_pas_sigma = myof["int_pas_sigma"].GetDouble();
+	if (!strcmp(temp_string, "MyoSim"))
+	{
+		JSON_functions::check_JSON_member_exists(myof, "model");
+		const rapidjson::Value& model = myof["model"];
 
-	JSON_functions::check_JSON_member_number(myof, "int_pas_L");
-	myof_int_pas_L = myof["int_pas_L"].GetDouble();
+		// Load a MyoSim model
+		JSON_functions::check_JSON_member_number(model, "cb_number_density");
+		myof_cb_number_density = model["cb_number_density"].GetDouble();
 
-	JSON_functions::check_JSON_member_number(myof, "int_pas_slack_hsl");
-	myof_int_pas_slack_hsl = myof["int_pas_slack_hsl"].GetDouble();
+		JSON_functions::check_JSON_member_number(model, "int_pas_sigma");
+		myof_int_pas_sigma = model["int_pas_sigma"].GetDouble();
 
-	JSON_functions::check_JSON_member_number(myof, "ext_pas_sigma");
-	myof_ext_pas_sigma = myof["ext_pas_sigma"].GetDouble();
+		JSON_functions::check_JSON_member_number(model, "int_pas_L");
+		myof_int_pas_L = model["int_pas_L"].GetDouble();
 
-	JSON_functions::check_JSON_member_number(myof, "ext_pas_L");
-	myof_ext_pas_L = myof["ext_pas_L"].GetDouble();
+		JSON_functions::check_JSON_member_number(model, "int_pas_slack_hsl");
+		myof_int_pas_slack_hsl = model["int_pas_slack_hsl"].GetDouble();
 
-	JSON_functions::check_JSON_member_number(myof, "ext_pas_slack_hsl");
-	myof_ext_pas_slack_hsl = myof["ext_pas_slack_hsl"].GetDouble();
+		JSON_functions::check_JSON_member_number(model, "ext_pas_sigma");
+		myof_ext_pas_sigma = model["ext_pas_sigma"].GetDouble();
 
-	JSON_functions::check_JSON_member_number(myof, "fil_compliance_factor");
-	myof_fil_compliance_factor = myof["fil_compliance_factor"].GetDouble();
+		JSON_functions::check_JSON_member_number(model, "ext_pas_L");
+		myof_ext_pas_L = model["ext_pas_L"].GetDouble();
 
-	JSON_functions::check_JSON_member_number(myof, "thick_filament_length");
-	myof_thick_fil_length = myof["thick_filament_length"].GetDouble();
+		JSON_functions::check_JSON_member_number(model, "ext_pas_slack_hsl");
+		myof_ext_pas_slack_hsl = model["ext_pas_slack_hsl"].GetDouble();
 
-	JSON_functions::check_JSON_member_number(myof, "bare_zone_length");
-	myof_bare_zone_length = myof["bare_zone_length"].GetDouble();
+		JSON_functions::check_JSON_member_number(model, "fil_compliance_factor");
+		myof_fil_compliance_factor = model["fil_compliance_factor"].GetDouble();
 
-	JSON_functions::check_JSON_member_number(myof, "thin_filament_length");
-	myof_thin_fil_length = myof["thin_filament_length"].GetDouble();
+		JSON_functions::check_JSON_member_number(model, "thick_filament_length");
+		myof_thick_fil_length = model["thick_filament_length"].GetDouble();
 
-	// Load the myosin structure
-	JSON_functions::check_JSON_member_exists(myof, "myosin");
-	const rapidjson::Value& myos = myof["myosin"];
+		JSON_functions::check_JSON_member_number(model, "bare_zone_length");
+		myof_bare_zone_length = model["bare_zone_length"].GetDouble();
 
-	JSON_functions::check_JSON_member_number(myos, "k_cb");
-	myof_k_cb = myos["k_cb"].GetDouble();
+		JSON_functions::check_JSON_member_number(model, "thin_filament_length");
+		myof_thin_fil_length = model["thin_filament_length"].GetDouble();
 
-	JSON_functions::check_JSON_member_exists(myos, "kinetics");
-	const rapidjson::Value& mykin = myos["kinetics"];
+		// Load the myosin structure
+		JSON_functions::check_JSON_member_exists(model, "myosin");
+		const rapidjson::Value& myos = model["myosin"];
 
-	// Now add kinetic scheme
-	p_m_scheme = new kinetic_scheme(mykin, this);
+		JSON_functions::check_JSON_member_number(myos, "k_cb");
+		myof_k_cb = myos["k_cb"].GetDouble();
 
-	// Load the actin structure
-	JSON_functions::check_JSON_member_exists(myof, "actin");
-	const rapidjson::Value& actin = myof["actin"];
+		JSON_functions::check_JSON_member_exists(myos, "kinetics");
+		const rapidjson::Value& mykin = myos["kinetics"];
 
-	JSON_functions::check_JSON_member_number(actin, "k_on");
-	myof_a_k_on = actin["k_on"].GetDouble();
+		// Now add kinetic scheme
+		p_m_scheme = new kinetic_scheme(mykin, this);
 
-	JSON_functions::check_JSON_member_number(actin, "k_off");
-	myof_a_k_off = actin["k_off"].GetDouble();
+		// Load the actin structure
+		JSON_functions::check_JSON_member_exists(model, "actin");
+		const rapidjson::Value& actin = model["actin"];
 
-	JSON_functions::check_JSON_member_number(actin, "k_coop");
-	myof_a_k_coop = actin["k_coop"].GetDouble();
+		JSON_functions::check_JSON_member_number(actin, "k_on");
+		myof_a_k_on = actin["k_on"].GetDouble();
+
+		JSON_functions::check_JSON_member_number(actin, "k_off");
+		myof_a_k_off = actin["k_off"].GetDouble();
+
+		JSON_functions::check_JSON_member_number(actin, "k_coop");
+		myof_a_k_coop = actin["k_coop"].GetDouble();
+
+		printf("\nFinished loading MyoSim model\n");
+	}
+	else
+	{
+		printf("Loading a FiberSim object\n");
+		exit(1);
+	}
 
 	// Now try the baroreflex
 	if (JSON_functions::check_JSON_member_exists(doc, "baroreflex"))

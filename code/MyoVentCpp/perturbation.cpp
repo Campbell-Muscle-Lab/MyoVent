@@ -114,6 +114,25 @@ void perturbation::impose(double sim_time_s)
 				*p_double = *p_double + increment;
 			}
 
+			if (variable.rfind("compliance", 0) == 0)
+			{
+				// Starts with resistance
+				int no_of_digits = 1;
+				int digits[1];
+				int compartment_index;
+
+				for (int i = 0; i < no_of_digits; i++)
+					digits[i] = 0;
+
+				extract_digits(variable, digits, 1);
+
+				compartment_index = digits[0] - 1;
+
+				p_double = &(p_cmv_protocol->p_cmv_system->p_circulation->circ_compliance[compartment_index]);
+
+				*p_double = *p_double + increment;
+			}
+
 			if (variable == "blood_volume")
 			{
 				p_double = &(p_cmv_protocol->p_cmv_system->p_circulation->circ_blood_volume);
