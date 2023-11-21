@@ -24,6 +24,8 @@ class membranes;
 class heart_rate;
 class kinetic_scheme;
 
+class FiberSim_model;
+
 struct cmv_model_valve_structure;
 struct cmv_model_rc_structure;
 struct cmv_model_gc_structure;
@@ -153,6 +155,9 @@ public:
 												in M s^-1 */
 
 	// Myofilaments
+
+	FiberSim_model* p_fs_model;			/**< pointer to a FiberSim model */
+
 	double myof_cb_number_density;		/**< double describing the number of
 												cross-bridges in a half-sarcomere
 												with a cross-sectional area of 1 m^2 */

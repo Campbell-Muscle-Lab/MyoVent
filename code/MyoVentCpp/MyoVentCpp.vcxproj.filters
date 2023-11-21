@@ -87,6 +87,12 @@
     <ClCompile Include="growth_control.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="FiberSim_model.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FiberSim_options.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cmv_system.h">
@@ -159,6 +165,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="growth_control.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FiberSim_model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FiberSim_options.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

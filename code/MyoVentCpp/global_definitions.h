@@ -24,5 +24,7 @@
 
 #define MAX_NO_OF_GROWTH_CONTROLS 10
 
+// FiberSim specific
+#define MAX_NO_OF_ISOTYPES 5
 
 

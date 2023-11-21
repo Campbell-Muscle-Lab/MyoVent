@@ -18,6 +18,9 @@
 #include "JSON_functions.h"
 #include "kinetic_scheme.h"
 
+#include "FiberSim_model.h"
+
+
 #include "rapidjson\document.h"
 #include "rapidjson\filereadstream.h"
 
@@ -84,6 +87,9 @@ cmv_model::cmv_model(string JSON_model_file_string)
 	baro_P_compartment = -1;
 
 	// Safe pointers
+
+	p_fs_model = NULL;
+
 	for (int i = 0; i < MAX_NO_OF_REFLEX_CONTROLS; i++)
 	{
 		p_rc[i] = NULL;
@@ -97,6 +103,7 @@ cmv_model::cmv_model(string JSON_model_file_string)
 	}
 
 	no_of_gc_controls = 0;
+
 
 	// Set rest from file
 	initialise_model_from_JSON_file(JSON_model_file_string);
@@ -112,10 +119,18 @@ cmv_model::~cmv_model(void)
 	delete p_av;
 	delete p_mv;
 
+	delete p_fs_model;
+
 	for (int i = 0; i < MAX_NO_OF_REFLEX_CONTROLS; i++)
 	{
 		if (p_rc[i] != NULL)
 			delete p_rc[i];
+	}
+
+	for (int i = 0; i < MAX_NO_OF_GROWTH_CONTROLS; i++)
+	{
+		if (p_gc[i] != NULL)
+			delete p_gc[i];
 	}
 
 	free(circ_resistance);
@@ -395,7 +410,16 @@ void cmv_model::initialise_model_from_JSON_file(string JSON_model_file_string)
 	else
 	{
 		printf("Loading a FiberSim object\n");
-		exit(1);
+
+		JSON_functions::check_JSON_member_exists(myof, "model");
+		const rapidjson::Value& model = myof["model"];
+
+		// Create the model
+		p_fs_model = new FiberSim_model();
+
+		p_fs_model->set_FiberSim_model_parameters(model);
+
+
 	}
 
 	// Now try the baroreflex
