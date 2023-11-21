@@ -294,6 +294,12 @@ bool circulation::implement_time_step(double time_step_s)
 	// Update the hemi_vent with the new volume
 	p_hemi_vent->update_chamber_volume(circ_volume[0]);
 
+	p_hemi_vent->vent_chamber_radius = 
+		p_hemi_vent->return_internal_radius_for_chamber_volume(circ_volume[0]);
+
+	p_hemi_vent->vent_chamber_height =
+		p_hemi_vent->return_chamber_height(p_hemi_vent->vent_chamber_radius);
+
 	// Make sure total volume remains constant
 	double holder = 0.0;
 	for (int i = 0; i < circ_no_of_compartments; i++)
