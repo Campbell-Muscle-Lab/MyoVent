@@ -105,6 +105,18 @@
     <ClCompile Include="FiberSim_half_sarcomere.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="MyoSim_half_sarcomere.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FiberSim_thick_filament.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FiberSim_thin_filament.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MyoSim_options.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cmv_system.h">
@@ -195,6 +207,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FiberSim_half_sarcomere.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MyoSim_half_sarcomere.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FiberSim_thick_filament.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FiberSim_thin_filament.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MyoSim_options.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

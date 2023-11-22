@@ -21,8 +21,11 @@ class cmv_options;
 class hemi_vent;
 class membranes;
 class myofilaments;
+class MyoSim_half_sarcomere;
+class FiberSim_half_sarcomere;
 class heart_rate;
 class mitochondria;
+
 
 class half_sarcomere
 {
@@ -81,6 +84,12 @@ public:
 
 	double hs_delta_G_ATP;							/**< double with energy in Joules
 															per mole of ATP */
+
+	FiberSim_half_sarcomere* p_FiberSim_hs;			/**< pointer to a FiberSim half-sarcomere
+															object */
+
+	MyoSim_half_sarcomere* p_MyoSim_hs;				/**< pointer to a MyoSim half-sarcomere
+															object */
 
 	/**
 	/* function adds data fields and vectors to the results objet

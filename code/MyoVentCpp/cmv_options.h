@@ -16,6 +16,11 @@
 #include "rapidjson/document.h"
 #endif
 
+// Forward declarations
+class FiberSim_options;
+class MyoSim_options;
+
+
 using namespace std;
 
 class cmv_options
@@ -76,6 +81,10 @@ public:
 													time-points in the
 													cmv_results object for the
 													summary output */
+
+	FiberSim_options* p_FiberSim_options;	/**< pointer to a FiberSim options object */
+
+	MyoSim_options* p_MyoSim_options;		/**< pointer to a MyoSim options object */
 
 	/**
 	/* Function initialises protocol object from file

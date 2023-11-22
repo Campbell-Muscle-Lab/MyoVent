@@ -32,7 +32,9 @@ struct stats_structure {
 };
 
 // Constructor
-cmv_system::cmv_system(string JSON_model_file_string, int set_system_id)
+cmv_system::cmv_system(string JSON_model_file_string,
+						string options_file_string,
+						int set_system_id)
 {
 	// Initialise
 
@@ -44,7 +46,6 @@ cmv_system::cmv_system(string JSON_model_file_string, int set_system_id)
 	system_id = set_system_id;
 
 	// Sets other pointers to safety
-	p_cmv_options = NULL;
 	p_cmv_protocol = NULL;
 	p_cmv_results_beat = NULL;
 	p_cmv_results_summary = NULL;
@@ -55,6 +56,11 @@ cmv_system::cmv_system(string JSON_model_file_string, int set_system_id)
 	sim_t_index = 0;
 	beat_t_index = 0;
 	summary_t_index = 0;
+
+	// Initialises an options object
+	p_cmv_options = new cmv_options(options_file_string);
+
+	// Update the 
 
 	// Create constituent objects
 	p_circulation = new circulation(this);
@@ -72,8 +78,7 @@ cmv_system::~cmv_system(void)
 	delete p_cmv_model;
 }
 
-void cmv_system::run_simulation(string options_file_string,
-									string protocol_file_string,
+void cmv_system::run_simulation(string protocol_file_string,
 									string results_file_string)
 {
 	//! Code runs a simulation
@@ -82,9 +87,6 @@ void cmv_system::run_simulation(string options_file_string,
 	bool new_beat = false;
 
 	// Code
-	
-	// Initialises an options object
-	p_cmv_options = new cmv_options(options_file_string);
 
 	// Initialise the protocol object
 	p_cmv_protocol = new cmv_protocol(this, protocol_file_string);
@@ -92,6 +94,8 @@ void cmv_system::run_simulation(string options_file_string,
 	// Initialise the cmv_results_beat object
 	p_cmv_options->beat_length_points = int(p_cmv_options->beat_length_s /
 		p_cmv_protocol->time_step_s);
+
+	printf("cmv_beat_points: %i\n", p_cmv_options->beat_length_points);
 
 	// Create the cmv_results_beat object
 	p_cmv_results_beat = new cmv_results(this, p_cmv_options->beat_length_points);
@@ -136,6 +140,8 @@ void cmv_system::run_simulation(string options_file_string,
 
 	for (sim_t_index = 0; sim_t_index < p_cmv_protocol->no_of_time_steps; sim_t_index++)
 	{
+printf("sim_t_index: %i\n", sim_t_index);
+
 		new_beat = implement_time_step(p_cmv_protocol->time_step_s);
 
 		p_cmv_results_beat->update_results_vectors(beat_t_index);

@@ -27,4 +27,10 @@
 // FiberSim specific
 #define MAX_NO_OF_ISOTYPES 5
 
+#define MAX_NO_OF_THICK_FILAMENTS 200
+
+#define MAX_NO_OF_THIN_FILAMENTS 400
+
+#define MAX_NO_OF_ADJACENT_BS 10
+
 

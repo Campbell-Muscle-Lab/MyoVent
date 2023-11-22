@@ -13,6 +13,8 @@
 #include "rapidjson\filereadstream.h"
 
 #include "cmv_options.h"
+#include "FiberSim_options.h"
+#include "MyoSim_options.h"
 
 using namespace std::filesystem;
 using namespace std;
@@ -27,6 +29,10 @@ cmv_options::cmv_options(string set_options_file_string)
 	// Initialise variables
 	options_file_string = set_options_file_string;
 
+	// Set pointers
+	p_FiberSim_options = NULL;
+	p_MyoSim_options = NULL;
+
 	// Now update from file
 	initialise_options_from_JSON_file(options_file_string);
 }
@@ -37,6 +43,8 @@ cmv_options::~cmv_options(void)
 	// Initialise
 
 	// Code
+	delete p_FiberSim_options;
+	delete p_MyoSim_options;
 }
 
 void cmv_options::initialise_options_from_JSON_file(string options_file_string)
@@ -145,5 +153,13 @@ void cmv_options::initialise_options_from_JSON_file(string options_file_string)
 
 		JSON_functions::check_JSON_member_number(res, "summary_time_step_s");
 		summary_time_step_s = res["summary_time_step_s"].GetDouble();
+	}
+
+	// FiberSim
+	if (JSON_functions::check_JSON_member_exists(doc, "FiberSim"))
+	{
+		const rapidjson::Value& fs = doc["FiberSim"];
+
+		p_FiberSim_options = new FiberSim_options(fs);
 	}
 }

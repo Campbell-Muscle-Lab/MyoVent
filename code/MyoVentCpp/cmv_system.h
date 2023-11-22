@@ -25,7 +25,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	cmv_system(string JSON_model_file_string, int system_id);
+	cmv_system(string JSON_model_file_string, string options_file_string, int system_id);
 		/**
 
 	* Destructor
@@ -71,7 +71,7 @@ public:
 	/**
 	/* function runs a simulation
 	*/
-	void run_simulation(string options_file_string, string protocol_file_string,
+	void run_simulation(string protocol_file_string,
 		string results_file_string);
 
 	void add_fields_to_cmv_results_beat();

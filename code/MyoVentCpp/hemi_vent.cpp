@@ -45,7 +45,7 @@ hemi_vent::hemi_vent(circulation* set_p_parent_circulation)
 
 	// Initialise with safe options
 	p_cmv_results_beat = NULL;
-	p_cmv_options = NULL;
+	p_cmv_options = p_parent_circulation->p_cmv_options;
 
 	vent_wall_density = p_cmv_model->vent_wall_density;
 	vent_wall_volume = p_cmv_model->vent_wall_volume;
@@ -123,7 +123,6 @@ void hemi_vent::initialise_simulation(void)
 	cout << "\n\nvent_circum: " << vent_circumference << " vent_z_scale: " << vent_z_scale <<
 		" vent_volume: " << p_parent_circulation->circ_slack_volume[0] <<
 		" vent_diam:" << vent_diam << "\n\n\n";
-	//exit(1);
 
 	// Add fields
 	p_cmv_results_beat->add_results_field("vent_wall_volume", &vent_wall_volume);

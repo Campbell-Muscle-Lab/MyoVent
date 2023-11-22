@@ -20,7 +20,7 @@ public:
     /**
      * Constructor
      */
-    FiberSim_options(char JSON_options_file_string[]);
+    FiberSim_options(const rapidjson::Value& set_fs);
 
     /**
      * Destructor
@@ -130,7 +130,7 @@ public:
      * a function that sets FiberSim_options parameters from a JSON file
      * @param json_file_string the filename for the JSON file
      */
-    void set_FiberSim_options_from_JSON_file_string(char JSON_file_string[]);
+    void set_FiberSim_options_from_JSON_file_string(const rapidjson::Value& doc);
 
 
     /**

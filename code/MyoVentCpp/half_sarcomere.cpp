@@ -7,9 +7,15 @@
 #include "stdio.h"
 
 #include "cmv_model.h"
-#include "half_sarcomere.h"
-#include "hemi_vent.h"
+#include "cmv_options.h"
 #include "cmv_results.h"
+
+#include "FiberSim_model.h"
+
+#include "half_sarcomere.h"
+#include "MyoSim_half_sarcomere.h"
+#include "FiberSim_half_sarcomere.h"
+#include "hemi_vent.h"
 #include "membranes.h"
 #include "mitochondria.h"
 #include "myofilaments.h"
@@ -39,15 +45,27 @@ half_sarcomere::half_sarcomere(hemi_vent* set_p_parent_hemi_vent)
 	p_parent_hemi_vent = set_p_parent_hemi_vent;
 	p_cmv_model = p_parent_hemi_vent->p_cmv_model;
 	p_cmv_system = p_parent_hemi_vent->p_parent_cmv_system;
+	p_cmv_options = p_parent_hemi_vent->p_cmv_options;
 
 	// Create the daugher objects
 	p_heart_rate = new heart_rate(this);
 	p_membranes = new membranes(this);
 	p_mitochondria = new mitochondria(this);
-	p_myofilaments = new myofilaments(this);
+
+	// Create the correct half-sarcomere model
+	if (p_cmv_model->p_fs_model == NULL)
+	{
+		p_MyoSim_hs = new MyoSim_half_sarcomere(this);
+		//p_myofilaments = new myofilaments(this);
+		p_FiberSim_hs = NULL;
+	}
+	else
+	{
+		p_MyoSim_hs = NULL;
+		p_FiberSim_hs = new FiberSim_half_sarcomere(this, 0);
+	}
 
 	// Set safe values
-	p_cmv_options = NULL;
 	p_cmv_results_beat = NULL;
 
 	// Initialise
@@ -73,6 +91,8 @@ half_sarcomere::~half_sarcomere(void)
 	delete p_membranes;
 	delete p_mitochondria;
 	delete p_myofilaments;
+	delete p_FiberSim_hs;
+	delete p_MyoSim_hs;
 }
 
 // Other functions
@@ -84,9 +104,6 @@ void half_sarcomere::initialise_simulation(void)
 	double slack_hs_length;
 	
 	// Code
-
-	// Set options from parent
-	p_cmv_options = p_parent_hemi_vent->p_cmv_options;
 
 	// Set results from parent
 	p_cmv_results_beat = p_parent_hemi_vent->p_cmv_results_beat;
@@ -101,17 +118,35 @@ void half_sarcomere::initialise_simulation(void)
 	p_heart_rate->initialise_simulation();
 	p_membranes->initialise_simulation();
 	p_mitochondria->initialise_simulation();
-	p_myofilaments->initialise_simulation();
+	
+	if (p_FiberSim_hs != NULL)
+	{
+		p_FiberSim_hs->initialise_for_MyoVent_simulation();
 
-	// Set the hs_length so that wall stress is zero
-	slack_hs_length = return_hs_length_for_stress(0.0);
+		// Adjust to slack length
+		slack_hs_length = p_FiberSim_hs->return_hs_length_for_force(0.0, 0.0);
+		p_FiberSim_hs->update_lattice(0.0, (slack_hs_length - p_FiberSim_hs->hs_length));
 
-	change_hs_length(slack_hs_length - hs_length);
+		// Now calculate forces
+		p_FiberSim_hs->calculate_force(0.0, 0.0);
 
-	// Now calculate the wall stress
-	p_myofilaments->calculate_stresses();
+		hs_stress = p_FiberSim_hs->hs_force;
+	}
+	else
+	{
+		p_myofilaments->initialise_simulation();
 
-	hs_stress = p_myofilaments->myof_stress_total;
+		// Set the hs_length so that wall stress is zero
+		slack_hs_length = return_hs_length_for_stress(0.0);
+
+		change_hs_length(slack_hs_length - hs_length);
+
+		// Now calculate the wall stress
+		p_myofilaments->calculate_stresses();
+
+		hs_stress = p_myofilaments->myof_stress_total;
+
+	}
 }
 
 bool half_sarcomere::implement_time_step(double time_step_s)
@@ -130,10 +165,27 @@ bool half_sarcomere::implement_time_step(double time_step_s)
 
 	p_mitochondria->implement_time_step(time_step_s);
 
-	p_myofilaments->implement_time_step(time_step_s);
+printf("hs A\n");
+
+	if (p_FiberSim_hs != NULL)
+	{
+printf("hs B\n");
+		double pCa = -log10(p_membranes->memb_Ca_cytosol);
+printf("pCa: %g\n", pCa);
+
+		p_FiberSim_hs->sarcomere_kinetics(time_step_s, pCa);
+	}
+	else
+	{
+		p_myofilaments->implement_time_step(time_step_s);
+	}
+
+printf("hs C\n");
 
 	// Update the ATP
 	calculate_hs_ATP_concentration(time_step_s);
+
+printf("hs D\n");
 
 	// Return new beat status
 	return (new_beat);
@@ -148,13 +200,23 @@ void half_sarcomere::change_hs_length(double delta_hsl)
 	// Adjust this half-sarcomere
 	hs_length = hs_length + delta_hsl;
 
-	// And the cross-bridges
-	p_myofilaments->move_cb_populations(delta_hsl);
+	if (p_FiberSim_hs != NULL)
+	{
+		p_FiberSim_hs->update_lattice(0.0, delta_hsl);
 
-	// Now update wall stress
-	p_myofilaments->calculate_stresses();
+		hs_stress = p_FiberSim_hs->calculate_force(delta_hsl, 0.0);
 
-	hs_stress = p_myofilaments->myof_stress_total;
+	}
+	else
+	{
+		// And the cross-bridges
+		p_myofilaments->move_cb_populations(delta_hsl);
+
+		// Now update wall stress
+		p_myofilaments->calculate_stresses();
+
+		hs_stress = p_myofilaments->myof_stress_total;
+	}
 }
 
 double half_sarcomere::return_wall_stress_after_delta_hsl(double delta_hsl)
@@ -165,7 +227,14 @@ double half_sarcomere::return_wall_stress_after_delta_hsl(double delta_hsl)
 	double wall_stress;
 
 	// Code
-	wall_stress = p_myofilaments->return_stress_after_delta_hsl(delta_hsl);
+	if (p_FiberSim_hs != NULL)
+	{
+		wall_stress = p_FiberSim_hs->return_force_for_test_delta_hsl(delta_hsl, 0.0);
+	}
+	else
+	{
+		wall_stress = p_myofilaments->return_stress_after_delta_hsl(delta_hsl);
+	}
 
 	return wall_stress;
 }
@@ -255,15 +324,29 @@ void half_sarcomere::calculate_hs_ATP_concentration(double time_step_s)
 
 	// Variables
 	double d_heads;					// number of heads per liter
+	double cb_number_density;
+	double ATP_flux;
 
 	// Code
 
+	if (p_FiberSim_hs != NULL)
+	{
+		ATP_flux = p_FiberSim_hs->ATP_flux;
+		cb_number_density = p_cmv_model->p_fs_model->m_filament_density *
+			p_FiberSim_hs->m_cbs_per_thick_filament;
+	}
+	else
+	{
+		ATP_flux = p_myofilaments->myof_ATP_flux;
+		cb_number_density = p_myofilaments->myof_cb_number_density;
+	}
+
 	d_heads = 0.001 *
 		(1.0 - hs_prop_fibrosis) * hs_prop_myofilaments *
-			p_myofilaments->myof_cb_number_density *
+			cb_number_density *
 			(1.0 / (1e-9 * hs_reference_hs_length));
 
-	hs_ATP_used_per_liter_per_s = -d_heads * p_myofilaments->myof_ATP_flux /
+	hs_ATP_used_per_liter_per_s = -d_heads * ATP_flux /
 								GSL_CONST_NUM_AVOGADRO;
 
 	// Euler step

@@ -27,6 +27,8 @@
 #include "kinetic_scheme.h"
 #include "transition.h"
 
+#include "FiberSim_half_sarcomere.h"
+
 #include "gsl_math.h"
 #include "gsl/gsl_fit.h"
 
@@ -173,7 +175,7 @@ void growth_control::set_gc_p_signal(void)
 
 	// Code
 
-		// Find the variable this object is controlling
+	// Find the variable this object is controlling
 	if (gc_level == "myofilaments")
 	{
 		if (gc_signal == "myof_stress_int_pas")
@@ -185,6 +187,15 @@ void growth_control::set_gc_p_signal(void)
 		if (gc_signal == "myof_mean_stress_int_pas")
 		{
 			gc_p_signal = &p_parent_circulation->p_hemi_vent->p_hs->p_myofilaments->myof_mean_stress_int_pas;
+			gc_signal_assigned = true;
+		}
+	}
+
+	if (gc_level == "FiberSim_half_sarcomere")
+	{
+		if (gc_signal == "fs_stress_titin")
+		{
+			gc_p_signal = &p_parent_circulation->p_hemi_vent->p_hs->p_FiberSim_hs->hs_titin_force;
 			gc_signal_assigned = true;
 		}
 	}

@@ -42,8 +42,8 @@ circulation::circulation(cmv_system* set_p_parent_cmv_system = NULL)
 	p_parent_cmv_system = set_p_parent_cmv_system;
 	p_cmv_model = p_parent_cmv_system->p_cmv_model;
 
-	// Set pointers to safety
-	p_cmv_options = NULL;
+	// Set pointers
+	p_cmv_options = p_parent_cmv_system->p_cmv_options;
 	p_cmv_results_beat = NULL;
 
 	// Now initialise other objects

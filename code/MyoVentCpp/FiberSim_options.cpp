@@ -17,7 +17,7 @@
 namespace fs = std::filesystem;
 
 // Constructor
-FiberSim_options::FiberSim_options(char JSON_options_file_string[])
+FiberSim_options::FiberSim_options(const rapidjson::Value& doc)
 {
     // Initialise
 
@@ -63,10 +63,10 @@ FiberSim_options::FiberSim_options(char JSON_options_file_string[])
     no_of_worker_threads = 0;               /**< default value for number of worker threads */
 
     // Update values from log file
-    set_FiberSim_options_from_JSON_file_string(JSON_options_file_string);
+    set_FiberSim_options_from_JSON_file_string(doc);
 
     // Do some processing on the options
-
+    /*
     if (strlen(rate_file_string) > 0)
     {
         if (!strcmp(rate_relative_to, "this_file"))
@@ -78,7 +78,9 @@ FiberSim_options::FiberSim_options(char JSON_options_file_string[])
             sprintf_s(rate_file_string, _MAX_PATH, "%s", rate_path.string().c_str());
         }
     }
+    */
 
+    /*
     if (strlen(status_folder) > 0)
     {
         if (!strcmp(status_relative_to, "this_file"))
@@ -175,6 +177,7 @@ FiberSim_options::FiberSim_options(char JSON_options_file_string[])
             write_FiberSim_options_to_file();
         }
     }
+    */
 }
 
 // Destructor
@@ -189,31 +192,8 @@ FiberSim_options::~FiberSim_options()
     }
 }
 
-void FiberSim_options::set_FiberSim_options_from_JSON_file_string(char JSON_file_string[])
+void FiberSim_options::set_FiberSim_options_from_JSON_file_string(const rapidjson::Value& options)
 {
-    // Variables
-    errno_t file_error;
-
-    FILE *fp;
-    file_error = fopen_s(&fp, JSON_file_string, "rb");
-    if (file_error != 0)
-    {
-        printf("Error opening JSON options file: %s\n", JSON_file_string);
-        exit(1);
-    }
-
-    char readBuffer[65536];
-    rapidjson::FileReadStream is(fp, readBuffer, sizeof(readBuffer));
-
-    rapidjson::Document doc;
-    doc.ParseStream(is);
-
-    fclose(fp);
-
-    // Check we have options
-    JSON_functions::check_JSON_member_object(doc, "options");
-    const rapidjson::Value& options = doc["options"];
-
     // Check we have entries and set them
 
     if (JSON_functions::is_JSON_member(options, "max_rate"))

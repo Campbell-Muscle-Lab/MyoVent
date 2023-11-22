@@ -77,7 +77,6 @@ double FiberSim_transition::calculate_rate(double x, double x_ext, double node_f
 {
 	//! Returns the rate for a transition with a given x
 	//! 
-	// printf("%s \n ", rate_type);
 
 	// Variables
 	double rate = 0.0;
@@ -87,7 +86,7 @@ double FiberSim_transition::calculate_rate(double x, double x_ext, double node_f
 	// Code
 
 	// Set options
-	p_options = p_parent_m_state->p_parent_scheme->p_fs_options;
+	p_options = p_fs_hs->p_fs_options;
 
 	// Constant
 	if (!strcmp(rate_type, "constant"))
@@ -271,7 +270,7 @@ double FiberSim_transition::calculate_rate(double x, double x_ext, double node_f
 		if (p_fs_hs == NULL)
 			hs_length = 1100.0;
 		else
-			hs_length = p_fs_hs->p_hs->hs_length;
+			hs_length = p_fs_hs->p_parent_hs->hs_length;
 
 		y_actual = (2.0 / 3.0) * (37.0 / sqrt(hs_length / 1100.0)) - r_thick - r_thin;
 
