@@ -26,14 +26,14 @@ classDiagram
     circulation <|-- baroreflex
     circulation <|-- Growth
     
-    hemi_vent <|-- half_sarcomere
+    hemi_vent <|-- muscle
     hemi_vent <|-- valve
     
-    half_sarcomere <|-- membranes
-    half_sarcomere <|-- heart_rate
-    half_sarcomere <|-- MyoSim_half_sarcomere
-    half_sarcomere <|-- FiberSim_half_sarcomere
-    half_sarcomere <|-- mitochondria
+    muscle <|-- membranes
+    muscle <|-- heart_rate
+    muscle <|-- MyoSim_muscle
+    muscle <|-- FiberSim_muscle
+    muscle <|-- mitochondria
 
     baroreflex <|-- reflex_control
     
@@ -46,6 +46,9 @@ classDiagram
     MyoSim_model <|-- MyoSim_kinetic_scheme
     MyoSim_kinetic_scheme <|-- MyoSim_m_state
     MyoSim_m_state <|-- MyoSim_transition
+
+    FiberSim_muscle <|-- FiberSim_series_component
+    FiberSim_muscle <|-- FiberSim_half_sarcomere
 
     FiberSim_half_sarcomere <|-- FiberSim_thick_filament
     FiberSim_half_sarcomere <|-- FiberSim_thin_filament

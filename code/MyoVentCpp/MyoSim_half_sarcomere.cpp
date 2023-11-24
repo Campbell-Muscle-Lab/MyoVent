@@ -8,8 +8,6 @@
 
 #include "MyoSim_half_sarcomere.h"
 
-#include "half_sarcomere.h"
-
 // Constructor
 MyoSim_half_sarcomere::MyoSim_half_sarcomere(half_sarcomere* set_p_hs)
 {

@@ -13,12 +13,14 @@
 #include "perturbation.h"
 #include "cmv_system.h"
 #include "circulation.h"
+
 #include "hemi_vent.h"
+
 #include "valve.h"
-#include "half_sarcomere.h"
+#include "muscle.h"
 #include "membranes.h"
 #include "mitochondria.h"
-#include "myofilaments.h"
+
 #include "kinetic_scheme.h"
 #include "transition.h"
 #include "baroreflex.h"
@@ -77,7 +79,7 @@ void perturbation::impose(double sim_time_s)
 	double* p_double;
 
 	double delta_n_hs;
-	double delta_hs_length;
+	double delta_muscle_length;
 
 	// Code
 
@@ -162,11 +164,11 @@ void perturbation::impose(double sim_time_s)
 				delta_n_hs = increment;
 
 				// Work out how far half-sarcomeres move using chain rule
-				delta_hs_length = -(delta_n_hs * p_cmv_protocol->p_cmv_system->p_circulation->p_hemi_vent->p_hs->hs_length) /
+				delta_muscle_length = -(delta_n_hs * p_cmv_protocol->p_cmv_system->p_circulation->p_hemi_vent->p_muscle->muscle_length) /
 					p_cmv_protocol->p_cmv_system->p_circulation->p_hemi_vent->vent_n_hs;
 
 				// Apply to half-sarcomere
-				p_cmv_protocol->p_cmv_system->p_circulation->p_hemi_vent->p_hs->change_hs_length(delta_hs_length);
+				p_cmv_protocol->p_cmv_system->p_circulation->p_hemi_vent->p_muscle->change_muscle_length(0.0, delta_muscle_length);
 
 				// And the wall volume
 				p_cmv_protocol->p_cmv_system->p_circulation->p_hemi_vent->vent_wall_volume =
@@ -237,11 +239,11 @@ void perturbation::impose(double sim_time_s)
 			}
 		}
 
-		if (class_name == "half_sarcomere")
+		if (class_name == "muscle")
 		{
 			if (variable == "prop_fibrosis")
 			{
-				p_double = &(p_cmv_protocol->p_cmv_system->p_circulation->p_hemi_vent->p_hs->hs_prop_fibrosis);
+				p_double = &(p_cmv_protocol->p_cmv_system->p_circulation->p_hemi_vent->p_muscle->muscle_prop_fibrosis);
 
 				*p_double = *p_double + increment;
 			}
@@ -250,14 +252,14 @@ void perturbation::impose(double sim_time_s)
 		{
 			if (variable == "t_open")
 			{
-				p_double = &(p_cmv_protocol->p_cmv_system->p_circulation->p_hemi_vent->p_hs->p_membranes->memb_t_open_s);
+				p_double = &(p_cmv_protocol->p_cmv_system->p_circulation->p_hemi_vent->p_muscle->p_membranes->memb_t_open_s);
 
 				*p_double = *p_double + increment;
 			}
 
 			if (variable == "k_leak")
 			{
-				p_double = &(p_cmv_protocol->p_cmv_system->p_circulation->p_hemi_vent->p_hs->p_membranes->memb_k_leak);
+				p_double = &(p_cmv_protocol->p_cmv_system->p_circulation->p_hemi_vent->p_muscle->p_membranes->memb_k_leak);
 
 				*p_double = *p_double + increment;
 			}
@@ -268,13 +270,14 @@ void perturbation::impose(double sim_time_s)
 		{
 			if (variable == "ATP_generation_rate")
 			{
-				p_double = &(p_cmv_protocol->p_cmv_system->p_circulation->p_hemi_vent->p_hs->
+				p_double = &(p_cmv_protocol->p_cmv_system->p_circulation->p_hemi_vent->p_muscle->
 					p_mitochondria->mito_ATP_generation_rate);
 
 				*p_double = *p_double + increment;
 			}
 		}
 
+		/*
 		if (class_name == "myofilaments")
 		{
 			if (variable.rfind("m_state", 0) == 0)
@@ -335,6 +338,7 @@ void perturbation::impose(double sim_time_s)
 				*p_double = *p_double + increment;
 			}
 		}
+		*/
 	}
 }
 

@@ -84,18 +84,19 @@ public:
 	int flow_aortic_valve_field_index;		/**< integer holding the index for flow
 													through the aortic valve */
 
-	int hs_length_field_index;				/**< integer holding the index for the
-													hs length */
+	int muscle_length_field_index;			/**< integer holding the index for the
+													muscle length */
 
-	int myof_stress_int_pas_field_index;	/**< integer holding the index for the
-													myofilament int pass stress */
 
-	int myof_mean_stress_int_pas_field_index;
+//	int myof_stress_int_pas_field_index;	/**< integer holding the index for the
+//													myofilament int pass stress */
+
+//	int myof_mean_stress_int_pas_field_index;
 											/**< integer holding the index for the
 													myofilament mean int pass stress */
 
-	int myof_ATP_flux_field_index;			/**< integer holding the index for the
-													myofilament ATPase field */
+	//int myof_ATP_flux_field_index;			/**< integer holding the index for the
+	//													myofilament ATPase field */
 
 	int vent_stroke_work_field_index;		/**< integer holding the index for the
 													vent stroke work field */

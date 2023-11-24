@@ -17,7 +17,7 @@
 #include "growth_control.h"
 #include "circulation.h"
 #include "hemi_vent.h"
-#include "half_sarcomere.h"
+#include "muscle.h"
 
 #include "gsl_math.h"
 
@@ -105,7 +105,7 @@ void growth::implement_time_step(double time_step_s, bool new_beat)
 	double delta_relative_n_hs;
 
 	double delta_n_hs;
-	double delta_hs_length;
+	double delta_muscle_length;
 
 	// Code
 
@@ -164,11 +164,11 @@ void growth::implement_time_step(double time_step_s, bool new_beat)
 		// Work out how far half-sarcomeres move using chain rule
 		delta_n_hs = delta_relative_n_hs * p_parent_circulation->p_hemi_vent->vent_n_hs;
 
-		delta_hs_length = -(delta_n_hs * p_parent_circulation->p_hemi_vent->p_hs->hs_length) /
+		delta_muscle_length = -(delta_n_hs * p_parent_circulation->p_hemi_vent->p_muscle->muscle_length) /
 			p_parent_circulation->p_hemi_vent->vent_n_hs;
 
 		// Apply to half-sarcomere
-		p_parent_circulation->p_hemi_vent->p_hs->change_hs_length(delta_hs_length);
+		p_parent_circulation->p_hemi_vent->p_muscle->change_muscle_length(delta_muscle_length, 0.0);
 
 		// Update the wall volume
 		p_parent_circulation->p_hemi_vent->vent_wall_volume =

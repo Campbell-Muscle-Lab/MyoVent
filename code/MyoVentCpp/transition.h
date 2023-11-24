@@ -6,7 +6,7 @@
 * @author	Ken Campbell
 */
 
-#include "half_sarcomere.h"
+#include "MyoSim_half_sarcomere.h"
 #include "m_state.h"
 #include "rapidjson/document.h"
 #include "JSON_functions.h"
@@ -15,7 +15,7 @@
 #include "gsl_math.h"
 
 // Forward declaration
-class half_sarcomere;
+class MyoSim_half_sarcomere;
 class cmv_model;
 class cmv_options;
 

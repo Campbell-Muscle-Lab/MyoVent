@@ -21,13 +21,15 @@
 #include "circulation.h"
 #include "hemi_vent.h"
 
-#include "half_sarcomere.h"
+#include "muscle.h"
 #include "heart_rate.h"
 #include "membranes.h"
-#include "myofilaments.h"
+#include "muscle.h"
+
 #include "kinetic_scheme.h"
 #include "transition.h"
 
+#include "FiberSim_muscle.h"
 #include "FiberSim_half_sarcomere.h"
 #include "FiberSim_kinetic_scheme.h"
 #include "FiberSim_m_state.h"
@@ -199,7 +201,7 @@ void reflex_control::set_controlled_variable(void)
 	{
 		if (rc_variable == "t_RR_interval_s")
 		{
-			p_controlled_variable = &p_parent_circulation->p_hemi_vent->p_hs->p_heart_rate->hr_t_RR_interval_s;
+			p_controlled_variable = &p_parent_circulation->p_hemi_vent->p_muscle->p_heart_rate->hr_t_RR_interval_s;
 			reflex_assigned = true;
 		}
 	}
@@ -208,20 +210,21 @@ void reflex_control::set_controlled_variable(void)
 	{
 		if (rc_variable == "k_active")
 		{
-			p_controlled_variable = &p_parent_circulation->p_hemi_vent->p_hs->p_membranes->memb_k_active;
+			p_controlled_variable = &p_parent_circulation->p_hemi_vent->p_muscle->p_membranes->memb_k_active;
 			reflex_assigned = true;
 		}
 
 		if (rc_variable == "k_serca")
 		{
-			p_controlled_variable = &p_parent_circulation->p_hemi_vent->p_hs->p_membranes->memb_k_serca;
+			p_controlled_variable = &p_parent_circulation->p_hemi_vent->p_muscle->p_membranes->memb_k_serca;
 			reflex_assigned = true;
 		}
 	}
 
 	if (rc_level == "FiberSim")
 	{
-		FiberSim_half_sarcomere* p_FiberSim_hs = p_parent_circulation->p_hemi_vent->p_hs->p_FiberSim_hs;
+		FiberSim_half_sarcomere* p_FiberSim_hs = p_parent_circulation->p_hemi_vent->p_muscle->
+			p_FiberSim_muscle->p_FiberSim_hs;
 
 		if (rc_variable == "k_on")
 		{
@@ -254,6 +257,7 @@ void reflex_control::set_controlled_variable(void)
 		}
 	}
 
+	/*
 	if (rc_level == "myofilaments")
 	{
 		if (rc_variable == "k_on")
@@ -288,6 +292,7 @@ void reflex_control::set_controlled_variable(void)
 			reflex_assigned = true;
 		}
 	}
+	*/
 
 	if (rc_level == "circulation")
 	{

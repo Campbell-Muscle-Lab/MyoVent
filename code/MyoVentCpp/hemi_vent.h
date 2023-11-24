@@ -15,12 +15,15 @@
 // Forward declararations
 class cmv_model;
 class cmv_system;
-class valve;
-class half_sarcomere;
-class circulation;
-
 class cmv_results;
 class cmv_options;
+
+class circulation;
+
+class valve;
+class muscle;
+
+
 
 class hemi_vent
 {
@@ -54,7 +57,7 @@ public:
 
 	valve* p_mv;							/**< pointer to the mitral valve */
 
-	half_sarcomere* p_hs;					/**< pointer to child half-sarcomere */
+	muscle* p_muscle;						/**< pointer to child muscle */
 
 	double vent_wall_density;				/**< double with wall density in kg m^-3 */
 

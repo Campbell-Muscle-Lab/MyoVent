@@ -20,13 +20,15 @@
 #include "growth.h"
 #include "circulation.h"
 #include "hemi_vent.h"
-#include "half_sarcomere.h"
+#include "muscle.h"
 #include "heart_rate.h"
 #include "membranes.h"
-#include "myofilaments.h"
+
+
 #include "kinetic_scheme.h"
 #include "transition.h"
 
+#include "FiberSim_muscle.h"
 #include "FiberSim_half_sarcomere.h"
 
 #include "gsl_math.h"
@@ -176,8 +178,11 @@ void growth_control::set_gc_p_signal(void)
 	// Code
 
 	// Find the variable this object is controlling
-	if (gc_level == "myofilaments")
+	if (gc_level == "MyoSim_half_sarcomere")
 	{
+		printf("Growth for MyoSim not yet implemented\n");
+		exit(1);
+		/*
 		if (gc_signal == "myof_stress_int_pas")
 		{
 			gc_p_signal = &p_parent_circulation->p_hemi_vent->p_hs->p_myofilaments->myof_stress_int_pas;
@@ -189,22 +194,23 @@ void growth_control::set_gc_p_signal(void)
 			gc_p_signal = &p_parent_circulation->p_hemi_vent->p_hs->p_myofilaments->myof_mean_stress_int_pas;
 			gc_signal_assigned = true;
 		}
+		*/
 	}
 
 	if (gc_level == "FiberSim_half_sarcomere")
 	{
 		if (gc_signal == "fs_stress_titin")
 		{
-			gc_p_signal = &p_parent_circulation->p_hemi_vent->p_hs->p_FiberSim_hs->hs_titin_force;
+			gc_p_signal = &p_parent_circulation->p_hemi_vent->p_muscle->p_FiberSim_muscle->p_FiberSim_hs->hs_titin_force;
 			gc_signal_assigned = true;
 		}
 	}
 
-	if (gc_level == "half_sarcomere")
+	if (gc_level == "muscle")
 	{
-		if (gc_signal == "hs_ATP_concentration")
+		if (gc_signal == "muscle_ATP_concentration")
 		{
-			gc_p_signal = &p_parent_circulation->p_hemi_vent->p_hs->hs_ATP_concentration;
+			gc_p_signal = &p_parent_circulation->p_hemi_vent->p_muscle->muscle_ATP_concentration;
 			gc_signal_assigned = true;
 		}
 	}

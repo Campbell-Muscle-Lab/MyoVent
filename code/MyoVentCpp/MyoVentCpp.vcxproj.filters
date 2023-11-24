@@ -30,9 +30,6 @@
     <ClCompile Include="hemi_vent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="half_sarcomere.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="membranes.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -46,9 +43,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="cmv_protocol.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="myofilaments.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="kinetic_scheme.cpp">
@@ -117,6 +111,15 @@
     <ClCompile Include="MyoSim_options.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="FiberSim_muscle.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MyoSim_muscle.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FiberSim_series_component.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cmv_system.h">
@@ -129,9 +132,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="circulation.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="half_sarcomere.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="membranes.h">
@@ -150,9 +150,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="cmv_protocol.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="myofilaments.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="kinetic_scheme.h">
@@ -219,6 +216,21 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MyoSim_options.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FiberSim_muscle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="muscle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MyoSim_series_component.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FiberSim_series_component.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MyoSim_muscle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -15,9 +15,9 @@
 #include "gsl_spmatrix.h"
 #include "gsl_rng.h"
 
-class half_sarcomere;
 class cmv_results;
 
+class FiberSim_muscle;
 class FiberSim_model;
 class FiberSim_options;
 class FiberSim_kinetic_scheme;
@@ -33,7 +33,8 @@ class FiberSim_half_sarcomere
 {
 public:
 	// Variables
-	half_sarcomere* p_parent_hs;	/**< pointer to the parent half-sarcomere */
+	FiberSim_muscle* p_parent_fs_muscle;
+                                    /**< pointer to the parent FiberSim muscle */
     
     int hs_id;						/**< integer identifier for the half-sarcomere */
 
@@ -308,7 +309,7 @@ public:
          + an id number
      */
     FiberSim_half_sarcomere(
-        half_sarcomere* set_p_hs,
+        FiberSim_muscle* set_p_parent_fs_muscle,
         int set_hs_id);
 
     /**

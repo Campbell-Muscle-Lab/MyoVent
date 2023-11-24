@@ -7,14 +7,16 @@
 #include "stdio.h"
 
 #include "circulation.h"
+
 #include "cmv_system.h"
 #include "cmv_model.h"
 #include "cmv_protocol.h"
 #include "cmv_options.h"
 #include "cmv_results.h"
+
 #include "hemi_vent.h"
+#include "muscle.h"
 #include "valve.h"
-#include "half_sarcomere.h"
 #include "baroreflex.h"
 #include "growth.h"
 

@@ -13,7 +13,7 @@
 #include "circulation.h"
 #include "cmv_results.h"
 #include "membranes.h"
-#include "myofilaments.h"
+#include "muscle.h"
 #include "heart_rate.h"
 
 #include "gsl_errno.h"

@@ -16,7 +16,7 @@
 class cmv_system;
 class cmv_model;
 class cmv_results;
-class half_sarcomere;
+class muscle;
 
 
 class heart_rate
@@ -25,7 +25,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	heart_rate(half_sarcomere* set_p_parent_hs);
+	heart_rate(muscle* set_p_parent_muscle);
 
 	/**
 	 * Destructor
@@ -42,7 +42,7 @@ public:
 													holding data at full time
 													resolution for one beat */
 
-	half_sarcomere* p_parent_hs;			/**< pointer to parent half-sarcomere */
+	muscle* p_parent_muscle;				/**< pointer to parent muscle */
 
 	double hr_new_beat;						/**< double, set to 0.0 normally but to
 													1.0 on a new beat */

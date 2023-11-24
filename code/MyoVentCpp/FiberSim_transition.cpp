@@ -13,9 +13,6 @@
 #include "FiberSim_model.h"
 #include "FiberSim_half_sarcomere.h"
 
-#include "half_sarcomere.h"
-
-//#include "muscle.h"
 #include "global_definitions.h"
 #include "JSON_functions.h"
 
@@ -281,7 +278,7 @@ double FiberSim_transition::calculate_rate(double x, double x_ext, double node_f
 		if (p_fs_hs == NULL)
 			hs_length = 1100.0;
 		else
-			hs_length = p_fs_hs->p_parent_hs->hs_length;
+			hs_length = p_fs_hs->hs_length;
 
 		y_actual = (2.0 / 3.0) * (37.0 / sqrt(hs_length / 1100.0)) - r_thick - r_thin;
 

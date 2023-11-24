@@ -7,22 +7,23 @@
 #include "stdio.h"
 
 #include "mitochondria.h"
-#include "half_sarcomere.h"
-#include "myofilaments.h"
+
+#include "muscle.h"
+
 #include "hemi_vent.h"
 #include "cmv_model.h"
 #include "cmv_options.h"
 #include "cmv_results.h"
 
 // Constructor
-mitochondria::mitochondria(half_sarcomere* set_p_parent_hs)
+mitochondria::mitochondria(muscle* set_p_parent_muscle)
 {
 	//! Constructor
 
 	// Code
 	// Set the pointer to the parent system
-	p_parent_hs = set_p_parent_hs;
-	p_cmv_model = p_parent_hs->p_cmv_model;
+	p_parent_muscle = set_p_parent_muscle;
+	p_cmv_model = p_parent_muscle->p_cmv_model;
 
 	// Set other pointers safe
 	p_cmv_results_beat = NULL;
@@ -31,9 +32,9 @@ mitochondria::mitochondria(half_sarcomere* set_p_parent_hs)
 	// Initialize
 	mito_ATP_generation_rate = p_cmv_model->mito_ATP_generation_rate;
 
-	mito_volume = 0.001 * p_parent_hs->p_parent_hemi_vent->vent_wall_volume *
-		(1.0 - p_parent_hs->hs_prop_fibrosis) *
-		(1.0 - p_parent_hs->hs_prop_myofilaments);
+	mito_volume = 0.001 * p_parent_muscle->p_parent_hemi_vent->vent_wall_volume *
+		(1.0 - p_parent_muscle->muscle_prop_fibrosis) *
+		(1.0 - p_parent_muscle->muscle_prop_myofilaments);
 
 	mito_ATP_generated_M_per_liter_per_s = 0.0;
 }
@@ -56,10 +57,10 @@ void mitochondria::initialise_simulation(void)
 	// Initialize
 
 	// Set the options
-	p_cmv_options = p_parent_hs->p_cmv_options;
+	p_cmv_options = p_parent_muscle->p_cmv_options;
 
 	// Set the pointer to the results object
-	p_cmv_results_beat = p_parent_hs->p_cmv_results_beat;
+	p_cmv_results_beat = p_parent_muscle->p_cmv_results_beat;
 
 	// Now add the results fields
 	
@@ -73,9 +74,9 @@ void mitochondria::implement_time_step(double time_step_s)
 
 	// Variables
 
-	mito_volume = 0.001 * p_parent_hs->p_parent_hemi_vent->vent_wall_volume *
-		(1.0 - p_parent_hs->hs_prop_fibrosis) *
-		(1.0 - p_parent_hs->hs_prop_myofilaments);
+	mito_volume = 0.001 * p_parent_muscle->p_parent_hemi_vent->vent_wall_volume *
+		(1.0 - p_parent_muscle->muscle_prop_fibrosis) *
+		(1.0 - p_parent_muscle->muscle_prop_myofilaments);
 
 	mito_ATP_generated_M_per_liter_per_s = mito_volume * mito_ATP_generation_rate;
 }

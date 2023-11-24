@@ -10,7 +10,7 @@
 #include <filesystem>
 
 #include "kinetic_scheme.h"
-#include "myofilaments.h"
+
 #include "cmv_model.h"
 #include "cmv_options.h"
 #include "m_state.h"
@@ -180,6 +180,7 @@ void kinetic_scheme::initialise_simulation(myofilaments* set_p_parent_myofilamen
 
 	// Code
 
+/*
 	// Updates the parent
 	p_parent_myofilaments = set_p_parent_myofilaments;
 
@@ -207,10 +208,12 @@ void kinetic_scheme::initialise_simulation(myofilaments* set_p_parent_myofilamen
 	{
 		write_rate_functions_to_file();
 	}
+*/
 }
 
 void kinetic_scheme::write_rate_functions_to_file(void)
 {
+	/*
 	//! Writes rate functions to output file based on data in p_cmv_options
 
 	// Variables
@@ -346,6 +349,7 @@ void kinetic_scheme::write_rate_functions_to_file(void)
 	fprintf_s(output_file, "\"\n}\n");
 
 	fclose(output_file);
+	*/
 }
 
 void kinetic_scheme::write_kinetic_scheme_to_file(char output_file_string[])

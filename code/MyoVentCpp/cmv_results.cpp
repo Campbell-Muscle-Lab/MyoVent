@@ -17,8 +17,7 @@
 #include "circulation.h"
 #include "baroreflex.h"
 #include "hemi_vent.h"
-#include "half_sarcomere.h"
-#include "myofilaments.h"
+#include "muscle.h"
 
 #include "gsl_vector.h"
 #include "gsl_math.h"
@@ -59,9 +58,9 @@ cmv_results::cmv_results(cmv_system* set_p_parent_cmv_system, int set_no_of_time
 	volume_vent_field_index = -1;
 	flow_mitral_valve_field_index = -1;
 	flow_aortic_valve_field_index = -1;
-	hs_length_field_index = -1;
-	myof_stress_int_pas_field_index = -1;
-	myof_ATP_flux_field_index = -1;
+	muscle_length_field_index = -1;
+//	myof_stress_int_pas_field_index = -1;
+//	myof_ATP_flux_field_index = -1;
 	vent_stroke_work_field_index = -1;
 	vent_stroke_energy_used_field_index = -1;
 	vent_efficiency_field_index = -1;
@@ -158,12 +157,13 @@ void cmv_results::add_results_field(std::string field_name, double* p_double)
 		index_set = true;
 	}
 
-	if (field_name == "hs_length")
+	if (field_name == "muscle_length")
 	{
-		hs_length_field_index = new_index;
+		muscle_length_field_index = new_index;
 		index_set = true;
 	}
 
+/*
 	if (field_name == "myof_stress_int_pas")
 	{
 		myof_stress_int_pas_field_index = new_index;
@@ -175,6 +175,7 @@ void cmv_results::add_results_field(std::string field_name, double* p_double)
 		myof_ATP_flux_field_index = new_index;
 		index_set = true;
 	}
+*/
 
 	if (field_name == "vent_stroke_work_J")
 	{
@@ -410,7 +411,7 @@ double cmv_results::return_energy_used(int start_t_index, int stop_t_index)
 
 	// Calculate energy per second
 	energy_used = holder * delta_t *
-		p_parent_cmv_system->p_circulation->p_hemi_vent->p_hs->hs_delta_G_ATP;
+		p_parent_cmv_system->p_circulation->p_hemi_vent->p_muscle->muscle_delta_G_ATP;
 
 	return energy_used;
 }

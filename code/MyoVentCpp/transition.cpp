@@ -12,7 +12,7 @@
 #include "transition.h"
 #include "m_state.h"
 #include "kinetic_scheme.h"
-#include "half_sarcomere.h"
+
 #include "global_definitions.h"
 #include "JSON_functions.h"
 

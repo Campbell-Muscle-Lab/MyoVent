@@ -10,18 +10,18 @@
 #include "cmv_system.h"
 #include "cmv_results.h"
 #include "cmv_model.h"
-#include "half_sarcomere.h"
+#include "muscle.h"
 
 // Constructor
-heart_rate::heart_rate(half_sarcomere* set_p_parent_hs)
+heart_rate::heart_rate(muscle* set_p_parent_muscle)
 {
 	// Initialise
 
 	// Code
 
 	// Set pointers
-	p_parent_hs = set_p_parent_hs;
-	p_cmv_model = p_parent_hs->p_cmv_model;
+	p_parent_muscle = set_p_parent_muscle;
+	p_cmv_model = p_parent_muscle->p_cmv_model;
 
 	// Initialize variables
 	hr_new_beat = 0.0;
@@ -40,7 +40,7 @@ heart_rate::~heart_rate(void)
 void heart_rate::initialise_simulation(void)
 {
 	// Set the pointer to the results object
-	p_cmv_results_beat = p_parent_hs->p_cmv_results_beat;
+	p_cmv_results_beat = p_parent_muscle->p_cmv_results_beat;
 
 	// Now add the results fields
 	p_cmv_results_beat->add_results_field("hr_new_beat", &hr_new_beat);

@@ -7,7 +7,7 @@
 #include "stdio.h"
 
 #include "membranes.h"
-#include "half_sarcomere.h"
+#include "muscle.h"
 #include "cmv_model.h"
 #include "cmv_options.h"
 #include "cmv_results.h"
@@ -17,15 +17,15 @@
 
 
 // Constructor
-membranes::membranes(half_sarcomere* set_p_parent_hs)
+membranes::membranes(muscle* set_p_parent_muscle)
 {
 	//! Constructor
 
 	// Code
 
 	// Set the pointer to the parent system
-	p_parent_hs = set_p_parent_hs;
-	p_cmv_model = p_parent_hs->p_cmv_model;
+	p_parent_muscle = set_p_parent_muscle;
+	p_cmv_model = p_parent_muscle->p_cmv_model;
 
 	// Set other pointers safe
 	p_cmv_results_beat = NULL;
@@ -65,10 +65,10 @@ void membranes::initialise_simulation(void)
 	// Initialize
 
 	// Set the options
-	p_cmv_options = p_parent_hs->p_cmv_options;
+	p_cmv_options = p_parent_muscle->p_cmv_options;
 
 	// Set the pointer to the results object
-	p_cmv_results_beat = p_parent_hs->p_cmv_results_beat;
+	p_cmv_results_beat = p_parent_muscle->p_cmv_results_beat;
 
 	// Now add the results fields
 	p_cmv_results_beat->add_results_field("memb_Ca_cytosol", &memb_Ca_cytosol);

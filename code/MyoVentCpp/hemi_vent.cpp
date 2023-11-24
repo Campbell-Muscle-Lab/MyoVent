@@ -7,15 +7,16 @@
 #include "stdio.h"
 #include "math.h"
 
-#include "hemi_vent.h"
 #include "cmv_system.h"
 #include "cmv_model.h"
-#include "circulation.h"
-#include "valve.h"
-#include "half_sarcomere.h"
-#include "myofilaments.h"
 #include "cmv_results.h"
 #include "cmv_options.h"
+
+#include "hemi_vent.h"
+#include "circulation.h"
+#include "valve.h"
+
+#include "muscle.h"
 
 #include "gsl_errno.h"
 #include "gsl_roots.h"
@@ -64,7 +65,7 @@ hemi_vent::hemi_vent(circulation* set_p_parent_circulation)
 	vent_cardiac_output = GSL_NAN;
 
 	// Initialise child half-sarcomere
-	p_hs = new half_sarcomere(this);
+	p_muscle = new muscle(this);
 
 	// Initialise aortic valve
 	p_av = new valve(this, p_cmv_model->p_av);
@@ -79,7 +80,7 @@ hemi_vent::~hemi_vent(void)
 	//! hemi_vent destructor
 
 	// Tidy up
-	delete p_hs;
+	delete p_muscle;
 	delete p_av;
 	delete p_mv;
 }
@@ -107,7 +108,7 @@ void hemi_vent::initialise_simulation(void)
 	p_av->initialise_simulation();
 	p_mv->initialise_simulation();
 
-	p_hs->initialise_simulation();
+	p_muscle->initialise_simulation();
 
 	// Deduce the slack circumference of the ventricle and
 	// set the number of half-sarcomeres
@@ -116,7 +117,7 @@ void hemi_vent::initialise_simulation(void)
 	vent_circumference = return_lv_circumference_for_chamber_volume(
 		p_parent_circulation->circ_slack_volume[0]);
 
-	vent_n_hs = 1e9 * vent_circumference / p_hs->hs_length;
+	vent_n_hs = 1e9 * vent_circumference / p_muscle->muscle_length;
 
 	double vent_diam = vent_circumference / 3.14159;
 
@@ -150,7 +151,7 @@ bool hemi_vent::implement_time_step(double time_step_s)
 	p_av->implement_time_step(time_step_s);
 	p_mv->implement_time_step(time_step_s);
 
-	new_beat = p_hs->implement_time_step(time_step_s);
+	new_beat = p_muscle->implement_time_step(time_step_s);
 
 	// Calculate energy used per s
 	calculate_vent_ATP_used_per_s();
@@ -324,7 +325,7 @@ double hemi_vent::return_internal_radius_for_chamber_volume(double cv)
 	if (cv < 0.0)
 		cv = 0.0;
 
-	rel_hsl = (p_hs->hs_length / p_hs->hs_reference_hs_length);
+	rel_hsl = (p_muscle->muscle_length / p_muscle->muscle_reference_length);
 
 	r = pow(((3.0 * 0.001 * cv) /
 		(2.0 * M_PI * pow(rel_hsl, vent_z_exp) * vent_z_scale)), (1.0 / 3.0));
@@ -338,8 +339,8 @@ double hemi_vent::return_pressure_for_chamber_volume(double cv, double time_step
 
 	// Variables
 	double new_lv_circumference;
-	double new_hs_length;
-	double delta_hs_length;
+	double new_muscle_length;
+	double delta_muscle_length;
 	double new_stress;
 	double internal_r;
 	double P_in_Pascals;
@@ -348,9 +349,9 @@ double hemi_vent::return_pressure_for_chamber_volume(double cv, double time_step
 	// Code
 	new_lv_circumference = return_lv_circumference_for_chamber_volume(cv);
 
-	new_hs_length = 1.0e9 * new_lv_circumference / vent_n_hs;
+	new_muscle_length = 1.0e9 * new_lv_circumference / vent_n_hs;
 
-	delta_hs_length = new_hs_length - p_hs->hs_length;
+	delta_muscle_length = new_muscle_length - p_muscle->muscle_length;
 
 	// Deduce stress for the new hs_length
 /*	double xt = 0.0;
@@ -363,7 +364,7 @@ double hemi_vent::return_pressure_for_chamber_volume(double cv, double time_step
 	}
 */
 
-	new_stress = p_hs->return_wall_stress_after_delta_hsl(delta_hs_length, time_step_s);
+	new_stress = p_muscle->return_wall_stress_after_test_delta_ml(delta_muscle_length, time_step_s);
 
 	new_stress = GSL_MAX(-1000.0, new_stress);
 
@@ -378,7 +379,7 @@ double hemi_vent::return_pressure_for_chamber_volume(double cv, double time_step
 	{
 		P_in_Pascals = 0.0;
 		cout << "Hemi_vent, internal_r ~= 0.0 problem\n";
-		cout << "delta_hs_length: " << delta_hs_length << "\n";
+		cout << "delta_muscle_length: " << delta_muscle_length << "\n";
 		cout << "new_stress: " << new_stress << "\n";
 		cout << "wall_thickness: " << vent_wall_thickness << "\n";
 	}
@@ -401,7 +402,7 @@ void hemi_vent::update_chamber_volume(double new_volume)
 	// Variables
 	double new_circumference;
 	double delta_circumference;
-	double delta_hsl;
+	double delta_muscle_length;
 
 	// Code
 
@@ -411,18 +412,14 @@ void hemi_vent::update_chamber_volume(double new_volume)
 
 	delta_circumference = new_circumference - vent_circumference;
 
-	delta_hsl = 1e9 * delta_circumference / vent_n_hs;
+	delta_muscle_length = 1e9 * delta_circumference / vent_n_hs;
 
-	p_hs->change_hs_length(delta_hsl);
+	p_muscle->change_muscle_length(delta_muscle_length, 0.0);
 
 	vent_circumference = new_circumference;
-
-	// Dump if necessary
-	if (!p_cmv_options->cb_dump_file_string.empty())
-		p_hs->p_myofilaments->dump_cb_distributions();
 }
 
-void hemi_vent::update_beat_metrics()
+void hemi_vent::update_beat_metrics(void)
 {
 	//! Code updates beat metrics
 
@@ -481,7 +478,7 @@ void hemi_vent::update_beat_metrics()
 		vent_cardiac_output, 0, p_parent_cmv_system->beat_t_index);
 
 	// Update hs metrics
-	p_hs->update_beat_metrics();
+	p_muscle->update_beat_metrics();
 }
 
 double hemi_vent::return_chamber_height(double r)
@@ -494,7 +491,7 @@ double hemi_vent::return_chamber_height(double r)
 
 	// Code
 
-	h = r * vent_z_scale * pow((p_hs->hs_length / p_hs->hs_reference_hs_length), vent_z_exp);
+	h = r * vent_z_scale * pow((p_muscle->muscle_length / p_muscle->muscle_reference_length), vent_z_exp);
 
 	return h;
 }
@@ -505,5 +502,5 @@ void hemi_vent::calculate_vent_ATP_used_per_s()
 
 	// Variables
 	vent_ATP_used_per_s = vent_wall_volume *
-		p_hs->hs_ATP_used_per_liter_per_s;
+		p_muscle->muscle_ATP_used_per_liter_per_s;
 }

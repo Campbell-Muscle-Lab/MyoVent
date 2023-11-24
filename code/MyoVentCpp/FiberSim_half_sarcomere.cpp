@@ -9,12 +9,16 @@
 #include <iostream>
 #include <regex>
 
-#include "FiberSim_half_sarcomere.h"
-#include "half_sarcomere.h"
+#include "global_definitions.h"
+
 #include "cmv_model.h"
 #include "cmv_options.h"
 #include "cmv_results.h"
-#include "global_definitions.h"
+
+#include "muscle.h"
+
+#include "FiberSim_muscle.h"
+#include "FiberSim_half_sarcomere.h"
 #include "FiberSim_thick_filament.h"
 #include "FiberSim_thin_filament.h"
 #include "FiberSim_kinetic_scheme.h"
@@ -56,15 +60,15 @@ struct lattice_event
 #include "gsl_vector.h"
 
 // Constructor
-FiberSim_half_sarcomere::FiberSim_half_sarcomere(half_sarcomere* set_p_hs, int set_hs_id)
+FiberSim_half_sarcomere::FiberSim_half_sarcomere(FiberSim_muscle* set_p_parent_fs_muscle, int set_hs_id)
 {
 	//! Constructor
-	p_parent_hs = set_p_hs;
+	p_parent_fs_muscle = set_p_parent_fs_muscle;
 	hs_id = set_hs_id;
 
 	// Set the pointers
-	p_fs_model = p_parent_hs->p_cmv_model->p_fs_model;
-	p_fs_options = p_parent_hs->p_cmv_options->p_FiberSim_options;
+	p_fs_model = p_parent_fs_muscle->p_parent_muscle->p_cmv_model->p_fs_model;
+	p_fs_options = p_parent_fs_muscle->p_parent_muscle->p_cmv_options->p_FiberSim_options;
 
     // Set the class pointers to the kinetic scheme for myosin
     for (int i = 0; i < p_fs_model->m_no_of_isotypes; i++) {
@@ -383,7 +387,7 @@ void FiberSim_half_sarcomere::initialise_for_MyoVent_simulation(void)
 
     // p_scheme->initialise
 
-    p_cmv_results_beat = p_parent_hs->p_cmv_results_beat;
+    p_cmv_results_beat = p_parent_fs_muscle->p_cmv_results_beat;
 
     // Add results fields
     for (int i = 0; i < a_no_of_bs_states; i++)

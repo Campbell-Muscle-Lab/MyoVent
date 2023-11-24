@@ -13,7 +13,8 @@
 #include "global_definitions.h"
 
 // Forward declararations
-class half_sarcomere;
+class muscle;
+
 class cmv_model;
 class cmv_options;
 class cmv_results;
@@ -24,7 +25,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	membranes(half_sarcomere* set_p_parent_hs);
+	membranes(muscle* set_p_parent_muscle);
 
 	/**
 	* Destructor
@@ -33,7 +34,7 @@ public:
 
 	// Variables
 
-	half_sarcomere* p_parent_hs;		/**< pointer to parent half-sarcomere */
+	muscle* p_parent_muscle;			/**< pointer to parent half-sarcomere */
 
 	cmv_model* p_cmv_model;				/**< pointer to cmv_model object */
 
