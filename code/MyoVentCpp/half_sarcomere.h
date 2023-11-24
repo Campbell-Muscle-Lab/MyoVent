@@ -101,7 +101,7 @@ public:
 
 	void change_hs_length(double delta_hsl);
 
-	double return_wall_stress_after_delta_hsl(double delta_hsl);
+	double return_wall_stress_after_delta_hsl(double delta_hsl, double time_step_s);
 
 	double return_hs_length_for_stress(double target_stress);
 

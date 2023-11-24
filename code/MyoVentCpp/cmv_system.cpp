@@ -140,7 +140,7 @@ void cmv_system::run_simulation(string protocol_file_string,
 
 	for (sim_t_index = 0; sim_t_index < p_cmv_protocol->no_of_time_steps; sim_t_index++)
 	{
-printf("sim_t_index: %i\n", sim_t_index);
+cout << "sim_t_index: " << sim_t_index << "\n";
 
 		new_beat = implement_time_step(p_cmv_protocol->time_step_s);
 
@@ -238,6 +238,8 @@ void cmv_system::update_cmv_results_summary(void)
 
 	// Code
 	
+printf("In cmv_system::update_cmv_results_summary()\n");
+
 	// We have to run through the entire beat to capture the fields that
 	// were back-filled to describe the cardiac cycle
 

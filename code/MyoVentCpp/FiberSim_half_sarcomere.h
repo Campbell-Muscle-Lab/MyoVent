@@ -292,6 +292,9 @@ public:
     gsl_vector* cum_prob;           /**< gsl_vector holding cumulative transition probabilties */
 
     // ATP flux
+    int ATP_transition_counter;     /**< integer counting number of ATP-involving transitions
+                                            in a time-step */
+
     double ATP_flux;                /**< double holding ATP flux */
 
     // Functions

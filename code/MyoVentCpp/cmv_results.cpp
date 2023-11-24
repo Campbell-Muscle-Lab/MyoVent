@@ -240,6 +240,8 @@ void cmv_results::update_results_vectors(int t_index)
 
 	for (int i = 0; i < no_of_defined_results_fields; i++)
 	{
+		//cout << "results_field_" << i << " string " << results_fields[i] << " value " << *p_data_sources[i] << "\n";
+
 		gsl_vector_set(gsl_results_vectors[i], t_index, *p_data_sources[i]);
 	}
 }

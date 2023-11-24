@@ -271,7 +271,7 @@ bool circulation::implement_time_step(double time_step_s)
 	}
 
 	// Calculate pressures
-	calculate_pressures(vol_calc, circ_pressure);
+	calculate_pressures(vol_calc, circ_pressure, time_step_s);
 
 	// Now adjust the compartment volumes by integrating flows.
 	gsl_odeiv2_system sys =
@@ -345,13 +345,13 @@ bool circulation::implement_time_step(double time_step_s)
 	return (new_beat);
 }
 
-void circulation::calculate_pressures(const double v[], double p[])
+void circulation::calculate_pressures(const double v[], double p[], double time_step_s)
 {
 	//! Function calculates pressures
 	
 	// Code
 	
-	p[0] = p_hemi_vent->return_pressure_for_chamber_volume(v[0]);
+	p[0] = p_hemi_vent->return_pressure_for_chamber_volume(v[0], time_step_s);
 
 	// Calculate the other pressures
 	for (int i = 1; i < circ_no_of_compartments; i++)

@@ -41,6 +41,17 @@ FiberSim_transition::FiberSim_transition(const rapidjson::Value& tr, FiberSim_m_
 	JSON_functions::check_JSON_member_string(tr, "rate_type");
 	sprintf_s(rate_type, _MAX_PATH, tr["rate_type"].GetString());
 
+	// Check whether it uses ATP
+	if (JSON_functions::is_JSON_member(tr, "uses_ATP"))
+	{
+		JSON_functions::check_JSON_member_int(tr, "uses_ATP");
+		uses_ATP = tr["uses_ATP"].GetInt();
+	}
+	else
+	{
+		uses_ATP = 0;
+	}
+
 	// Read in parameters
 	JSON_functions::check_JSON_member_array(tr, "rate_parameters");
 	const rapidjson::Value& rp = tr["rate_parameters"];

@@ -165,14 +165,9 @@ bool half_sarcomere::implement_time_step(double time_step_s)
 
 	p_mitochondria->implement_time_step(time_step_s);
 
-printf("hs A\n");
-
 	if (p_FiberSim_hs != NULL)
 	{
-printf("hs B\n");
 		double pCa = -log10(p_membranes->memb_Ca_cytosol);
-printf("pCa: %g\n", pCa);
-
 		p_FiberSim_hs->sarcomere_kinetics(time_step_s, pCa);
 	}
 	else
@@ -180,12 +175,8 @@ printf("pCa: %g\n", pCa);
 		p_myofilaments->implement_time_step(time_step_s);
 	}
 
-printf("hs C\n");
-
 	// Update the ATP
 	calculate_hs_ATP_concentration(time_step_s);
-
-printf("hs D\n");
 
 	// Return new beat status
 	return (new_beat);
@@ -219,7 +210,7 @@ void half_sarcomere::change_hs_length(double delta_hsl)
 	}
 }
 
-double half_sarcomere::return_wall_stress_after_delta_hsl(double delta_hsl)
+double half_sarcomere::return_wall_stress_after_delta_hsl(double delta_hsl, double time_step_s)
 {
 	//! Function returns wall stress after given delta_hsl
 	
@@ -229,7 +220,7 @@ double half_sarcomere::return_wall_stress_after_delta_hsl(double delta_hsl)
 	// Code
 	if (p_FiberSim_hs != NULL)
 	{
-		wall_stress = p_FiberSim_hs->return_force_for_test_delta_hsl(delta_hsl, 0.0);
+		wall_stress = p_FiberSim_hs->return_force_for_test_delta_hsl(delta_hsl, time_step_s);
 	}
 	else
 	{
@@ -259,7 +250,7 @@ double hsl_stress_root_finder(double x, void* params)
 	struct gsl_root_params* p = (struct gsl_root_params*)params;
 
 	// Calculate the new stress after a length change
-	new_stress = p->p_hs_temp->return_wall_stress_after_delta_hsl(x);
+	new_stress = p->p_hs_temp->return_wall_stress_after_delta_hsl(x, 0.001);
 
 	// Calculate the difference between the new stress and the target
 	stress_difference = new_stress - p->stress_target;

@@ -20,12 +20,18 @@
 #include "baroreflex.h"
 #include "circulation.h"
 #include "hemi_vent.h"
+
 #include "half_sarcomere.h"
 #include "heart_rate.h"
 #include "membranes.h"
 #include "myofilaments.h"
 #include "kinetic_scheme.h"
 #include "transition.h"
+
+#include "FiberSim_half_sarcomere.h"
+#include "FiberSim_kinetic_scheme.h"
+#include "FiberSim_m_state.h"
+#include "FiberSim_transition.h"
 
 #include "gsl_math.h"
 
@@ -213,6 +219,41 @@ void reflex_control::set_controlled_variable(void)
 		}
 	}
 
+	if (rc_level == "FiberSim")
+	{
+		FiberSim_half_sarcomere* p_FiberSim_hs = p_parent_circulation->p_hemi_vent->p_hs->p_FiberSim_hs;
+
+		if (rc_variable == "k_on")
+		{
+			p_controlled_variable = &p_FiberSim_hs->a_k_on;
+			reflex_assigned = true;
+		}
+
+		if (rc_variable.rfind("m_state", 0) == 0)
+		{
+			int no_of_digits = 3;
+			int digits[3];
+			int state_index;
+			int transition_index;
+			int parameter_index;
+
+			for (int i = 0; i < no_of_digits; i++)
+				digits[i] = 0;
+
+			extract_digits(rc_variable, digits, 3);
+
+			state_index = digits[0] - 1;
+			transition_index = digits[1] - 1;
+			parameter_index = digits[2] - 1;
+
+			// This is tricky because the variable is stored in a gsl_vector
+			gsl_vector* p_gsl_v = p_FiberSim_hs->p_fs_model->p_m_scheme[0]->p_m_states[state_index]->p_transitions[transition_index]->rate_parameters;
+			p_controlled_variable = gsl_vector_ptr(p_gsl_v, parameter_index);
+
+			reflex_assigned = true;
+		}
+	}
+
 	if (rc_level == "myofilaments")
 	{
 		if (rc_variable == "k_on")
@@ -239,6 +280,8 @@ void reflex_control::set_controlled_variable(void)
 			parameter_index = digits[2] - 1;
 
 			// This is tricky because the variable is stored in a gsl_vector
+			printf("Reflex_control:: This needs to be fixed\n");
+			exit(1);
 			gsl_vector* p_gsl_v = p_parent_circulation->p_hemi_vent->p_hs->p_myofilaments->p_m_scheme->p_m_states[state_index]->p_transitions[transition_index]->rate_parameters;
 			p_controlled_variable = p_gsl_v->data + (parameter_index) * sizeof(p_gsl_v->stride);
 

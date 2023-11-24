@@ -244,7 +244,6 @@ double hemi_vent::wall_thickness_root_finder(double cv)
 	{
 		iter++;
 		status = gsl_root_fsolver_iterate(s);
-
 		x = gsl_root_fsolver_root(s);
 		x_lo = gsl_root_fsolver_x_lower(s);
 		x_hi = gsl_root_fsolver_x_upper(s);
@@ -333,7 +332,7 @@ double hemi_vent::return_internal_radius_for_chamber_volume(double cv)
 	return r;
 }
 
-double hemi_vent::return_pressure_for_chamber_volume(double cv)
+double hemi_vent::return_pressure_for_chamber_volume(double cv, double time_step_s)
 {
 	//! Code returns pressure for a given chamber volume
 
@@ -354,7 +353,17 @@ double hemi_vent::return_pressure_for_chamber_volume(double cv)
 	delta_hs_length = new_hs_length - p_hs->hs_length;
 
 	// Deduce stress for the new hs_length
-	new_stress = p_hs->return_wall_stress_after_delta_hsl(delta_hs_length);
+/*	double xt = 0.0;
+	for (int i = 0; i < 10; i++)
+	{
+		double ns;
+		ns = p_hs->return_wall_stress_after_delta_hsl(xt, time_step_s);
+		printf("xt: %g    ns: %g\n", xt, ns);
+		xt = xt + 1.0;
+	}
+*/
+
+	new_stress = p_hs->return_wall_stress_after_delta_hsl(delta_hs_length, time_step_s);
 
 	new_stress = GSL_MAX(-1000.0, new_stress);
 

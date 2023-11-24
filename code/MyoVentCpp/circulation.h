@@ -111,7 +111,7 @@ public:
 
 	bool implement_time_step(double time_step_s);
 
-	void calculate_pressures(const double v[], double p[]);
+	void calculate_pressures(const double v[], double p[], double time_step_s);
 
 	void calculate_flows(const double v[], double flow[]);
 

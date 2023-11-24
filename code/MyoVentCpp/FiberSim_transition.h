@@ -32,6 +32,9 @@ public:
 
 	char transition_type;			/**< char defining 'a' attachment, 'd' detachment, 'n' neutral */
 
+	int uses_ATP;					/**< integer, defining how many molecules of ATP the
+											transition uses */
+
 	gsl_vector* rate_parameters;	/**< gsl_vector holding parameter variables */
 
 	// Functions

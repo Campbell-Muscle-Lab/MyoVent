@@ -119,7 +119,7 @@ public:
 
 	double return_lv_circumference_for_chamber_volume(double cv);
 
-	double return_pressure_for_chamber_volume(double cv);
+	double return_pressure_for_chamber_volume(double cv, double time_step_s);
 
 	void update_chamber_volume(double new_volume);
 

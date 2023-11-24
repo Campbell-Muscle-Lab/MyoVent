@@ -1587,8 +1587,8 @@ double FiberSim_half_sarcomere::calculate_force(double delta_hsl, double time_st
     holder = (holder * (1.0 - p_fs_model->prop_fibrosis) *
         p_fs_model->prop_myofilaments * p_fs_model->m_filament_density *
         1e-9 / (double)m_n) +
-        hs_viscous_force +
-        hs_extracellular_force;
+        hs_extracellular_force +
+        hs_viscous_force;
 
     // Return
     return holder;
@@ -1681,7 +1681,7 @@ double FiberSim_half_sarcomere::calculate_extracellular_force(void)
             pas_force = p_fs_model->prop_fibrosis *
             e_sigma * (exp((hs_length - e_slack_length) / e_L) - 1.0);
         else
-            pas_force = p_fs_model->prop_fibrosis *
+            pas_force = -p_fs_model->prop_fibrosis *
             e_sigma * (exp(-(hs_length - e_slack_length) / e_L) - 1.0);
     }
 
@@ -2076,6 +2076,9 @@ void FiberSim_half_sarcomere::myosin_kinetics(double time_step)
 
     // Code
 
+    // Reset the ATP transition counter
+    ATP_transition_counter = 0;
+
     // Cycle through filaments
     for (int m_counter = 0; m_counter < m_n; m_counter++)
     {
@@ -2188,6 +2191,10 @@ void FiberSim_half_sarcomere::myosin_kinetics(double time_step)
             }
         }
     }
+
+    // Now normalize the ATP flux to the time step and the number of heads
+    ATP_flux = (double)(ATP_transition_counter) /
+        (time_step * (double)(m_n * m_cbs_per_thick_filament));
 }
 
 void FiberSim_half_sarcomere::mybpc_kinetics(double time_step)
@@ -2684,6 +2691,10 @@ void FiberSim_half_sarcomere::handle_lattice_event(lattice_event* p_event)
             gsl_vector_short_set(p_mf[p_event->m_f]->cb_bound_to_a_f, p_event->m_n, -1);
             gsl_vector_short_set(p_mf[p_event->m_f]->cb_bound_to_a_n, p_event->m_n, -1);
         }
+
+        // Add in the number of ATPs used
+        ATP_transition_counter = ATP_transition_counter +
+            p_event->p_trans->uses_ATP;
     }
 
     if (p_event->mol_type == 'c')
