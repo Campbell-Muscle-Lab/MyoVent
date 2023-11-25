@@ -294,7 +294,7 @@ bool circulation::implement_time_step(double time_step_s)
 	}
 
 	// Update the hemi_vent with the new volume
-	p_hemi_vent->update_chamber_volume(circ_volume[0]);
+	p_hemi_vent->update_chamber_volume(circ_volume[0], time_step_s);
 
 	p_hemi_vent->vent_chamber_radius = 
 		p_hemi_vent->return_internal_radius_for_chamber_volume(circ_volume[0]);

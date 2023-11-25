@@ -173,6 +173,7 @@
     <ClCompile Include="kinetic_scheme.cpp" />
     <ClCompile Include="membranes.cpp" />
     <ClCompile Include="mitochondria.cpp" />
+    <ClCompile Include="muscle.cpp" />
     <ClCompile Include="MyoSim_half_sarcomere.cpp" />
     <ClCompile Include="MyoSim_muscle.cpp" />
     <ClCompile Include="MyoSim_options.cpp" />

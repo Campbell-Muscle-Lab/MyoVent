@@ -139,7 +139,11 @@ void cmv_system::run_simulation(string protocol_file_string,
 
 	for (sim_t_index = 0; sim_t_index < p_cmv_protocol->no_of_time_steps; sim_t_index++)
 	{
-cout << "sim_t_index: " << sim_t_index << "\n";
+
+		if ((sim_t_index % 100) == 0)
+		{
+			cout << "sim_t_index: " << sim_t_index << "\n";
+		}
 
 		new_beat = implement_time_step(p_cmv_protocol->time_step_s);
 

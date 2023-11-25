@@ -7,6 +7,7 @@
 #include <cstdio>
 
 #include "cmv_options.h"
+#include "cmv_results.h"
 
 #include "muscle.h"
 #include "membranes.h"
@@ -16,13 +17,16 @@
 #include "FiberSim_half_sarcomere.h"
 #include "FiberSim_series_component.h"
 
+
+#include "gsl_math.h"
 #include "gsl_vector.h"
 #include "gsl_multiroots.h"
+#include "gsl_roots.h"
 
 // Structure used for root-finding for myofibril in length - or force control mode
 struct fs_m_control_params
 {
-	double time_step;
+	double time_step_s;
 	FiberSim_muscle* p_fs_m;
 	double target_force;
 };
@@ -54,6 +58,12 @@ FiberSim_muscle::FiberSim_muscle(muscle* set_p_parent_muscle)
 
 	// Make a new FiberSim series component
 	p_FiberSim_sc = new FiberSim_series_component(this);
+
+	// Set the length
+	fs_m_length = p_FiberSim_hs->hs_length + p_FiberSim_sc->sc_extension;
+
+	// Impose force balance
+	change_muscle_length(0.0, 0.0);
 }
 
 // Destructor
@@ -67,7 +77,7 @@ FiberSim_muscle::~FiberSim_muscle(void)
 
 // Other functions
 
-void FiberSim_muscle::initialise_for_MyoVent_simulation(void)
+void FiberSim_muscle::initialise_for_simulation(void)
 {
 	//! Code sets up for a simulation
 	
@@ -76,9 +86,14 @@ void FiberSim_muscle::initialise_for_MyoVent_simulation(void)
 	// Update a pointer
 	p_cmv_results_beat = p_parent_muscle->p_cmv_results_beat;
 
-	// Apply to the daughter objects
-	p_FiberSim_hs->initialise_for_MyoVent_simulation();
+	// Add fields
+	p_cmv_results_beat->add_results_field("fs_muscle_length", &fs_m_length);
+	p_cmv_results_beat->add_results_field("fs_muscle_stress", &fs_m_stress);
 
+
+	// Apply to the daughter objects
+	p_FiberSim_hs->initialise_for_simulation();
+	p_FiberSim_sc->initialise_for_simulation();
 }
 
 void FiberSim_muscle::implement_time_step(double time_step_s)
@@ -136,7 +151,7 @@ int FiberSim_muscle::change_muscle_length(double delta_ml, double time_step_s)
 
 	fs_m_control_params* par = new fs_m_control_params;
 	par->p_fs_m = this;
-	par->time_step = time_step_s;
+	par->time_step_s = time_step_s;
 
 	gsl_multiroot_function f = { &wrapper_length_control_myofibril_with_series_compliance, calculation_size, par };
 
@@ -174,7 +189,8 @@ int FiberSim_muscle::change_muscle_length(double delta_ml, double time_step_s)
 			}
 		}
 
-		status = gsl_multiroot_test_delta(s->dx, s->x, p_FiberSim_options->myofibril_force_tolerance, 0);
+		//status = gsl_multiroot_test_residual(s->f, p_FiberSim_options->myofibril_force_tolerance);
+		status = gsl_multiroot_test_delta(s->dx, s->x, p_FiberSim_options->myofibril_force_tolerance, 0.0);
 
 		gsl_vector_free(y);
 	} while ((status == GSL_CONTINUE) && (myofibril_iterations < p_FiberSim_options->myofibril_max_iterations));
@@ -195,6 +211,13 @@ int FiberSim_muscle::change_muscle_length(double delta_ml, double time_step_s)
 
 	// Update muscle force
 	fs_m_stress = p_FiberSim_sc->sc_force;
+
+/*
+	printf("hsl: %g\t\tscl: %g\t\ttotal_l: %g\n",
+		p_FiberSim_hs->hs_length, p_FiberSim_sc->sc_extension, fs_m_length);
+	printf("hs_force: %g\t\tsc_f: %g\t\ttotal_f: %g\n\n",
+		p_FiberSim_hs->hs_force, p_FiberSim_sc->sc_force, fs_m_stress);
+*/
 
 	// Tidy up
 	gsl_multiroot_fsolver_free(s);
@@ -257,7 +280,7 @@ size_t FiberSim_muscle::worker_length_control_myofibril_with_series_compliance(
 	// Set the force control parameters
 	fs_m_force_control_params* fp = new fs_m_force_control_params;
 	fp->target_force = gsl_vector_get(x, x->size - 1);
-	fp->time_step = params->time_step;
+	fp->time_step = params->time_step_s;
 	fp->p_fs_hs = p_FiberSim_hs;
 
 	// Get the length-change for the half-sacomere
@@ -287,6 +310,94 @@ size_t FiberSim_muscle::worker_length_control_myofibril_with_series_compliance(
 	return GSL_SUCCESS;
 }
 
+double FiberSim_muscle::return_muscle_length_for_force(double target_force, double time_step_s)
+{
+	//! Returns the muscle length for force
+	
+	// Variables
+	double delta_ml;
+
+	// Code
+
+	delta_ml = calculate_delta_ml_for_force(target_force, time_step_s);
+
+	// Return
+	return (fs_m_length + delta_ml);
+}
+
+double test_force_wrapper(double delta_ml, void* params)
+{
+	//! Code used by root finding for force balance
+
+	// Variables
+	struct fs_m_control_params* p =
+		(struct fs_m_control_params*)params;
+	FiberSim_muscle* p_fs_m = p->p_fs_m;
+
+	double test_value;
+
+	// Code
+	test_value = p_fs_m->return_wall_stress_after_test_delta_ml(delta_ml, p->time_step_s);
+
+	if (!gsl_finite(test_value))
+	{
+		if (delta_ml > 0)
+			test_value = DBL_MAX;
+		else
+			test_value = -DBL_MAX;
+	}
+
+	return test_value;
+}
+
+double FiberSim_muscle::calculate_delta_ml_for_force(double target_force, double time_step_s)
+{
+	//! Returns the delta_ml required for the muscle to generate the target force
+	
+	// Variables
+	int status;
+	int iter = 0, max_iter = 100;
+	const gsl_root_fsolver_type* T;
+	gsl_root_fsolver* s;
+
+	double r = 0.0;
+	double x_lo = GSL_MAX(-(fs_m_length - 10.0), -p_FiberSim_options->hs_force_control_max_delta_hs_length);
+	double x_hi = p_FiberSim_options->hs_force_control_max_delta_hs_length;
+	struct fs_m_control_params params = { time_step_s, this, target_force};
+
+	gsl_function F;
+	F.function = &test_force_wrapper;
+	F.params = &params;
+
+	// Test
+
+	double test_value;
+	test_value = test_force_wrapper(x_lo, &params);
+	printf("x_lo: %g\t\ttest_value: %g\n", x_lo, test_value);
+
+	test_value = test_force_wrapper(x_hi, &params);
+	printf("x_hi: %g\t\ttest_value: %g\n", x_hi, test_value);
+
+	// Code
+	T = gsl_root_fsolver_brent;
+	s = gsl_root_fsolver_alloc(T);
+	gsl_root_fsolver_set(s, &F, x_lo, x_hi);
+
+	do
+	{
+		iter++;
+		status = gsl_root_fsolver_iterate(s);
+		r = gsl_root_fsolver_root(s);
+		x_lo = gsl_root_fsolver_x_lower(s);
+		x_hi = gsl_root_fsolver_x_upper(s);
+		status = gsl_root_test_interval(x_lo, x_hi, 0.01, 0);
+	} while (status == GSL_CONTINUE && iter < max_iter);
+
+	gsl_root_fsolver_free(s);
+
+	return r;
+}
+
 double FiberSim_muscle::return_wall_stress_after_test_delta_ml(double delta_ml, double time_step_s)
 {
 	//! Function returns force after a test length change
@@ -304,5 +415,8 @@ double FiberSim_muscle::return_wall_stress_after_test_delta_ml(double delta_ml, 
 
 	// Change back
 	change_muscle_length(-delta_ml, time_step_s);
+
+	// Return
+	return test_force;
 }
 

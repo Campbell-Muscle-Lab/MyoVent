@@ -377,7 +377,7 @@ FiberSim_half_sarcomere::~FiberSim_half_sarcomere()
     gsl_vector_free(cum_prob);
 }
 
-void FiberSim_half_sarcomere::initialise_for_MyoVent_simulation(void)
+void FiberSim_half_sarcomere::initialise_for_simulation(void)
 {
     //! Code sets up for simulation
     
@@ -390,29 +390,32 @@ void FiberSim_half_sarcomere::initialise_for_MyoVent_simulation(void)
     p_cmv_results_beat = p_parent_fs_muscle->p_cmv_results_beat;
 
     // Add results fields
+
+    p_cmv_results_beat->add_results_field("fs_hs_length", &hs_length);
+    p_cmv_results_beat->add_results_field("fs_hs_stress_titin", &hs_titin_force);
+    p_cmv_results_beat->add_results_field("fs_hs_stress_extracellular", &hs_extracellular_force);
+    p_cmv_results_beat->add_results_field("fs_hs_stress_viscous", &hs_viscous_force);
+    p_cmv_results_beat->add_results_field("fs_hs_stress_total", &hs_force);
+
+
     for (int i = 0; i < a_no_of_bs_states; i++)
     {
-        string label = string("fs_a_pop_") + to_string(i);
+        string label = string("fs_hs_a_pop_") + to_string(i);
         p_cmv_results_beat->add_results_field(label, gsl_vector_ptr(a_pops, i));
     }
 
     for (int i = 0; i < p_m_scheme[0]->no_of_states; i++)
     {
-        string label = string("fs_m_pop_") + to_string(i);
+        string label = string("fs_hs_m_pop_") + to_string(i);
         p_cmv_results_beat->add_results_field(label, gsl_vector_ptr(m_pops, i));
     }
 
     // and MyBPC
     for (int i = 0; i < p_c_scheme[0]->no_of_states; i++)
     {
-        string label = string("fs_c_pop_") + to_string(i);
+        string label = string("fs_hs_c_pop_") + to_string(i);
         p_cmv_results_beat->add_results_field(label, gsl_vector_ptr(c_pops, i));
     }
-
-    p_cmv_results_beat->add_results_field("fs_stress_titin", &hs_titin_force);
-    p_cmv_results_beat->add_results_field("fs_stress_extracellular", &hs_extracellular_force);
-    p_cmv_results_beat->add_results_field("fs_stress_viscous", &hs_viscous_force);
-    p_cmv_results_beat->add_results_field("fs_stress_total", &hs_force);
 }
 
 

@@ -21,7 +21,10 @@
 #include "heart_rate.h"
 
 #include "MyoSim_muscle.h"
+
 #include "FiberSim_muscle.h"
+#include "FiberSim_half_sarcomere.h"
+#include "FiberSim_series_component.h"
 
 #include "gsl_errno.h"
 #include "gsl_math.h"
@@ -62,17 +65,19 @@ muscle::muscle(hemi_vent* set_p_parent_hemi_vent)
 	}
 	else
 	{
+		// We are making a FiberSim muscle
 		p_MyoSim_muscle = NULL;
 		p_FiberSim_muscle = new FiberSim_muscle(this);
+
+		muscle_length = p_FiberSim_muscle->fs_m_length;
+		muscle_stress = p_FiberSim_muscle->fs_m_stress;
 	}
 
 	// Set safe values
 	p_cmv_results_beat = NULL;
 
 	// Initialise
-	muscle_stress = 0.0;
 	muscle_ATP_used_per_liter_per_s = 0.0;
-	muscle_length = p_cmv_model->hs_reference_hs_length;
 	muscle_reference_length = p_cmv_model->hs_reference_hs_length;
 	muscle_delta_G_ATP = p_cmv_model->hs_delta_G_ATP;
 	muscle_ATP_concentration = p_cmv_model->hs_initial_ATP_concentration;
@@ -110,10 +115,10 @@ void muscle::initialise_simulation(void)
 	p_cmv_results_beat = p_parent_hemi_vent->p_cmv_results_beat;
 
 	// Now add the results fields
-	p_cmv_results_beat->add_results_field("muscle_length", &hs_length);
-	p_cmv_results_beat->add_results_field("muscle_stress", &hs_stress);
-	p_cmv_results_beat->add_results_field("muscle_ATP_used_per_liter_per_s", &hs_ATP_used_per_liter_per_s);
-	p_cmv_results_beat->add_results_field("muscle_ATP_concentration", &hs_ATP_concentration);
+	p_cmv_results_beat->add_results_field("muscle_length", &muscle_length);
+	p_cmv_results_beat->add_results_field("muscle_stress", &muscle_stress);
+	p_cmv_results_beat->add_results_field("muscle_ATP_used_per_liter_per_s", &muscle_ATP_used_per_liter_per_s);
+	p_cmv_results_beat->add_results_field("muscle_ATP_concentration", &muscle_ATP_concentration);
 
 	// Now initialise daughter objects
 	p_heart_rate->initialise_simulation();
@@ -122,34 +127,18 @@ void muscle::initialise_simulation(void)
 	
 	if (p_FiberSim_muscle != NULL)
 	{
-		p_FiberSim_muscle->initialise_for_MyoVent_simulation();
-
-		// Adjust to slack length
-		slack_length = p_FiberSim_muscle->return_muscle_length_for_force(0.0, 0.0);
-		p_FiberSim_hs->update_lattice(0.0, (slack_length - p_FiberSim_hs->hs_length));
-
-		// Now calculate forces
-		p_FiberSim_hs->calculate_force(0.0, 0.0);
-
-		hs_stress = p_FiberSim_hs->hs_force;
+		p_FiberSim_muscle->initialise_for_simulation();
 	}
 	else
 	{
-		printf("MyoSim_muscle::Not yet implemented\n");
+		printf("Not yet implemented\n");
 		exit(1);
-
-		/*
-		// Set the hs_length so that wall stress is zero
-		slack_hs_length = return_hs_length_for_stress(0.0);
-
-		change_hs_length(slack_hs_length - hs_length);
-
-		// Now calculate the wall stress
-		p_myofilaments->calculate_stresses();
-
-		hs_stress = p_myofilaments->myof_stress_total;
-		*/
+		//p_MyoSim_muscle->initialise_for_simulation();
 	}
+
+	// Now adjust muscle to slack length
+	slack_length = return_muscle_length_for_stress(0.0, 0.0);
+	change_muscle_length(slack_length - muscle_length, 0.0);
 }
 
 bool muscle::implement_time_step(double time_step_s)
@@ -182,7 +171,7 @@ bool muscle::implement_time_step(double time_step_s)
 	}
 
 	// Update the ATP
-	calculate_hs_ATP_concentration(time_step_s);
+	calculate_muscle_ATP_concentration(time_step_s);
 
 	// Return new beat status
 	return (new_beat);
@@ -200,8 +189,7 @@ void muscle::change_muscle_length(double delta_ml, double time_step_s)
 	if (p_FiberSim_muscle != NULL)
 	{
 		p_FiberSim_muscle->change_muscle_length(delta_ml, time_step_s);
-
-		muscle_stress = p_FiberSim_muscle->muscle_stress;
+		muscle_stress = p_FiberSim_muscle->fs_m_stress;
 	}
 	else
 	{
@@ -232,6 +220,7 @@ double muscle::return_wall_stress_after_test_delta_ml(double delta_ml, double ti
 	else
 	{
 		printf("Not yet implemented\n");
+		wall_stress = 0.0;
 		exit(1);
 		//wall_stress = p_myofilaments->return_stress_after_delta_hsl(delta_hsl);
 	}
@@ -243,6 +232,7 @@ struct gsl_root_params
 {
 	muscle* p_muscle_temp;
 	double stress_target;
+	double time_step_s;
 };
 
 double muscle_stress_root_finder(double x, void* params)
@@ -259,7 +249,7 @@ double muscle_stress_root_finder(double x, void* params)
 	struct gsl_root_params* p = (struct gsl_root_params*)params;
 
 	// Calculate the new stress after a length change
-	new_stress = p->p_muscle_temp->return_wall_stress_after_delta_hsl(x, 0.0);
+	new_stress = p->p_muscle_temp->return_wall_stress_after_test_delta_ml(x, p->time_step_s);
 
 	// Calculate the difference between the new stress and the target
 	stress_difference = new_stress - p->stress_target;
@@ -268,20 +258,20 @@ double muscle_stress_root_finder(double x, void* params)
 	return stress_difference;
 }
 
-double muscle::return_muscle_length_for_stress(double target_stress)
+double muscle::return_muscle_length_for_stress(double target_stress, double time_step_s)
 {
 	//! Code returns the muscle_length at which force is equal to the target
 
 	// Variables
-	double x_lo = -500;
-	double x_hi = 500;
+	double x_lo = -100;
+	double x_hi = 100;
 	double r;
 
 	const gsl_root_fsolver_type* T;
 	gsl_root_fsolver* s;
 
 	gsl_function F;
-	struct gsl_root_params params = { this, target_stress };
+	struct gsl_root_params params = { this, target_stress, time_step_s};
 
 	int status;
 	int iter = 0;
@@ -332,11 +322,13 @@ void muscle::calculate_muscle_ATP_concentration(double time_step_s)
 	if (p_FiberSim_muscle != NULL)
 	{
 		ATP_flux = p_FiberSim_muscle->p_FiberSim_hs->ATP_flux;
+
 		cb_number_density = p_cmv_model->p_fs_model->m_filament_density *
-			p_FiberSim_hs->m_cbs_per_thick_filament;
+			(p_FiberSim_muscle->p_FiberSim_hs->m_cbs_per_thick_filament);
 	}
 	else
 	{
+		// MyoSim
 		printf("Not yet implemented\n");
 		exit(1);
 
@@ -345,18 +337,17 @@ void muscle::calculate_muscle_ATP_concentration(double time_step_s)
 	}
 
 	d_heads = 0.001 *
-		(1.0 - hs_prop_fibrosis) * hs_prop_myofilaments *
+		(1.0 - muscle_prop_fibrosis) * muscle_prop_myofilaments *
 			cb_number_density *
-			(1.0 / (1e-9 * hs_reference_hs_length));
+			(1.0 / (1e-9 * muscle_reference_length));
 
-	hs_ATP_used_per_liter_per_s = -d_heads * ATP_flux /
+	muscle_ATP_used_per_liter_per_s = -d_heads * ATP_flux /
 								GSL_CONST_NUM_AVOGADRO;
 
 	// Euler step
-
-	hs_ATP_concentration = hs_ATP_concentration +
+	muscle_ATP_concentration = muscle_ATP_concentration +
 		(time_step_s *
-			(hs_ATP_used_per_liter_per_s +
+			(muscle_ATP_used_per_liter_per_s +
 				p_mitochondria->mito_ATP_generated_M_per_liter_per_s));
 }
 

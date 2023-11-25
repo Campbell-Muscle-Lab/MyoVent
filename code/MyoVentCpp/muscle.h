@@ -101,7 +101,7 @@ public:
 
 	double return_wall_stress_after_test_delta_ml(double delta_ml, double time_step_s);
 
-	double return_muscle_length_for_stress(double target_stress);
+	double return_muscle_length_for_stress(double target_stress, double time_step_s);
 
 	void calculate_muscle_ATP_concentration(double time_step);
 	

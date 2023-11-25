@@ -53,5 +53,8 @@ classDiagram
     FiberSim_half_sarcomere <|-- FiberSim_thick_filament
     FiberSim_half_sarcomere <|-- FiberSim_thin_filament
 
+    MyoSim_muscle <|-- MyoSim_half_sarcomere
+    MyoSim_muscle <|-- MyoSim_series_component
+
 
 ````

@@ -16,6 +16,7 @@
 #include "muscle.h"
 
 #include "cmv_model.h"
+#include "cmv_results.h"
 
 
 
@@ -44,6 +45,19 @@ FiberSim_series_component::~FiberSim_series_component(void)
 }
 
 // Other functions
+void FiberSim_series_component::initialise_for_simulation(void)
+{
+	//! Initialises for simulation
+	
+	// Variables
+	p_cmv_results_beat = p_parent_fs_muscle->p_cmv_results_beat;
+
+	// Add results fields
+	p_cmv_results_beat->add_results_field("fs_sc_extension", &sc_extension);
+	p_cmv_results_beat->add_results_field("fs_sc_force", &sc_force);
+
+}
+
 double FiberSim_series_component::return_series_extension(double muscle_force)
 {
 	//! Returns the extension of the series component for a given force

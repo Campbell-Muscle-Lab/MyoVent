@@ -395,7 +395,7 @@ double hemi_vent::return_pressure_for_chamber_volume(double cv, double time_step
 	return P_in_mmHg;
 }
 
-void hemi_vent::update_chamber_volume(double new_volume)
+void hemi_vent::update_chamber_volume(double new_volume, double time_step_s)
 {
 	//! Function updates the chamber volume
 
@@ -414,7 +414,7 @@ void hemi_vent::update_chamber_volume(double new_volume)
 
 	delta_muscle_length = 1e9 * delta_circumference / vent_n_hs;
 
-	p_muscle->change_muscle_length(delta_muscle_length, 0.0);
+	p_muscle->change_muscle_length(delta_muscle_length, time_step_s);
 
 	vent_circumference = new_circumference;
 }

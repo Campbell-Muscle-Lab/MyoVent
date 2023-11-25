@@ -318,11 +318,11 @@ public:
     ~FiberSim_half_sarcomere(void);
 
     /**
-    * initialise_for_MyoVent_simulation(void)
+    * initialise_for_simulation(void)
     * Sets pointers for the simulation
     * @return void
     */
-    void initialise_for_MyoVent_simulation(void);
+    void initialise_for_simulation(void);
 
     /**
     * initialise_filament_y_z_coordinates(int m_n)

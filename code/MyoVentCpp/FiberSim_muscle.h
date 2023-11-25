@@ -55,7 +55,7 @@ public:
 
 	// Other functions
 
-	void initialise_for_MyoVent_simulation(void);
+	void initialise_for_simulation(void);
 
 	void implement_time_step(double time_step_s);		/**< Runs sarcomere kinetics */
 
@@ -64,6 +64,12 @@ public:
 
 	size_t worker_length_control_myofibril_with_series_compliance(
 		const gsl_vector* x, void* p, gsl_vector* f);
+
+	double return_muscle_length_for_force(double target_force, double time_step_s);
+														/** Returns the muscle length for
+															a given force */
+
+	double calculate_delta_ml_for_force(double target_force, double time_step_s);
 
 	double return_wall_stress_after_test_delta_ml(double delta_ml, double time_step_s);
 };

@@ -124,7 +124,7 @@ public:
 
 	double return_pressure_for_chamber_volume(double cv, double time_step_s);
 
-	void update_chamber_volume(double new_volume);
+	void update_chamber_volume(double new_volume, double time_step_s);
 
 	void update_beat_metrics(void);
 

@@ -272,9 +272,11 @@ void FiberSim_options::set_FiberSim_options_from_JSON_file_string(const rapidjso
     }
 
     // Check for myofibrils
-    if (JSON_functions::check_JSON_member_exists(options, "myofibrils"))
+    if (JSON_functions::is_JSON_member(options, "myofibrils"))
     {
         const rapidjson::Value& myofibrils = options["myofibrils"];
+
+        printf("\n\nKen was here\n");
 
         JSON_functions::check_JSON_member_number(myofibrils, "force_tolerance");
         myofibril_force_tolerance = myofibrils["force_tolerance"].GetDouble();
@@ -284,9 +286,6 @@ void FiberSim_options::set_FiberSim_options_from_JSON_file_string(const rapidjso
 
         JSON_functions::check_JSON_member_number(myofibrils, "max_delta_hs_length");
         myofibril_max_delta_hs_length = myofibrils["max_delta_hs_length"].GetDouble();
-
-        JSON_functions::check_JSON_member_int(myofibrils, "multithreading");
-        myofibril_multithreading = myofibrils["multithreading"].GetInt();
     }
 
     // Now check for logging

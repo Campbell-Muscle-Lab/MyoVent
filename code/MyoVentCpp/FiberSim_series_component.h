@@ -11,6 +11,8 @@
 // Forward declaration
 class FiberSim_muscle;
 
+class cmv_results;
+
 class FiberSim_series_component
 {
 public:
@@ -18,6 +20,8 @@ public:
 	// Variables
 	
 	FiberSim_muscle* p_parent_fs_muscle;					/**< Pointer to the parent FiberSim muscle */
+
+	cmv_results* p_cmv_results_beat;						/**< pointer to a simulation results object */
 
 	double sc_extension;									/**< double holding sc_length in nm */
 
@@ -41,5 +45,7 @@ public:
 	double return_series_extension(double muscle_force);
 
 	double return_series_force(double series_extension);
+
+	void initialise_for_simulation(void);
 
 };

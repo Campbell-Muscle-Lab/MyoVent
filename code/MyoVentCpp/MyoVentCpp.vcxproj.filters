@@ -120,6 +120,9 @@
     <ClCompile Include="FiberSim_series_component.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="muscle.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cmv_system.h">
