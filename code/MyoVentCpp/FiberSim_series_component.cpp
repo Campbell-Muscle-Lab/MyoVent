@@ -32,9 +32,11 @@ FiberSim_series_component::FiberSim_series_component(FiberSim_muscle* set_p_pare
 	p_fs_model = p_parent_fs_muscle->p_parent_muscle->p_cmv_model->p_fs_model;
 
 	sc_k_stiff = p_fs_model->sc_k_stiff;
+	sc_eta = p_fs_model->sc_eta;
 
 	// Set some defaults
 	sc_extension = 0.0;
+	sc_last_extension = 0.0;
 	sc_force = 0.0;
 }
 
@@ -54,13 +56,15 @@ void FiberSim_series_component::initialise_for_simulation(void)
 
 	// Add results fields
 	p_cmv_results_beat->add_results_field("fs_sc_extension", &sc_extension);
+	p_cmv_results_beat->add_results_field("fs_sc_last_extension", &sc_last_extension);
 	p_cmv_results_beat->add_results_field("fs_sc_force", &sc_force);
 
 }
 
-double FiberSim_series_component::return_series_extension(double muscle_force)
+double FiberSim_series_component::return_series_extension(double muscle_force, double time_step_s)
 {
 	//! Returns the extension of the series component for a given force
+	//! Assumption is that F = kx + eta*(x-x_last)/delta_t
 
 	// Variables
 	double ext;
@@ -72,20 +76,41 @@ double FiberSim_series_component::return_series_extension(double muscle_force)
 		exit(1);
 	}
 
-	ext = muscle_force / sc_k_stiff;
+	if (time_step_s > 0.0)
+	{
+		ext = (muscle_force + ((sc_eta * sc_last_extension) / time_step_s)) /
+			(sc_k_stiff + (sc_eta / time_step_s));
+	}
+	else
+	{
+		ext = (muscle_force / sc_k_stiff);
+	}
 
 	return ext;
 }
 
-double FiberSim_series_component::return_series_force(double series_extension)
+double FiberSim_series_component::return_series_force_for_length(double test_length, double time_step_s)
 {
-	//! Returns the force in the series component for a given extension
+	//! Returns force for test_length
 
 	// Variables
-	double series_force;
+	double elastic_force;
+	double viscous_force;
+	double test_force;
 
 	// Code
-	series_force = series_extension * sc_k_stiff;
+	elastic_force = sc_k_stiff * test_length;
 
-	return series_force;
+	if (time_step_s > 0)
+	{
+		viscous_force = sc_eta * (test_length - sc_extension) / time_step_s;
+	}
+	else
+	{
+		viscous_force = 0.0;
+	}
+
+	test_force = elastic_force + viscous_force;
+
+	return test_force;
 }

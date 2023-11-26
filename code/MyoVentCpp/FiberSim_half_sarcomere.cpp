@@ -1685,12 +1685,18 @@ double FiberSim_half_sarcomere::calculate_extracellular_force(void)
     if (!strcmp(e_passive_mode, "exponential"))
     {
         if (hs_length >= e_slack_length)
+        {
             pas_force = p_fs_model->prop_fibrosis *
-            e_sigma * (exp((hs_length - e_slack_length) / e_L) - 1.0);
+                e_sigma * (exp((hs_length - e_slack_length) / e_L) - 1.0);
+        }
         else
+        {
             pas_force = -p_fs_model->prop_fibrosis *
-            e_sigma * (exp(-(hs_length - e_slack_length) / e_L) - 1.0);
+                e_sigma * (exp(-(hs_length - e_slack_length) / e_L) - 1.0);
+        }
     }
+
+
 
     if (!strcmp(e_passive_mode, "linear"))
     {

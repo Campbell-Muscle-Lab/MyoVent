@@ -27,7 +27,12 @@ public:
 
 	double sc_k_stiff;										/**< double holding sc_stiffness in N M^-1 */
 
+	double sc_eta;											/**< double holding sc parallell viscosity */
+
 	double sc_force;										/**< double holding the sc_force in N m^-2 */
+
+	double sc_last_extension;								/**< double holding the extension on the last
+																	time_step */
 
 	// Functions
 
@@ -42,10 +47,10 @@ public:
 	~FiberSim_series_component(void);
 
 	// Other functions
-	double return_series_extension(double muscle_force);
-
-	double return_series_force(double series_extension);
+	double return_series_extension(double muscle_force, double time_step_s);
 
 	void initialise_for_simulation(void);
+
+	double return_series_force_for_length(double test_length, double time_step_s);
 
 };

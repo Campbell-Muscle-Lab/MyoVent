@@ -64,11 +64,11 @@ void FiberSim_model::set_FiberSim_model_parameters(const rapidjson::Value& doc)
 {
     // Load the FiberSim version number
 
-    JSON_functions::check_JSON_member_object(doc, "FiberSim");
-    const rapidjson::Value& fs = doc["FiberSim"];
+    JSON_functions::check_JSON_member_object(doc, "version");
+    const rapidjson::Value& ver = doc["version"];
 
-    JSON_functions::check_JSON_member_string(fs, "version");
-    sprintf_s(version, _MAX_PATH, fs["version"].GetString());
+    JSON_functions::check_JSON_member_string(ver, "version");
+    sprintf_s(version, _MAX_PATH, ver["version"].GetString());
 
     printf("version: %s\n", version);
 
@@ -82,38 +82,45 @@ void FiberSim_model::set_FiberSim_model_parameters(const rapidjson::Value& doc)
     JSON_functions::check_JSON_member_int(mus, "no_of_myofibrils");
     no_of_myofibrils = mus["no_of_myofibrils"].GetInt();
 
-    JSON_functions::check_JSON_member_number(mus, "initial_hs_length");
-    initial_hs_length = mus["initial_hs_length"].GetDouble();
-
-    JSON_functions::check_JSON_member_number(mus, "prop_fibrosis");
-    prop_fibrosis = mus["prop_fibrosis"].GetDouble();
-
-    JSON_functions::check_JSON_member_number(mus, "prop_myofilaments");
-    prop_myofilaments = mus["prop_myofilaments"].GetDouble();
-
-    JSON_functions::check_JSON_member_number(mus, "m_filament_density");
-    m_filament_density = mus["m_filament_density"].GetDouble();
-
     // Check if the series elastic component is specified
-    if (JSON_functions::check_JSON_member_exists(mus, "sc_k_stiff"))
+    if (JSON_functions::check_JSON_member_exists(mus, "series_component"))
     {
-        // Is it a number
-        if (JSON_functions::valid_JSON_member_number(mus, "sc_k_stiff"))
-        {
-            sc_k_stiff = mus["sc_k_stiff"].GetDouble();
-        }
-        else
-        {
-            sc_k_stiff = GSL_NAN;
-        }
+        const rapidjson::Value& sc = mus["series_component"];
+        
+        // Now pull off properties
+        JSON_functions::check_JSON_member_number(sc, "sc_k_stiff");
+        sc_k_stiff = sc["sc_k_stiff"].GetDouble();
+
+        JSON_functions::check_JSON_member_number(sc, "sc_eta");
+        sc_eta = sc["sc_eta"].GetDouble();
     }
     else
+    {
         sc_k_stiff = GSL_NAN;
+        sc_eta = GSL_NAN;
+    }
+
+    // Now pull off the half-sarcomere
+    const rapidjson::Value& hs = mus["half_sarcomere"];
+
+    const rapidjson::Value& mat = hs["material"];
+
+    JSON_functions::check_JSON_member_number(mat, "initial_hs_length");
+    initial_hs_length = mat["initial_hs_length"].GetDouble();
+
+    JSON_functions::check_JSON_member_number(mat, "prop_fibrosis");
+    prop_fibrosis = mat["prop_fibrosis"].GetDouble();
+
+    JSON_functions::check_JSON_member_number(mat, "prop_myofilaments");
+    prop_myofilaments = mat["prop_myofilaments"].GetDouble();
+
+    JSON_functions::check_JSON_member_number(mat, "m_filament_density");
+    m_filament_density = mat["m_filament_density"].GetDouble();
 
     // Check if temperature is specified - This part of the code ensures compatibility with FiberSim V2.0.2
 
-    if (JSON_functions::check_JSON_member_exists(mus, "temperature"))
-        temperature = mus["temperature"].GetDouble();
+    if (JSON_functions::check_JSON_member_exists(mat, "temperature"))
+        temperature = mat["temperature"].GetDouble();
     else
         temperature = 310;
 
@@ -121,9 +128,9 @@ void FiberSim_model::set_FiberSim_model_parameters(const rapidjson::Value& doc)
 
     // Check if lattice_parameters is specified - This part of the code ensures compatibility with FiberSim V2.0.2
 
-    if (JSON_functions::check_JSON_member_exists(doc, "lattice_parameters"))
+    if (JSON_functions::check_JSON_member_exists(hs, "lattice_parameters"))
     { 
-        const rapidjson::Value& lp = doc["lattice_parameters"];
+        const rapidjson::Value& lp = hs["lattice_parameters"];
         JSON_functions::check_JSON_member_number(lp, "viscosity");
         viscosity = lp["viscosity"].GetDouble();
     }
@@ -133,8 +140,8 @@ void FiberSim_model::set_FiberSim_model_parameters(const rapidjson::Value& doc)
     }
 
     // Load the thick_structure variables
-    JSON_functions::check_JSON_member_object(doc, "thick_structure");
-    const rapidjson::Value& thick_structure = doc["thick_structure"];
+    JSON_functions::check_JSON_member_object(hs, "thick_structure");
+    const rapidjson::Value& thick_structure = hs["thick_structure"];
 
     JSON_functions::check_JSON_member_int(thick_structure, "m_n");
     m_n = thick_structure["m_n"].GetInt();
@@ -164,8 +171,8 @@ void FiberSim_model::set_FiberSim_model_parameters(const rapidjson::Value& doc)
     m_within_hub_twist = thick_structure["m_within_hub_twist"].GetDouble();
 
     // Load the thin_structure variables
-    JSON_functions::check_JSON_member_object(doc, "thin_structure");
-    const rapidjson::Value& thin_structure = doc["thin_structure"];
+    JSON_functions::check_JSON_member_object(hs, "thin_structure");
+    const rapidjson::Value& thin_structure = hs["thin_structure"];
 
     JSON_functions::check_JSON_member_int(thin_structure, "a_strands_per_filament");
     a_strands_per_filament = thin_structure["a_strands_per_filament"].GetInt();
@@ -183,8 +190,8 @@ void FiberSim_model::set_FiberSim_model_parameters(const rapidjson::Value& doc)
     a_inter_bs_twist = thin_structure["a_inter_bs_twist"].GetDouble();
 
     // Load the titin_structure variables
-    JSON_functions::check_JSON_member_object(doc, "titin_structure");
-    const rapidjson::Value& titin_structure = doc["titin_structure"];
+    JSON_functions::check_JSON_member_object(hs, "titin_structure");
+    const rapidjson::Value& titin_structure = hs["titin_structure"];
 
     JSON_functions::check_JSON_member_int(titin_structure, "t_attach_a_node");
     t_attach_a_node = titin_structure["t_attach_a_node"].GetInt();
@@ -193,8 +200,8 @@ void FiberSim_model::set_FiberSim_model_parameters(const rapidjson::Value& doc)
     t_attach_m_node = titin_structure["t_attach_m_node"].GetInt();
 
     // Load the MyBPC structure variables
-    JSON_functions::check_JSON_member_object(doc, "mybpc_structure");
-    const rapidjson::Value& mybpc_structure = doc["mybpc_structure"];
+    JSON_functions::check_JSON_member_object(hs, "mybpc_structure");
+    const rapidjson::Value& mybpc_structure = hs["mybpc_structure"];
 
     JSON_functions::check_JSON_member_int(mybpc_structure, "c_thick_proximal_node");
     c_thick_proximal_node = mybpc_structure["c_thick_proximal_node"].GetInt();
@@ -225,8 +232,8 @@ void FiberSim_model::set_FiberSim_model_parameters(const rapidjson::Value& doc)
         c_sd_angle_deviation = 0.0;
 
     // Load the MyBPC parameters variables
-    JSON_functions::check_JSON_member_object(doc, "mybpc_parameters");
-    const rapidjson::Value& mybpc_parameters = doc["mybpc_parameters"];
+    JSON_functions::check_JSON_member_object(hs, "mybpc_parameters");
+    const rapidjson::Value& mybpc_parameters = hs["mybpc_parameters"];
 
     JSON_functions::check_JSON_member_number(mybpc_parameters, "c_k_stiff");
     c_k_stiff = mybpc_parameters["c_k_stiff"].GetDouble();
@@ -245,8 +252,8 @@ void FiberSim_model::set_FiberSim_model_parameters(const rapidjson::Value& doc)
     }
 
     // Load the thin_parameters
-    JSON_functions::check_JSON_member_object(doc, "thin_parameters");
-    const rapidjson::Value& thin_parameters = doc["thin_parameters"];
+    JSON_functions::check_JSON_member_object(hs, "thin_parameters");
+    const rapidjson::Value& thin_parameters = hs["thin_parameters"];
 
     JSON_functions::check_JSON_member_number(thin_parameters, "a_k_stiff");
     a_k_stiff = thin_parameters["a_k_stiff"].GetDouble();
@@ -281,15 +288,15 @@ void FiberSim_model::set_FiberSim_model_parameters(const rapidjson::Value& doc)
         a_k_force = 0.0;
 
     // Load the thick_parameters
-    JSON_functions::check_JSON_member_object(doc, "thick_parameters");
-    const rapidjson::Value& thick_parameters = doc["thick_parameters"];
+    JSON_functions::check_JSON_member_object(hs, "thick_parameters");
+    const rapidjson::Value& thick_parameters = hs["thick_parameters"];
 
     JSON_functions::check_JSON_member_number(thick_parameters, "m_k_stiff");
     m_k_stiff = thick_parameters["m_k_stiff"].GetDouble();
 
     // Load the m_parameters
-    JSON_functions::check_JSON_member_object(doc, "m_parameters");
-    const rapidjson::Value& m_parameters = doc["m_parameters"];
+    JSON_functions::check_JSON_member_object(hs, "m_parameters");
+    const rapidjson::Value& m_parameters = hs["m_parameters"];
 
     JSON_functions::check_JSON_member_number(m_parameters, "m_k_cb");
     m_k_cb = m_parameters["m_k_cb"].GetDouble();
@@ -307,8 +314,8 @@ void FiberSim_model::set_FiberSim_model_parameters(const rapidjson::Value& doc)
     }
 
     // Load the titin_parameters
-    JSON_functions::check_JSON_member_object(doc, "titin_parameters");
-    const rapidjson::Value& titin_parameters = doc["titin_parameters"];
+    JSON_functions::check_JSON_member_object(hs, "titin_parameters");
+    const rapidjson::Value& titin_parameters = hs["titin_parameters"];
 
     JSON_functions::check_JSON_member_string(titin_parameters, "t_passive_mode");
     sprintf_s(t_passive_mode, _MAX_PATH, titin_parameters["t_passive_mode"].GetString());
@@ -336,8 +343,8 @@ void FiberSim_model::set_FiberSim_model_parameters(const rapidjson::Value& doc)
     }
 
     // Load the extracellular_parameters
-    JSON_functions::check_JSON_member_object(doc, "extracellular_parameters");
-    const rapidjson::Value& extracellular_parameters = doc["extracellular_parameters"];
+    JSON_functions::check_JSON_member_object(hs, "extracellular_parameters");
+    const rapidjson::Value& extracellular_parameters = hs["extracellular_parameters"];
 
     JSON_functions::check_JSON_member_string(extracellular_parameters, "e_passive_mode");
     sprintf_s(e_passive_mode, _MAX_PATH, extracellular_parameters["e_passive_mode"].GetString());
@@ -360,8 +367,8 @@ void FiberSim_model::set_FiberSim_model_parameters(const rapidjson::Value& doc)
     e_slack_length = extracellular_parameters["e_slack_length"].GetDouble();
 
     // Kinetic scheme for myosin - this is complicated so it's done in a different file
-    JSON_functions::check_JSON_member_array(doc, "m_kinetics");
-    const rapidjson::Value& m_ks = doc["m_kinetics"];
+    JSON_functions::check_JSON_member_array(hs, "m_kinetics");
+    const rapidjson::Value& m_ks = hs["m_kinetics"];
 
     for (rapidjson::SizeType i = 0; i < m_ks.Size(); i++)
     {
@@ -369,8 +376,8 @@ void FiberSim_model::set_FiberSim_model_parameters(const rapidjson::Value& doc)
     }
 
     // Kinetic scheme for MyBPC
-    JSON_functions::check_JSON_member_array(doc, "c_kinetics");
-    const rapidjson::Value& c_ks = doc["c_kinetics"];
+    JSON_functions::check_JSON_member_array(hs, "c_kinetics");
+    const rapidjson::Value& c_ks = hs["c_kinetics"];
 
     for (rapidjson::SizeType i = 0; i < c_ks.Size(); i++)
     {

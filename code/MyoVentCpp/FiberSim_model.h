@@ -62,6 +62,9 @@ public:
     double sc_k_stiff;                  /**< double definiing the stiffness of the
                                              series elastic component  in N m^-1 */
 
+    double sc_eta;                      /**< double defining the parallel viscosity
+                                                of the series elastic component */
+
     double temperature;                 /**< double defining temperature in K */
         
     // Filaments

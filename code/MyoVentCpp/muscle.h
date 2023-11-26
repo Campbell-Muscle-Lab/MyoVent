@@ -72,7 +72,7 @@ public:
 															is mitochondria */
 
 	double muscle_length;
-	double muscle_reference_length;						
+	double muscle_reference_length;
 	double muscle_stress;
 
 	double muscle_ATP_used_per_liter_per_s;			/**< double with ATP used in moles
@@ -90,7 +90,7 @@ public:
 															object */
 
 	/**
-	/* function adds data fields and vectors to the results objet
+	/* function adds data fields and vectors to the results object
 	*/
 	
 	void initialise_simulation(void);

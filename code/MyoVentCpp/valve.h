@@ -52,6 +52,9 @@ public:
 	double valve_pos;								/**< Double holding valve status
 															1.0 = open
 															0.0 = closed */
+
+	double valve_last_pos;							/**< Double holding valve status
+															on last iteration */
 	
 	double valve_vel;								/**< Double holding valve velocity */
 

@@ -78,7 +78,7 @@ muscle::muscle(hemi_vent* set_p_parent_hemi_vent)
 
 	// Initialise
 	muscle_ATP_used_per_liter_per_s = 0.0;
-	muscle_reference_length = p_cmv_model->hs_reference_hs_length;
+	muscle_reference_length = GSL_NAN;
 	muscle_delta_G_ATP = p_cmv_model->hs_delta_G_ATP;
 	muscle_ATP_concentration = p_cmv_model->hs_initial_ATP_concentration;
 	muscle_prop_fibrosis = p_cmv_model->hs_prop_fibrosis;
@@ -105,10 +105,10 @@ muscle::~muscle(void)
 void muscle::initialise_simulation(void)
 {
 	//! Code initialises simulation
-	
+
 	// Variables
 	double slack_length;
-	
+
 	// Code
 
 	// Set results from parent
@@ -124,7 +124,7 @@ void muscle::initialise_simulation(void)
 	p_heart_rate->initialise_simulation();
 	p_membranes->initialise_simulation();
 	p_mitochondria->initialise_simulation();
-	
+
 	if (p_FiberSim_muscle != NULL)
 	{
 		p_FiberSim_muscle->initialise_for_simulation();
@@ -137,8 +137,37 @@ void muscle::initialise_simulation(void)
 	}
 
 	// Now adjust muscle to slack length
-	slack_length = return_muscle_length_for_stress(0.0, 0.0);
+	slack_length = return_muscle_length_for_stress(0.0, 0.00);
 	change_muscle_length(slack_length - muscle_length, 0.0);
+
+	muscle_reference_length = slack_length;
+
+	
+
+	// Adjust the series component last length
+	if (p_FiberSim_muscle != NULL)
+	{
+		p_FiberSim_muscle->p_FiberSim_sc->sc_last_extension =
+			p_FiberSim_muscle->p_FiberSim_sc->sc_extension;
+	}
+	else
+	{
+		printf("Not yet implemented\n");
+		exit(1);
+	}
+
+	printf("Muscle is slack\n");
+	printf("Slack_length: %g\n", slack_length);
+	printf("muscle_length: %g\n", muscle_length);
+	printf("muscle_force: %g\n", muscle_stress);
+
+	printf("p_sc_ext: %g\n", p_FiberSim_muscle->p_FiberSim_sc->sc_extension);
+	printf("p_fs_hsl: %g\n", p_FiberSim_muscle->p_FiberSim_hs->hs_length);
+	printf("p_collagen: %g\n", p_FiberSim_muscle->p_FiberSim_hs->hs_extracellular_force);
+	printf("p_titin: %g\n", p_FiberSim_muscle->p_FiberSim_hs->hs_titin_force);
+
+	//exit(1);
+
 }
 
 bool muscle::implement_time_step(double time_step_s)

@@ -55,6 +55,7 @@ valve::valve(hemi_vent* set_p_parent_hemi_vent, cmv_model_valve_structure* set_p
 
 	// Initialise
 	valve_pos = 0.0;
+	valve_last_pos = 0.0;
 	valve_vel = 0.0;
 }
 
@@ -194,4 +195,44 @@ void valve::implement_time_step(double time_step_s)
 
 	// Tidy up
 	free(y_calc);
+
+/*
+	double pressure_difference;
+
+	circulation* p_circ = p_parent_hemi_vent->p_parent_circulation;
+
+	if (valve_name == "aortic")
+	{
+		pressure_difference = p_circ->circ_pressure[0] - p_circ->circ_pressure[1];
+		//cout << "pd: " << pressure_difference << "\n";
+	}
+
+	if (valve_name == "mitral")
+	{
+		pressure_difference = p_circ->circ_pressure[p_circ->circ_no_of_compartments - 1] - p_circ->circ_pressure[0];
+		//cout << "pd: " << pressure_difference << "\n";
+	}
+
+	double temp_x;
+
+	temp_x = valve_last_pos;
+
+	valve_pos = (pressure_difference + ((valve_eta * valve_last_pos) / time_step_s)) /
+		(valve_k + (valve_eta / time_step_s));
+
+	valve_last_pos = temp_x;
+
+	// Bounds
+	if (valve_pos > 1.0)
+	{
+		valve_pos = 1.0;
+		valve_vel = 0.0;
+	}
+
+	if (valve_pos < valve_leak)
+	{
+		valve_pos = valve_leak;
+		valve_vel = 0.0;
+	}
+*/
 }

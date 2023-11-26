@@ -64,6 +64,9 @@ FiberSim_muscle::FiberSim_muscle(muscle* set_p_parent_muscle)
 
 	// Impose force balance
 	change_muscle_length(0.0, 0.0);
+
+	// Special case
+	p_FiberSim_sc->sc_last_extension = p_FiberSim_sc->sc_extension;
 }
 
 // Destructor
@@ -206,18 +209,15 @@ int FiberSim_muscle::change_muscle_length(double delta_ml, double time_step_s)
 
 	max_lattice_iterations = p_FiberSim_hs->update_lattice(time_step_s, delta_length);
 
+	// Update the sc_extension
+	p_FiberSim_sc->sc_last_extension = p_FiberSim_sc->sc_extension;
+
 	p_FiberSim_sc->sc_extension = (fs_m_length - new_hs_length);
-	p_FiberSim_sc->sc_force = p_FiberSim_sc->return_series_force(p_FiberSim_sc->sc_extension);
+	p_FiberSim_sc->sc_force = p_FiberSim_sc->return_series_force_for_length(
+		p_FiberSim_sc->sc_extension, time_step_s);
 
 	// Update muscle force
 	fs_m_stress = p_FiberSim_sc->sc_force;
-
-/*
-	printf("hsl: %g\t\tscl: %g\t\ttotal_l: %g\n",
-		p_FiberSim_hs->hs_length, p_FiberSim_sc->sc_extension, fs_m_length);
-	printf("hs_force: %g\t\tsc_f: %g\t\ttotal_f: %g\n\n",
-		p_FiberSim_hs->hs_force, p_FiberSim_sc->sc_force, fs_m_stress);
-*/
 
 	// Tidy up
 	gsl_multiroot_fsolver_free(s);
@@ -261,7 +261,8 @@ size_t FiberSim_muscle::worker_length_control_myofibril_with_series_compliance(
 
 	double delta_hsl;
 	double cum_hs_length;
-	double test_se_length;
+	double test_sc_length;
+	double test_sc_force;
 	double force_diff;
 
 	// Code
@@ -299,8 +300,11 @@ size_t FiberSim_muscle::worker_length_control_myofibril_with_series_compliance(
 	gsl_vector_set(f, 0, force_diff);
 
 	// Now deduce the series elastic force
-	test_se_length = fs_m_length - cum_hs_length;
-	force_diff = p_FiberSim_sc->return_series_force(test_se_length) - gsl_vector_get(x, x->size - 1);
+	test_sc_length = fs_m_length - cum_hs_length;
+
+	test_sc_force = p_FiberSim_sc->return_series_force_for_length(test_sc_length, params->time_step_s);
+
+	force_diff = test_sc_force - gsl_vector_get(x, x->size - 1);
 
 	gsl_vector_set(f, f->size - 1, force_diff);
 

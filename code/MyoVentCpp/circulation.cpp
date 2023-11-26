@@ -73,7 +73,18 @@ circulation::circulation(cmv_system* set_p_parent_cmv_system = NULL)
 		circ_slack_volume[i] = p_cmv_model->circ_slack_volume[i];
 		circ_inertance[i] = p_cmv_model->circ_inertance[i];
 		circ_pressure[i] = 0.0;
+
+		/*if (i == 1)
+		{
+			circ_volume[i] = 1.5 * circ_slack_volume[i];
+		}
+		else
+		{
+			circ_volume[i] = circ_slack_volume[i];
+		}
+		*/
 		circ_volume[i] = circ_slack_volume[i];
+
 		circ_flow[i] = 0.0;
 
 		circ_total_slack_volume = circ_total_slack_volume +
