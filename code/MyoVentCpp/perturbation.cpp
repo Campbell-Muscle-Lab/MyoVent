@@ -21,6 +21,12 @@
 #include "membranes.h"
 #include "mitochondria.h"
 
+#include "FiberSim_muscle.h"
+#include "FiberSim_half_sarcomere.h"
+#include "FiberSim_kinetic_scheme.h"
+#include "FiberSim_m_state.h"
+#include "FiberSim_transition.h"
+
 #include "kinetic_scheme.h"
 #include "transition.h"
 #include "baroreflex.h"
@@ -276,6 +282,67 @@ void perturbation::impose(double sim_time_s)
 				*p_double = *p_double + increment;
 			}
 		}
+
+		if (class_name == "FiberSim_half_sarcomere")
+		{
+			FiberSim_half_sarcomere* p_FiberSim_hs =
+				p_cmv_protocol->p_cmv_system->p_circulation->p_hemi_vent->p_muscle->
+				p_FiberSim_muscle->p_FiberSim_hs;
+
+			if (variable.rfind("m_state", 0) == 0)
+			{
+				int no_of_digits = 3;
+				int digits[3];
+				int state_index;
+				int transition_index;
+				int parameter_index;
+
+				for (int i = 0; i < no_of_digits; i++)
+					digits[i] = 0;
+
+				extract_digits(variable, digits, 3);
+
+				state_index = digits[0] - 1;
+				transition_index = digits[1] - 1;
+				parameter_index = digits[2] - 1;
+
+				// This is tricky because the variable is stored in a gsl_vector
+				gsl_vector* p_gsl_v = p_FiberSim_hs->p_fs_model->p_m_scheme[0]->p_m_states[state_index]->
+					p_transitions[transition_index]->rate_parameters;
+
+				gsl_vector_set(p_gsl_v, parameter_index,
+					gsl_vector_get(p_gsl_v, parameter_index) + increment);
+			}
+
+			if (variable.rfind("c_state", 0) == 0)
+			{
+				int no_of_digits = 3;
+				int digits[3];
+				int state_index;
+				int transition_index;
+				int parameter_index;
+
+				for (int i = 0; i < no_of_digits; i++)
+					digits[i] = 0;
+
+				extract_digits(variable, digits, 3);
+
+				state_index = digits[0] - 1;
+				transition_index = digits[1] - 1;
+				parameter_index = digits[2] - 1;
+
+				// This is tricky because the variable is stored in a gsl_vector
+				gsl_vector* p_gsl_v = p_FiberSim_hs->p_fs_model->p_c_scheme[0]->p_m_states[state_index]->
+					p_transitions[transition_index]->rate_parameters;
+
+				gsl_vector_set(p_gsl_v, parameter_index,
+					gsl_vector_get(p_gsl_v, parameter_index) + increment);
+			}
+		}
+
+
+
+
 
 		/*
 		if (class_name == "myofilaments")

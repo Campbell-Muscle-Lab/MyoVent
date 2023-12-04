@@ -155,6 +155,15 @@ void cmv_options::initialise_options_from_JSON_file(string options_file_string)
 		summary_time_step_s = res["summary_time_step_s"].GetDouble();
 	}
 
+	// Check for growth control
+	if (JSON_functions::is_JSON_member(doc, "growth"))
+	{
+		const rapidjson::Value& gr = doc["growth"];
+
+		JSON_functions::check_JSON_member_int(gr, "deriv_points");
+		growth_control_deriv_points = gr["deriv_points"].GetInt();
+	}
+
 	// FiberSim
 	if (JSON_functions::check_JSON_member_exists(doc, "FiberSim"))
 	{

@@ -26,9 +26,9 @@ classDiagram
     circulation <|-- baroreflex
     circulation <|-- Growth
     
-    hemi_vent <|-- muscle
     hemi_vent <|-- valve
-    
+    hemi_vent <|-- muscle
+        
     muscle <|-- membranes
     muscle <|-- heart_rate
     muscle <|-- MyoSim_muscle

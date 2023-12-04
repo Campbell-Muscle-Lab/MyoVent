@@ -82,6 +82,10 @@ public:
 													cmv_results object for the
 													summary output */
 
+	int growth_control_deriv_points;		/**< int defining the number of time-points
+													used to calculate the rate of change
+													of growth */
+
 	FiberSim_options* p_FiberSim_options;	/**< pointer to a FiberSim options object */
 
 	MyoSim_options* p_MyoSim_options;		/**< pointer to a MyoSim options object */

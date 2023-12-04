@@ -17,7 +17,7 @@ import subprocess
 from ..output_handler import output_handler as oh
 
 def run_batch(json_batch_file_string, figures_only=False):
-    """ Runs >=1 batch using multithreading """
+    """ Runs >=1 job using multithreading """
     
     # Load the batch file
     with open(json_batch_file_string, 'r') as f:
@@ -124,4 +124,5 @@ def run_batch(json_batch_file_string, figures_only=False):
     
 def worker(cmd):
     subprocess.call(cmd)
+
    

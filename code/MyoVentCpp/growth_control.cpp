@@ -85,19 +85,9 @@ growth_control::growth_control(growth* set_p_parent_growth, int set_gc_number,
 	gc_set_point = p_struct->set_point;
 	gc_max_rate = p_struct->max_rate;
 
-	if (gc_type == "concentric")
-	{
-		// Need to calculate the deriv
-		gc_deriv_points = 30;
-		gc_deriv_x = (double*)malloc(gc_deriv_points * sizeof(double));
-		gc_deriv_y = (double*)malloc(gc_deriv_points * sizeof(double));
-	}
-	else
-	{
-		gc_deriv_points = 0;
-		gc_deriv_x = NULL;
-		gc_deriv_y = NULL;
-	}
+	gc_deriv_points = 0;
+	gc_deriv_x = NULL;
+	gc_deriv_y = NULL;
 }
 
 // Destructor
@@ -127,6 +117,16 @@ void growth_control::initialise_simulation(void)
 
 	// Find the controlled variable
 	set_gc_p_signal();
+
+	if (gc_type == "concentric")
+	{
+		// Need to calculate the deriv
+		gc_deriv_points = p_cmv_options->growth_control_deriv_points;
+		gc_deriv_x = (double*)malloc(gc_deriv_points * sizeof(double));
+		gc_deriv_y = (double*)malloc(gc_deriv_points * sizeof(double));
+
+		printf("\n\ngc_deriv_points: %i\n\n", gc_deriv_points);
+	}
 
 	// Set the derivitives if necessary
 	if (gc_deriv_points > 0)
@@ -160,8 +160,20 @@ void growth_control::implement_time_step(double time_step_s, bool new_beat)
 
 	// Code
 
+		// Update the arrays
+	if (gc_deriv_points > 0)
+	{
+		for (int i = 0; i < (gc_deriv_points - 1); i++)
+		{
+			gc_deriv_x[i] = gc_deriv_x[i + 1];
+			gc_deriv_y[i] = gc_deriv_y[i + 1];
+		}
+		gc_deriv_x[gc_deriv_points - 1] = p_parent_cmv_system->cum_time_s;
+		gc_deriv_y[gc_deriv_points - 1] = *gc_p_signal;
+	}
+
 	// If we are calculating the slope, and it's a new beat, update
-	if ((gc_deriv_points > 0) && (new_beat))
+	if (gc_deriv_points > 0)
 	{
 		calculate_slope();
 	}
@@ -280,15 +292,6 @@ void growth_control::calculate_slope(void)
 	double c0, c1, cov00, cov10, cov11, sumsq;
 
 	// Code
-
-	// Update the arrays
-	for (int i = 0; i < (gc_deriv_points - 1); i++)
-	{
-		gc_deriv_x[i] = gc_deriv_x[i + 1];
-		gc_deriv_y[i] = gc_deriv_y[i + 1];
-	}
-	gc_deriv_x[gc_deriv_points - 1] = p_parent_cmv_system->cum_time_s;
-	gc_deriv_y[gc_deriv_points - 1] = *gc_p_signal;
 
 	// Check there are no NANs
 	for (int i = 0; i < gc_deriv_points; i++)

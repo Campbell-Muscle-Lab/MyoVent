@@ -221,7 +221,7 @@ void reflex_control::set_controlled_variable(void)
 		}
 	}
 
-	if (rc_level == "FiberSim")
+	if (rc_level == "FiberSim_half_sarcomere")
 	{
 		FiberSim_half_sarcomere* p_FiberSim_hs = p_parent_circulation->p_hemi_vent->p_muscle->
 			p_FiberSim_muscle->p_FiberSim_hs;

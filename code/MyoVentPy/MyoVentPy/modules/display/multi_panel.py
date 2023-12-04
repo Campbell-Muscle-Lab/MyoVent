@@ -13,8 +13,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 from matplotlib.lines import Line2D
-from matplotlib import patches as pat
-from matplotlib.patches import Patch
+from matplotlib import patches
+from matplotlib.patches import Polygon
 
 
 def default_formatting():
@@ -333,15 +333,22 @@ def multi_panel_from_flat_data(
                     col = colors[y_d['field_counter']]
                 else:
                     col = colors[patch_counter]
+                    
+                print('xy')
+                print(xy)
+                print(col)
+                print(formatting['patch_alpha'])
+                print(p_data['y_info'])
+                
+                p = Polygon(xy,
+                            fc=col,
+                            alpha=formatting['patch_alpha'])
 
-                polygon = pat.Polygon(xy, True, clip_on=True,
-                                      fc=col,
-                                      alpha=formatting['patch_alpha'])
-                ax[i].add_patch(polygon)
+                ax[i].add_patch(p)
 
                 if y_d['field_label']:
                     legend_symbols.append(
-                        Patch(facecolor=col,
+                        patches.Patch(facecolor=col,
                               alpha=formatting['patch_alpha']))
                     legend_strings.append(y_d['field_label'])
 

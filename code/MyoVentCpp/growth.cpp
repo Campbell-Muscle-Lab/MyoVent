@@ -167,8 +167,7 @@ void growth::implement_time_step(double time_step_s, bool new_beat)
 		delta_muscle_length = -(delta_n_hs * p_parent_circulation->p_hemi_vent->p_muscle->muscle_length) /
 			p_parent_circulation->p_hemi_vent->vent_n_hs;
 
-		// Apply to half-sarcomere
-		p_parent_circulation->p_hemi_vent->p_muscle->change_muscle_length(delta_muscle_length, 0.0);
+		p_parent_circulation->p_hemi_vent->p_muscle->change_muscle_length(delta_muscle_length, time_step_s);
 
 		// Update the wall volume
 		p_parent_circulation->p_hemi_vent->vent_wall_volume =
