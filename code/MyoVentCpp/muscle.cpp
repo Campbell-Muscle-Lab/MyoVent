@@ -78,11 +78,11 @@ muscle::muscle(hemi_vent* set_p_parent_hemi_vent)
 
 	// Initialise
 	muscle_ATP_used_per_liter_per_s = 0.0;
-	muscle_reference_length = GSL_NAN;
-	muscle_delta_G_ATP = p_cmv_model->hs_delta_G_ATP;
-	muscle_ATP_concentration = p_cmv_model->hs_initial_ATP_concentration;
-	muscle_prop_fibrosis = p_cmv_model->hs_prop_fibrosis;
-	muscle_prop_myofilaments = p_cmv_model->hs_prop_myofilaments;
+	muscle_reference_length = p_cmv_model->mus_reference_hs_length;
+	muscle_delta_G_ATP = p_cmv_model->mus_delta_G_ATP;
+	muscle_ATP_concentration = p_cmv_model->mus_initial_ATP_concentration;
+	muscle_prop_fibrosis = p_cmv_model->mus_prop_fibrosis;
+	muscle_prop_myofilaments = p_cmv_model->mus_prop_myofilaments;
 }
 
 // Destructor
@@ -139,10 +139,6 @@ void muscle::initialise_simulation(void)
 	// Now adjust muscle to slack length
 	slack_length = return_muscle_length_for_stress(0.0, 0.00);
 	change_muscle_length(slack_length - muscle_length, 0.0);
-
-	muscle_reference_length = slack_length;
-
-	
 
 	// Adjust the series component last length
 	if (p_FiberSim_muscle != NULL)

@@ -170,9 +170,17 @@ void cmv_model::initialise_model_from_JSON_file(string JSON_model_file_string)
 	// Now trying to read file
 	cout << "Parse JSON model file: " << JSON_model_file_string << "\n";
 
+	// Load the model
+	JSON_functions::check_JSON_member_exists(doc, "MyoVent");
+	const rapidjson::Value& myovent = doc["MyoVent"];
+
+	// Save the version
+	JSON_functions::check_JSON_member_string(myovent, "version");
+	version_string = myovent["version"].GetString();
+
 	// Load the circulation object
-	JSON_functions::check_JSON_member_object(doc, "circulation");
-	const rapidjson::Value& circ = doc["circulation"];
+	JSON_functions::check_JSON_member_object(myovent, "circulation");
+	const rapidjson::Value& circ = myovent["circulation"];
 
 	JSON_functions::check_JSON_member_number(circ, "blood_volume");
 	circ_blood_volume = circ["blood_volume"].GetDouble();
@@ -217,8 +225,8 @@ void cmv_model::initialise_model_from_JSON_file(string JSON_model_file_string)
 	}
 
 	// Load the ventricle object
-	JSON_functions::check_JSON_member_object(doc, "ventricle");
-	const rapidjson::Value& vent = doc["ventricle"];
+	JSON_functions::check_JSON_member_object(circ, "ventricle");
+	const rapidjson::Value& vent = circ["ventricle"];
 
 	JSON_functions::check_JSON_member_number(vent, "wall_density");
 	vent_wall_density = vent["wall_density"].GetDouble();
@@ -279,36 +287,36 @@ void cmv_model::initialise_model_from_JSON_file(string JSON_model_file_string)
 	else
 		p_mv->leak = 0.0;
 
+	// Load the muscle
+	JSON_functions::check_JSON_member_object(vent, "myocardium");
+	const rapidjson::Value& myoc = vent["myocardium"];
+
+	// Load the half_sarcomere parameters
+	JSON_functions::check_JSON_member_number(myoc, "reference_hs_length");
+	mus_reference_hs_length = myoc["reference_hs_length"].GetDouble();
+
+	JSON_functions::check_JSON_member_number(myoc, "initial_ATP_concentration");
+	mus_initial_ATP_concentration = myoc["initial_ATP_concentration"].GetDouble();
+
+	JSON_functions::check_JSON_member_number(myoc, "prop_fibrosis");
+	mus_prop_fibrosis = myoc["prop_fibrosis"].GetDouble();
+
+	JSON_functions::check_JSON_member_number(myoc, "prop_myofilaments");
+	mus_prop_myofilaments = myoc["prop_myofilaments"].GetDouble();
+
+	JSON_functions::check_JSON_member_number(myoc, "delta_G_ATP");
+	mus_delta_G_ATP = myoc["delta_G_ATP"].GetDouble();
+
 	// Load the heart_rate object
-	JSON_functions::check_JSON_member_object(vent, "heart_rate");
-	const rapidjson::Value& hr = vent["heart_rate"];
+	JSON_functions::check_JSON_member_object(myoc, "heart_rate");
+	const rapidjson::Value& hr = myoc["heart_rate"];
 
 	JSON_functions::check_JSON_member_number(hr, "t_RR_interval_s");
 	hr_t_RR_interval_s = hr["t_RR_interval_s"].GetDouble();
 
-	// Load the half-sarcomere structure
-	JSON_functions::check_JSON_member_object(vent, "half_sarcomere");
-	const rapidjson::Value& hs = vent["half_sarcomere"];
-
-	// Load the half_sarcomere parameters
-	JSON_functions::check_JSON_member_number(hs, "reference_hs_length");
-	hs_reference_hs_length = hs["reference_hs_length"].GetDouble();
-
-	JSON_functions::check_JSON_member_number(hs, "initial_ATP_concentration");
-	hs_initial_ATP_concentration = hs["initial_ATP_concentration"].GetDouble();
-
-	JSON_functions::check_JSON_member_number(hs, "prop_fibrosis");
-	hs_prop_fibrosis = hs["prop_fibrosis"].GetDouble();
-
-	JSON_functions::check_JSON_member_number(hs, "prop_myofilaments");
-	hs_prop_myofilaments = hs["prop_myofilaments"].GetDouble();
-
-	JSON_functions::check_JSON_member_number(hs, "delta_G_ATP");
-	hs_delta_G_ATP = hs["delta_G_ATP"].GetDouble();
-
 	// Load the membranes structure
-	JSON_functions::check_JSON_member_exists(hs, "membranes");
-	const rapidjson::Value& memb = hs["membranes"];
+	JSON_functions::check_JSON_member_exists(myoc, "membranes");
+	const rapidjson::Value& memb = myoc["membranes"];
 
 	JSON_functions::check_JSON_member_number(memb, "Ca_content");
 	memb_Ca_content = memb["Ca_content"].GetDouble();
@@ -326,15 +334,15 @@ void cmv_model::initialise_model_from_JSON_file(string JSON_model_file_string)
 	memb_t_open_s = memb["t_open"].GetDouble();
 
 	// Load the mitochondria structure
-	JSON_functions::check_JSON_member_exists(hs, "mitochondria");
-	const rapidjson::Value& mito = hs["mitochondria"];
+	JSON_functions::check_JSON_member_exists(myoc, "mitochondria");
+	const rapidjson::Value& mito = myoc["mitochondria"];
 
 	JSON_functions::check_JSON_member_number(mito, "ATP_generation_rate");
 	mito_ATP_generation_rate = mito["ATP_generation_rate"].GetDouble();
 
 	// Load the myofilaments structure
-	JSON_functions::check_JSON_member_exists(hs, "myofilaments");
-	const rapidjson::Value& myof = hs["myofilaments"];
+	JSON_functions::check_JSON_member_exists(myoc, "contraction");
+	const rapidjson::Value& myof = myoc["contraction"];
 
 	// Now check if it is a MyoSim model
 	JSON_functions::check_JSON_member_string(myof, "model_type");
@@ -421,10 +429,10 @@ void cmv_model::initialise_model_from_JSON_file(string JSON_model_file_string)
 	}
 
 	// Now try the baroreflex
-	if (JSON_functions::check_JSON_member_exists(doc, "baroreflex"))
+	if (JSON_functions::check_JSON_member_exists(myovent, "baroreflex"))
 	{
 		// It might not be in the model file
-		const rapidjson::Value& baro = doc["baroreflex"];
+		const rapidjson::Value& baro = myovent["baroreflex"];
 
 		JSON_functions::check_JSON_member_number(baro, "baro_P_set");
 		baro_P_set = baro["baro_P_set"].GetDouble();
@@ -473,10 +481,10 @@ void cmv_model::initialise_model_from_JSON_file(string JSON_model_file_string)
 	}
 
 	// Now try the growth
-	if (JSON_functions::check_JSON_member_exists(doc, "growth"))
+	if (JSON_functions::check_JSON_member_exists(myovent, "growth"))
 	{
 		// It might not be in the model file
-		const rapidjson::Value& grow = doc["growth"];
+		const rapidjson::Value& grow = myovent["growth"];
 
 		JSON_functions::check_JSON_member_number(grow, "master_rate");
 		gr_master_rate = grow["master_rate"].GetDouble();

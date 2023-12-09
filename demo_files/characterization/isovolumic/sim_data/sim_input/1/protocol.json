@@ -1,0 +1,15 @@
+{
+    "protocol": {
+        "time_step_s": 0.0002,
+        "no_of_time_steps": 100000
+    },
+    "perturbation": [
+        {
+            "class": "circulation",
+            "variable": "resistance_1",
+            "t_start_s": 10,
+            "t_stop_s": 20,
+            "total_change": 100.0
+        }
+    ]
+}

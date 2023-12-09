@@ -64,7 +64,8 @@ perturbation::perturbation(cmv_protocol* set_p_cmv_protocol, perturbation_struct
 
 	increment = total_change / n_steps;
 
-	cout << "n_steps: " << n_steps << " total_change: " << total_change << " increment " << increment << "\n";
+	cout << "class_name:" << class_name << "n_steps: " << n_steps << " total_change: " <<
+		total_change << " increment " << increment << "\n";
 }
 
 // Destructor
@@ -174,7 +175,7 @@ void perturbation::impose(double sim_time_s)
 					p_cmv_protocol->p_cmv_system->p_circulation->p_hemi_vent->vent_n_hs;
 
 				// Apply to half-sarcomere
-				p_cmv_protocol->p_cmv_system->p_circulation->p_hemi_vent->p_muscle->change_muscle_length(0.0, delta_muscle_length);
+				p_cmv_protocol->p_cmv_system->p_circulation->p_hemi_vent->p_muscle->change_muscle_length(delta_muscle_length, prot_time_step_s);
 
 				// And the wall volume
 				p_cmv_protocol->p_cmv_system->p_circulation->p_hemi_vent->vent_wall_volume =

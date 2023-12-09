@@ -120,8 +120,8 @@ void cmv_protocol::initialise_protocol_from_JSON_file(string protocol_file_strin
 	const rapidjson::Value& prot = doc["protocol"];
 
 	// Load protocol variables
-	JSON_functions::check_JSON_member_number(prot, "time_step");
-	time_step_s = prot["time_step"].GetDouble();
+	JSON_functions::check_JSON_member_number(prot, "time_step_s");
+	time_step_s = prot["time_step_s"].GetDouble();
 
 	JSON_functions::check_JSON_member_int(prot, "no_of_time_steps");
 	no_of_time_steps = prot["no_of_time_steps"].GetInt();

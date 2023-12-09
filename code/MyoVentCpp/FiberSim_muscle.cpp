@@ -63,7 +63,7 @@ FiberSim_muscle::FiberSim_muscle(muscle* set_p_parent_muscle)
 	fs_m_length = p_FiberSim_hs->hs_length + p_FiberSim_sc->sc_extension;
 
 	// Impose force balance
-	change_muscle_length(0.0, 0.0);
+	change_muscle_length(0.0, 0);
 
 	// Special case
 	p_FiberSim_sc->sc_last_extension = p_FiberSim_sc->sc_extension;

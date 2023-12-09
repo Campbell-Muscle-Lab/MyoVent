@@ -9,6 +9,7 @@
 #include "stdio.h"
 
 #include <iostream>
+#include <string>
 
 // Definitions for JSON parsing
 #ifndef _RAPIDJSON_DOCUMENT
@@ -46,6 +47,8 @@ public:
 	~cmv_model(void);
 
 	// Variables
+
+	string version_string;				/**< string holding the model version */
 
 	double temperature_K;				/**< double with temperature in K */
 
@@ -119,19 +122,19 @@ public:
 	// Heart rate
 	double hr_t_RR_interval_s;			/**< double with RR interval in s */
 
-	// Half-sarcomere
-	double hs_reference_hs_length;		/**< double with hs length used for normalization */
+	// Muscle
+	double mus_reference_hs_length;		/**< double with hs length used for normalization */
 
-	double hs_initial_ATP_concentration;
+	double mus_initial_ATP_concentration;
 										/**< double with initial ATP concentration */
 
-	double hs_delta_G_ATP;				/**< double with energy in Joules
+	double mus_delta_G_ATP;				/**< double with energy in Joules
 												per mole of ATP */
 
-	double hs_prop_fibrosis;			/**< double with the proportion of the hs
+	double mus_prop_fibrosis;			/**< double with the proportion of the hs
 												cross-sectional area that is fibrosis */
 
-	double hs_prop_myofilaments;		/**< Double with the proportion of the
+	double mus_prop_myofilaments;		/**< Double with the proportion of the
 												hs non-fibrotic area that is
 												that is myofilaments, remainder
 												is mitochondria */

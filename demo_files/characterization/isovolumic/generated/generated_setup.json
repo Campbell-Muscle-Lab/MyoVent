@@ -1,0 +1,40 @@
+{
+    "MyoVent_setup": {
+        "MyoVentCpp_exe": {
+            "relative_to": "this_file",
+            "exe_file": "../../../../code/myoventcpp/bin/myoventcpp.exe"
+        },
+        "model": {
+            "relative_to": "this_file",
+            "options_file": "sim_options.json",
+            "model_files": [
+                "model_1.json",
+                "model_2.json",
+                "model_3.json",
+                "model_4.json"
+            ]
+        },
+        "characterization": [
+            {
+                "type": "isovolumic",
+                "relative_to": "this_file",
+                "sim_folder": "../sim_data",
+                "m_n": 36,
+                "time_step_s": 0.0002,
+                "sim_duration_s": 20,
+                "ventricular_slack_volume_factors": [
+                    1
+                ],
+                "perturbation": [
+                    {
+                        "class": "circulation",
+                        "variable": "resistance_1",
+                        "t_start_s": 10,
+                        "t_stop_s": 20,
+                        "total_change": 100.0
+                    }
+                ]
+            }
+        ]
+    }
+}

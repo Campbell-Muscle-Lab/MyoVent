@@ -333,12 +333,6 @@ def multi_panel_from_flat_data(
                     col = colors[y_d['field_counter']]
                 else:
                     col = colors[patch_counter]
-                    
-                print('xy')
-                print(xy)
-                print(col)
-                print(formatting['patch_alpha'])
-                print(p_data['y_info'])
                 
                 p = Polygon(xy,
                             fc=col,

@@ -15,6 +15,7 @@ import threading
 import subprocess
 
 from ..output_handler import output_handler as oh
+from ..display import analyses
 
 def run_batch(json_batch_file_string, figures_only=False):
     """ Runs >=1 job using multithreading """
@@ -121,6 +122,14 @@ def run_batch(json_batch_file_string, figures_only=False):
             # except:
             #     print('Could not implement output_handler for: %s' %
             #           results_file_strings[i])
+            
+    # Run the batch figures
+    if ('batch_figures' in MyoVent_batch):
+        if ('superposed_traces' in MyoVent_batch['batch_figures']):
+            for fig_data in MyoVent_batch['batch_figures']['superposed_traces']:
+                analyses.create_superposed_traces_figure(
+                    fig_data,
+                    json_batch_file_string)
     
 def worker(cmd):
     subprocess.call(cmd)

@@ -1,0 +1,62 @@
+{
+    "MyoVent_batch": {
+        "MyoVentCpp_exe": {
+            "relative_to": "this_file",
+            "exe_file": "../../../../code/myoventcpp/bin/myoventcpp.exe"
+        },
+        "job": [
+            {
+                "model_file": "D:\\Ken\\GitHub\\CampbellMuscleLab\\Models\\MyoVent\\demo_files\\characterization\\isovolumic\\sim_data\\sim_input\\1\\model.json",
+                "options_file": "D:\\Ken\\GitHub\\CampbellMuscleLab\\Models\\MyoVent\\demo_files\\characterization\\isovolumic\\sim_data\\sim_input\\1\\options.json",
+                "protocol_file": "D:\\Ken\\GitHub\\CampbellMuscleLab\\Models\\MyoVent\\demo_files\\characterization\\isovolumic\\sim_data\\sim_input\\1\\protocol.json",
+                "results_file": "D:\\Ken\\GitHub\\CampbellMuscleLab\\Models\\MyoVent\\demo_files\\characterization\\isovolumic\\sim_data\\sim_output\\1\\sim_output.txt"
+            },
+            {
+                "model_file": "D:\\Ken\\GitHub\\CampbellMuscleLab\\Models\\MyoVent\\demo_files\\characterization\\isovolumic\\sim_data\\sim_input\\2\\model.json",
+                "options_file": "D:\\Ken\\GitHub\\CampbellMuscleLab\\Models\\MyoVent\\demo_files\\characterization\\isovolumic\\sim_data\\sim_input\\2\\options.json",
+                "protocol_file": "D:\\Ken\\GitHub\\CampbellMuscleLab\\Models\\MyoVent\\demo_files\\characterization\\isovolumic\\sim_data\\sim_input\\2\\protocol.json",
+                "results_file": "D:\\Ken\\GitHub\\CampbellMuscleLab\\Models\\MyoVent\\demo_files\\characterization\\isovolumic\\sim_data\\sim_output\\2\\sim_output.txt"
+            },
+            {
+                "model_file": "D:\\Ken\\GitHub\\CampbellMuscleLab\\Models\\MyoVent\\demo_files\\characterization\\isovolumic\\sim_data\\sim_input\\3\\model.json",
+                "options_file": "D:\\Ken\\GitHub\\CampbellMuscleLab\\Models\\MyoVent\\demo_files\\characterization\\isovolumic\\sim_data\\sim_input\\3\\options.json",
+                "protocol_file": "D:\\Ken\\GitHub\\CampbellMuscleLab\\Models\\MyoVent\\demo_files\\characterization\\isovolumic\\sim_data\\sim_input\\3\\protocol.json",
+                "results_file": "D:\\Ken\\GitHub\\CampbellMuscleLab\\Models\\MyoVent\\demo_files\\characterization\\isovolumic\\sim_data\\sim_output\\3\\sim_output.txt"
+            },
+            {
+                "model_file": "D:\\Ken\\GitHub\\CampbellMuscleLab\\Models\\MyoVent\\demo_files\\characterization\\isovolumic\\sim_data\\sim_input\\4\\model.json",
+                "options_file": "D:\\Ken\\GitHub\\CampbellMuscleLab\\Models\\MyoVent\\demo_files\\characterization\\isovolumic\\sim_data\\sim_input\\4\\options.json",
+                "protocol_file": "D:\\Ken\\GitHub\\CampbellMuscleLab\\Models\\MyoVent\\demo_files\\characterization\\isovolumic\\sim_data\\sim_input\\4\\protocol.json",
+                "results_file": "D:\\Ken\\GitHub\\CampbellMuscleLab\\Models\\MyoVent\\demo_files\\characterization\\isovolumic\\sim_data\\sim_output\\4\\sim_output.txt"
+            }
+        ],
+        "batch_figures": {
+            "superposed_traces": [
+                {
+                    "relative_to": "False",
+                    "results_folder": "D:\\Ken\\GitHub\\CampbellMuscleLab\\Models\\MyoVent\\demo_files\\characterization\\isovolumic\\generated\\../sim_data\\sim_output",
+                    "output_image_file": "D:\\Ken\\GitHub\\CampbellMuscleLab\\Models\\MyoVent\\demo_files\\characterization\\isovolumic\\generated\\../sim_data\\sim_output\\superposed_traces",
+                    "output_image_formats": [
+                        "png"
+                    ],
+                    "formatting": {
+                        "y_label_pad": 35,
+                        "tight_layout": true,
+                        "y_label_fontsize": 8,
+                        "legend_fontsize": 7,
+                        "legend_bbox_to_anchor": [
+                            1.05,
+                            1.2
+                        ]
+                    },
+                    "layout": {
+                        "panel_height": 0.7,
+                        "left_margin": 0.1,
+                        "right_margin": 0.1,
+                        "grid_hspace": 0.2
+                    }
+                }
+            ]
+        }
+    }
+}

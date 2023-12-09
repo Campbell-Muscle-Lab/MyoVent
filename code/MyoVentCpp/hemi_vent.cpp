@@ -18,6 +18,10 @@
 
 #include "muscle.h"
 
+#include "FiberSim_muscle.h"
+#include "FiberSim_half_sarcomere.h"
+#include "FiberSim_series_component.h"
+
 #include "gsl_errno.h"
 #include "gsl_roots.h"
 #include "gsl_math.h"
@@ -114,6 +118,13 @@ void hemi_vent::initialise_simulation(void)
 	// set the number of half-sarcomeres
 	// The p_hs->initialisation set hs_length so that stress was 0
 
+	printf("Slack_m_length: %g\n", p_muscle->p_FiberSim_muscle->fs_m_length);
+	printf("Slack_hs_length: %g\n", p_muscle->p_FiberSim_muscle->p_FiberSim_hs->hs_length);
+	printf("Slack_sc_extension: %g\n", p_muscle->p_FiberSim_muscle->p_FiberSim_sc->sc_extension);
+	//exit(1);
+
+
+
 	vent_circumference = return_lv_circumference_for_chamber_volume(
 		p_parent_circulation->circ_slack_volume[0]);
 
@@ -188,20 +199,12 @@ double hemi_vent_thickness_root_finder(double x, void* params)
 	inner_radius = p->p_hemi_vent_temp->return_internal_radius_for_chamber_volume(p->chamber_volume);
 
 	inner_height = p->p_hemi_vent_temp->return_chamber_height(inner_radius);
-
-//	cout << "\n\nx: " << x << "\n";
-//	cout << "inner_volume: " << p->chamber_volume << "\n";
-//	cout << "inner radius: " << inner_radius << " inner_height: " << inner_height << "\n";
-
 	
 	// Calculate external_volume
 	external_volume = 1000.0 * (2.0 / 3.0) * M_PI * pow(inner_radius + x, 2.0) * (inner_height + x);
 
 	// Estimated wall volume
 	calculated_wall_volume = external_volume - p->chamber_volume;
-
-//	cout << "external_volume: " << external_volume << " calculated_wall_volume: " << calculated_wall_volume << "\n";
-//	exit(1);
 
 	// How far off are we
 	volume_difference = calculated_wall_volume - p->wall_volume_target;
@@ -271,7 +274,6 @@ double hemi_vent::return_wall_thickness_for_chamber_volume(double cv)
 	thickness = wall_thickness_root_finder(cv);
 
 	/*
-
 	// Variables
 	double internal_r;
 
