@@ -56,6 +56,29 @@
                         "grid_hspace": 0.2
                     }
                 }
+            ],
+            "pv_loops": [
+                {
+                    "relative_to": "False",
+                    "results_folder": "D:\\Ken\\GitHub\\CampbellMuscleLab\\Models\\MyoVent\\demo_files\\characterization\\isovolumic\\generated\\../sim_data\\sim_output",
+                    "output_image_file": "D:\\Ken\\GitHub\\CampbellMuscleLab\\Models\\MyoVent\\demo_files\\characterization\\isovolumic\\generated\\../sim_data\\sim_output\\pv_loops",
+                    "output_image_formats": [
+                        "png",
+                        "svg"
+                    ],
+                    "espvr_start_time_s": 7,
+                    "layout": {
+                        "panel_height": 3.5,
+                        "top_margin": 0.05,
+                        "bottom_margin": 0.25,
+                        "grid_wspace": 0.5,
+                        "grid_hspace": 0.2
+                    },
+                    "formatting": {
+                        "x_label_pad": 10,
+                        "tight_layout": true
+                    }
+                }
             ]
         }
     }

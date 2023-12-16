@@ -1,0 +1,43 @@
+{
+    "protocol": {
+        "time_step_s": 0.001,
+        "no_of_time_steps": 70000
+    },
+    "perturbation": [
+        {
+            "class": "circulation",
+            "variable": "resistance_3",
+            "t_start_s": 20,
+            "t_stop_s": 21,
+            "total_change": 75
+        },
+        {
+            "class": "circulation",
+            "variable": "resistance_3",
+            "t_start_s": 30,
+            "t_stop_s": 31,
+            "total_change": 75
+        },
+        {
+            "class": "circulation",
+            "variable": "resistance_4",
+            "t_start_s": 40,
+            "t_stop_s": 41,
+            "total_change": 75
+        },
+        {
+            "class": "circulation",
+            "variable": "resistance_4",
+            "t_start_s": 50,
+            "t_stop_s": 51,
+            "total_change": 150
+        },
+        {
+            "class": "circulation",
+            "variable": "resistance_4",
+            "t_start_s": 60,
+            "t_stop_s": 61,
+            "total_change": 300
+        }
+    ]
+}

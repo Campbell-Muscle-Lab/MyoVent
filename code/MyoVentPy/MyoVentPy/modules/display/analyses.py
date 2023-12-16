@@ -7,6 +7,7 @@ Created on Wed May 19 16:30:00 2021
 
 import os
 import json
+import copy
 
 import numpy as np
 import pandas as pd
@@ -19,7 +20,16 @@ import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 
+import sklearn.preprocessing as preproc
+
+import scipy.signal as sig
+import scipy.odr as odr
+
 from natsort import natsorted
+
+from ..analysis import curve_fitting as cf
+
+from .utilities import tidy_limits, multiple_greater_than, multiple_less_than
 
 def default_formatting():
     formatting = dict()
@@ -249,11 +259,8 @@ def create_superposed_traces_figure(fig_data, batch_file_string):
 
     # Tidy overall figure
     # Move plots inside margins
-    # lhs = layout['left_margin'] / layout['fig_width']
     lhs = layout['left_margin'] / fig_width
     bot = layout['bottom_margin'] / fig_height
-    # wid = (layout['fig_width'] - layout['left_margin'] -
-    #        layout['right_margin']) / layout['fig_width']
     wid = (fig_width - layout['left_margin'] -
                layout['right_margin']) / fig_width
     hei = (fig_height - layout['bottom_margin'] -
@@ -276,6 +283,276 @@ def create_superposed_traces_figure(fig_data, batch_file_string):
     
     # Tidy up
     plt.close(fig)
+
+def create_pv_loops_figure(fig_data, batch_file_string):
+    """ Collates simulations and plots pv_loops with ESPVR """
+
+    # Pull default formatting, then overwrite any values from
+    # input file
+    formatting = default_formatting()
+    if ('formatting' in fig_data):
+        for entry in fig_data['formatting']:
+            formatting[entry] = fig_data['formatting'][entry]
+
+    layout = default_layout()
+    if ('layout' in fig_data):
+        for entry in fig_data['layout']:
+            layout[entry] = fig_data['layout'][entry]
+
+    # Load in the batch
+    with open(batch_file_string, 'r') as f:
+        batch_data = json.load(f)
+        
+    jobs = batch_data['MyoVent_batch']['job']
+    
+    results_file_strings = []
+    for (i,j) in enumerate(jobs):
+        results_file_strings.append(j['results_file'])
+        
+    # Get the number of results
+    no_of_results_files = len(results_file_strings)
+    
+    # Hold the no_of_conditions
+    no_of_conditions = no_of_results_files
+    no_of_rows = 1
+
+    # Set-up the figure
+    fig = plt.figure(constrained_layout = False)
+    spec = gridspec.GridSpec(nrows=no_of_rows,
+                             ncols=no_of_conditions,
+                             figure=fig,
+                             wspace = layout['grid_wspace'],
+                             hspace = layout['grid_hspace'])
+
+    fig_width = layout['left_margin'] + \
+        (no_of_conditions * 2) + layout['right_margin']    
+   
+    fig_height = layout['top_margin'] + \
+        (no_of_rows * layout['panel_height']) + \
+        layout['bottom_margin']
+        
+    fig.set_size_inches([fig_width, fig_height])
+
+    ax=[]
+    
+    # Keep track of max values
+    max_p = -np.inf
+    max_v = -np.inf
+    
+    # Create the color_map
+    color_map = formatting['color_set']
+    if (no_of_conditions > len(color_map)):
+        color_map = []
+        for i,c in enumerate(np.linspace(0, 1, no_of_conditions)):
+            color_map.append(cm.rainbow(c))
+
+    # Create the figure
+    for (i, rfs) in enumerate(results_file_strings):
+        for j in range(no_of_rows):
+            ax.append(fig.add_subplot(spec[j,i]))
+
+    # Make an array for espvr
+    espvr = dict()
+    espvr['slope'] = np.NaN * np.ones(len(results_file_strings))            
+           
+    # Now make all the plots
+    for (i, rfs) in enumerate(results_file_strings):
+    
+        # Load in the data
+        d = pd.read_csv(rfs, sep='\t',
+                        na_values = ['-nan(ind)'])
+        d = d.dropna(subset=['time'])
+        
+        # Get the end-phase data
+        d_espvr = copy.deepcopy(d)
+        
+        if ('espvr_start_time_s' in fig_data):
+            d_espvr = d_espvr[d_espvr['time'] > fig_data['espvr_start_time_s']]
+        
+        end_data = return_end_phase_data(d_espvr)
+
+        plot_index = i
+        ax[plot_index].plot(d_espvr['volume_0'], d_espvr['pressure_0'], '-')
+        
+        # Add in end-phase data
+        ax[plot_index].plot(end_data['systolic_volume'],
+                            end_data['systolic_pressure'], 'o',
+                            markerfacecolor='none')
+        
+        # Determine the ESPRV
+        # linear = odr.Model(odr_line)
+        # espvr_data = odr.Data(end_data['systolic_volume'], end_data['systolic_pressure'])
+        # espvr_odr = odr.ODR(espvr_data, linear, beta0 = [1,1])
+        # espvr_output = espvr_odr.run()
+        
+        # b = espvr_output.beta
+        # print(b)
+                
+        # espvr_y = odr_line(espvr_output.beta, np.asarray(end_data['systolic_volume']))
+        
+        # ax[plot_index].plot(end_data['systolic_volume'], espvr_y, '-')
+        
+        # Determine the ESPVR
+        lm = cf.fit_straight_line(end_data['systolic_volume'],
+                                  end_data['systolic_pressure'])
+        
+        x_max = np.amax(end_data['systolic_volume'])
+        x_min = np.amin(end_data['systolic_volume'])
+        x_range = x_max - x_min
+        x_fit = np.linspace(x_min - 0.5 * x_range, x_max + 0.5 * x_range)
+        y_fit = lm['intercept'] + lm['slope'] * x_fit
+        
+        # Save data
+        espvr['slope'][i] = lm['slope']
+        
+        ax[plot_index].plot(x_fit, y_fit, '-',
+                            color = ax[plot_index].lines[-1].get_color())
+        
+        max_p = np.amax([max_p, d['pressure_0'].max()])
+        max_v = np.amax([max_v, d['volume_0'].max()])
+        
+    # Tidy up
+    max_p = multiple_greater_than(max_p, 20)
+    max_v = multiple_greater_than(max_v, 0.02)
+
+    
+    for i in range(len(results_file_strings)):
+        
+        x_ticks = [0, max_v]
+        y_ticks = [0, max_p]
+        
+        plot_index = i
+        ax[plot_index].set_xlim(x_ticks)
+        ax[plot_index].set_xticks(x_ticks)
+        
+        for tick_label in ax[plot_index].get_xticklabels():
+            tick_label.set_fontname(formatting['fontname'])
+            tick_label.set_fontsize(formatting['tick_labels_fontsize'])
+        
+        ax[plot_index].set_xlabel('Volume (liters)',
+                                  loc='center',
+                                  verticalalignment='center',
+                                  labelpad=formatting['x_label_pad'],
+                                  fontfamily=formatting['fontname'],
+                                  fontsize=formatting['x_label_fontsize'])
+        
+        
+        ax[plot_index].set_ylim(y_ticks)
+        ax[plot_index].set_yticks(y_ticks)
+        
+        for tick_label in ax[plot_index].get_yticklabels():
+            tick_label.set_fontname(formatting['fontname'])
+            tick_label.set_fontsize(formatting['tick_labels_fontsize'])
+        
+        ax[plot_index].set_ylabel('Pressure\n(mmHg)',
+                                  loc='center',
+                                  verticalalignment='center',
+                                  labelpad=formatting['y_label_pad'],
+                                  fontfamily=formatting['fontname'],
+                                  fontsize=formatting['y_label_fontsize'],
+                                  rotation=formatting['y_label_rotation'])
+
+        ax[plot_index].text(0.5*x_ticks[-1], 1.1*y_ticks[-1],
+                            'ESPVR = %.0f\nmmHg liter$\mathregular{^{-1}}$' % espvr['slope'][i],
+                            fontfamily=formatting['fontname'],
+                            horizontalalignment='center',
+                            fontsize=9,
+                            color = ax[plot_index].lines[-1].get_color())   
+
+           
+        # Remove top and right-hand size of box
+        ax[i].spines['top'].set_visible(False)
+        ax[i].spines['right'].set_visible(False)
+       
+        if (i > 0):
+            ax[plot_index].get_yaxis().set_visible(False)
+            ax[plot_index].spines['left'].set_visible(False)
+        
+    # Tidy overall figure
+    # Move plots inside margins
+    lhs = layout['left_margin'] / fig_width
+    bot = layout['bottom_margin'] / fig_height
+    wid = (fig_width - layout['left_margin'] -
+               layout['right_margin']) / fig_width
+    hei = (fig_height - layout['bottom_margin'] -
+           layout['top_margin']) / fig_height
+    r = [lhs, bot, wid, hei]
+    
+    # if not formatting['y_label_loc']:
+    #     fig.align_labels()
+    # else:
+    #     for i in range(no_of_conditions * no_of_rows):
+    #         ax[i].yaxis.set_label_coords(formatting['y_label_loc'], 0.5)
+            
+    if formatting['tight_layout']:
+        spec.tight_layout(fig, rect=r)
+
+    # Output
+    for ext in fig_data['output_image_formats']:
+        ofs = ('%s.%s' % (fig_data['output_image_file'], ext))
+        fig.savefig(ofs)
+    
+    # Tidy up
+    plt.close(fig)
+    
+def odr_line(p, x):
+    y = p[1] * x + p[0]
+    
+    return y
+    
+def return_end_phase_data(df):
+    """ Returns the end-phase data of a record """
+    
+    # Get the new beat indices
+    new_beat_ind = np.nonzero(df.hr_new_beat)[0]
+    no_of_beats = len(new_beat_ind) - 1
+    
+    
+    # Set up dict for results
+    end_phase = dict()
+    end_phase['systolic_index'] = np.NaN * np.ones(no_of_beats)
+    end_phase['systolic_pressure'] = np.NaN * np.ones(no_of_beats)
+    end_phase['systolic_volume'] = np.NaN * np.ones(no_of_beats)
+    end_phase['diastolic_index'] = np.NaN * np.ones(no_of_beats)
+    end_phase['diastolic_pressure'] = np.NaN * np.ones(no_of_beats)
+    end_phase['diastolic_volume'] = np.NaN * np.ones(no_of_beats)
+
+    # Cycle through the beats    
+    for si in range(no_of_beats):
+        
+        d_beat = df.copy().iloc[(new_beat_ind[si]+1) : new_beat_ind[si+1]]
+        
+        # Rescale the volume and pressure
+        for x in ['pressure_0', 'volume_0']:
+            min_value = d_beat[x].min()
+            max_value = d_beat[x].max()
+            d_beat[x] = (d_beat[x] - min_value) / (max_value - min_value)
+        
+        # Get the means
+        mean_volume = d_beat['volume_0'].mean()
+        mean_pressure = d_beat['pressure_0'].mean()
+        
+        # Find end systole
+        r = np.hypot((d_beat['volume_0'] - mean_volume).to_numpy(),
+                     (d_beat['pressure_0'] - mean_pressure).to_numpy())
+        
+        r[np.nonzero(d_beat['volume_0'] > mean_volume)[0]] = 0
+        r[np.nonzero(d_beat['pressure_0'] < mean_pressure)[0]] = 0
+        
+        peaks, _ = sig.find_peaks(r, prominence = -.5 * np.amax(r))
+        
+        # Special case
+        if (len(peaks) == 0):
+            end_phase['systolic_index'].append(d_beat.index[0])
+        else:
+            i_loc = d_beat.index[peaks[0]]
+            df_loc = np.nonzero(df.index == i_loc)[0]
+            end_phase['systolic_index'][si] = df_loc
+            
+        end_phase['systolic_pressure'][si] = df['pressure_0'].iloc[df_loc].to_numpy()
+        end_phase['systolic_volume'][si] = df['volume_0'].iloc[df_loc].to_numpy()
+    
+    return end_phase
 
 
 # def create_y_pCa_figure(fig_data, batch_file_string):

@@ -130,6 +130,12 @@ def run_batch(json_batch_file_string, figures_only=False):
                 analyses.create_superposed_traces_figure(
                     fig_data,
                     json_batch_file_string)
+                
+        if ('pv_loops' in MyoVent_batch['batch_figures']):
+            for fig_data in MyoVent_batch['batch_figures']['pv_loops']:
+                analyses.create_pv_loops_figure(
+                    fig_data,
+                    json_batch_file_string)
     
 def worker(cmd):
     subprocess.call(cmd)

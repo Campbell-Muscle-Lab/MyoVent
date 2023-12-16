@@ -1,0 +1,39 @@
+{
+    "MyoSim": {
+        "bin_min": -15.0,
+        "bin_max": 15.0,
+        "bin_width": 1.0,
+        "max_rate": 1000.0,
+        "xrates_dump": {
+            "file_string": "D:\\Ken\\GitHub\\CampbellMuscleLab\\Publications\\paper_myovent_growth\\figures\\sim_data\\sim_output\\1\\rates.json"
+        }
+    },
+    "FiberSim": {
+        "max_rate": 50000.0,
+        "x_pos_rel_tol": 0.1,
+        "hs_force_control_max_delta_hs_length": 300,
+        "adjacent_bs": 1,
+        "lambda_jitter": 0,
+        "min_hs_length": 603,
+        "xstatus_files": {
+            "relative_to": "sim_output_dir",
+            "status_folder": "status_dumps",
+            "time_steps": "480:1:590"
+        },
+        "myofibrils": {
+            "max_iterations": 100,
+            "force_tolerance": 1,
+            "max_delta_hs_length": 100
+        }
+    },
+    "hemi_vent": {
+        "thick_wall_approximation": "True"
+    },
+    "growth": {
+        "deriv_points": 2500
+    },
+    "results": {
+        "beat_length_s": 3,
+        "summary_time_step_s": 0.01
+    }
+}

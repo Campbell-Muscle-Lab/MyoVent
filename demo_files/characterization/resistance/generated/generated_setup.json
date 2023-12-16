@@ -1,0 +1,124 @@
+{
+    "MyoVent_setup": {
+        "MyoVentCpp_exe": {
+            "relative_to": "this_file",
+            "exe_file": "../../../../code/myoventcpp/bin/myoventcpp.exe"
+        },
+        "model": {
+            "relative_to": "this_file",
+            "options_file": "sim_options.json",
+            "model_files": [
+                "model_1.json",
+                "model_2.json",
+                "model_3.json",
+                "model_4.json"
+            ]
+        },
+        "characterization": [
+            {
+                "type": "isovolumic",
+                "relative_to": "this_file",
+                "sim_folder": "../sim_data",
+                "m_n": 16,
+                "time_step_s": 0.001,
+                "sim_duration_s": 70,
+                "espvr_start_time_s": 7,
+                "ventricular_slack_volume_factors": [
+                    1
+                ],
+                "output_image_formats": [
+                    "png",
+                    "svg"
+                ],
+                "perturbation": [
+                    {
+                        "class": "circulation",
+                        "variable": "resistance_3",
+                        "t_start_s": 20,
+                        "t_stop_s": 21,
+                        "total_change": 75
+                    },
+                    {
+                        "class": "circulation",
+                        "variable": "resistance_3",
+                        "t_start_s": 30,
+                        "t_stop_s": 31,
+                        "total_change": 75
+                    },
+                    {
+                        "class": "circulation",
+                        "variable": "resistance_4",
+                        "t_start_s": 40,
+                        "t_stop_s": 41,
+                        "total_change": 75
+                    },
+                    {
+                        "class": "circulation",
+                        "variable": "resistance_4",
+                        "t_start_s": 50,
+                        "t_stop_s": 51,
+                        "total_change": 150
+                    },
+                    {
+                        "class": "circulation",
+                        "variable": "resistance_4",
+                        "t_start_s": 60,
+                        "t_stop_s": 61,
+                        "total_change": 300
+                    }
+                ],
+                "xperturbation": [
+                    {
+                        "class": "circulation",
+                        "variable": "resistance_3",
+                        "t_start_s": 1,
+                        "t_stop_s": 2,
+                        "total_change": -20
+                    },
+                    {
+                        "class": "circulation",
+                        "variable": "resistance_3",
+                        "t_start_s": 20,
+                        "t_stop_s": 21,
+                        "total_change": 50
+                    },
+                    {
+                        "class": "circulation",
+                        "variable": "resistance_3",
+                        "t_start_s": 40,
+                        "t_stop_s": 41,
+                        "total_change": 100
+                    },
+                    {
+                        "class": "circulation",
+                        "variable": "resistance_3",
+                        "t_start_s": 60,
+                        "t_stop_s": 61,
+                        "total_change": 100
+                    },
+                    {
+                        "class": "circulation",
+                        "variable": "resistance_4",
+                        "t_start_s": 80,
+                        "t_stop_s": 81,
+                        "total_change": 100
+                    },
+                    {
+                        "class": "circulation",
+                        "variable": "resistance_4",
+                        "t_start_s": 100,
+                        "t_stop_s": 101,
+                        "total_change": 100
+                    },
+                    {
+                        "class": "circulation",
+                        "variable": "resistance_4",
+                        "t_start_s": 120,
+                        "t_stop_s": 121,
+                        "total_change": 100
+                    }
+                ]
+            }
+        ]
+    }
+}

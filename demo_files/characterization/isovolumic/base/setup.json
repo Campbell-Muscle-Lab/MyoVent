@@ -46,7 +46,9 @@
                 "m_n": 36,
                 "time_step_s": 0.0002,
                 "sim_duration_s": 20,
+                "espvr_start_time_s": 7,
                 "ventricular_slack_volume_factors": [1],
+                "output_image_formats": ["png", "svg"],
                 "perturbation":
                 [
                     {

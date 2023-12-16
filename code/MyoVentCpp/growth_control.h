@@ -89,8 +89,10 @@ public:
 
 	double gc_slope;
 
-	double* gc_deriv_x;
-	double* gc_deriv_y;
+	gsl_vector* gc_deriv_x;					/**< gsl vector holding pointer to
+													x variable for slope */
+	gsl_vector* gc_deriv_y;					/**< gsl vector holding pointer to
+													y variable for slope */
 
 	double gc_prop_signal;
 	double gc_deriv_signal;
