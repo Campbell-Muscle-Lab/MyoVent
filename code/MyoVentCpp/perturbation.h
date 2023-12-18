@@ -59,7 +59,7 @@ public:
 
 	 void extract_digits(string test_string, int digits[], int no_of_digits);
 
-
+	 void make_adjustment(double* p_double, double increment);
 
 
 };

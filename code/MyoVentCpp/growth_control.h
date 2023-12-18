@@ -8,6 +8,8 @@
 
 #include "stdio.h"
 
+#include "gsl_vector.h"
+
 #include <iostream>
 
 #include "global_definitions.h"
@@ -89,9 +91,9 @@ public:
 
 	double gc_slope;
 
-	gsl_vector* gc_deriv_x;					/**< gsl vector holding pointer to
+	double * gc_deriv_x;					/**< gsl vector holding pointer to
 													x variable for slope */
-	gsl_vector* gc_deriv_y;					/**< gsl vector holding pointer to
+	double * gc_deriv_y;					/**< gsl vector holding pointer to
 													y variable for slope */
 
 	double gc_prop_signal;

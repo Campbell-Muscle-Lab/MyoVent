@@ -320,14 +320,18 @@ def deduce_freeform_properties(json_analysis_file_string,
             
             # Add in an activation
             prot['activation'] = []
-            for (i,act) in enumerate(characterization_struct['activation']):
-                if (np.any(np.asarray(act['simulation']) == (i+1))):
+            for i in range(len(characterization_struct['activation'])):
+                act = copy.deepcopy(characterization_struct['activation'][i])
+                if (np.any(np.asarray(act['simulation']) == (cond_ind+1))):
+                    del act['simulation']
                     prot['activation'].append(act)                
             
             # Add in the perturbation
             prot['perturbation'] = []
-            for (i, pert) in enumerate(characterization_struct['perturbation']):
-                if (np.any(np.asarray(pert['simulation']) == (i+1))):
+            for i in range(len(characterization_struct['perturbation'])):
+                pert = copy.deepcopy(characterization_struct['perturbation'][i])
+                if (np.any(np.asarray(pert['simulation']) == (cond_ind+1))):
+                    del pert['simulation']
                     prot['perturbation'].append(pert)
             
             # Write it to file

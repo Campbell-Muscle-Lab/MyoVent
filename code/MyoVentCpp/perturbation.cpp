@@ -30,6 +30,7 @@
 #include "kinetic_scheme.h"
 #include "transition.h"
 #include "baroreflex.h"
+#include "reflex_control.h"
 
 #include "gsl_math.h"
 
@@ -90,6 +91,8 @@ void perturbation::impose(double sim_time_s)
 
 	// Code
 
+	p_double = NULL;
+
 	if ((sim_time_s >= t_start_s) && (sim_time_s <= t_stop_s))
 	{
 		if (class_name == "baroreflex")
@@ -97,8 +100,6 @@ void perturbation::impose(double sim_time_s)
 			if (variable == "baro_P_set")
 			{
 				p_double = &(p_cmv_protocol->p_cmv_system->p_circulation->p_baroreflex->baro_P_set);
-
-				*p_double = *p_double + increment;
 			}
 		}
 
@@ -119,8 +120,6 @@ void perturbation::impose(double sim_time_s)
 				compartment_index = digits[0] - 1;
 
 				p_double = &(p_cmv_protocol->p_cmv_system->p_circulation->circ_resistance[compartment_index]);
-
-				*p_double = *p_double + increment;
 			}
 
 			if (variable.rfind("compliance", 0) == 0)
@@ -138,8 +137,6 @@ void perturbation::impose(double sim_time_s)
 				compartment_index = digits[0] - 1;
 
 				p_double = &(p_cmv_protocol->p_cmv_system->p_circulation->circ_compliance[compartment_index]);
-
-				*p_double = *p_double + increment;
 			}
 
 			if (variable == "blood_volume")
@@ -152,7 +149,6 @@ void perturbation::impose(double sim_time_s)
 				// And extra blood goes in veins
 				p_double = &(p_cmv_protocol->p_cmv_system->p_circulation->circ_volume[
 					p_cmv_protocol->p_cmv_system->p_circulation->circ_no_of_compartments - 1]);
-				*p_double = *p_double + increment;
 			}
 		}
 
@@ -161,8 +157,6 @@ void perturbation::impose(double sim_time_s)
 			if (variable == "vent_wall_volume")
 			{
 				p_double = &(p_cmv_protocol->p_cmv_system->p_circulation->p_hemi_vent->vent_wall_volume);
-
-				*p_double = *p_double + increment;
 			}
 
 			if (variable == "vent_n_hs")
@@ -185,9 +179,6 @@ void perturbation::impose(double sim_time_s)
 				p_cmv_protocol->p_cmv_system->p_circulation->p_hemi_vent->vent_wall_volume =
 					p_cmv_protocol->p_cmv_system->p_circulation->p_hemi_vent->vent_wall_volume *
 					(1.0 + (delta_n_hs / p_cmv_protocol->p_cmv_system->p_circulation->p_hemi_vent->vent_n_hs));
-
-				// Finally increment the vent_n_hs
-				*p_double = *p_double + increment;
 			}
 		}
 
@@ -196,57 +187,41 @@ void perturbation::impose(double sim_time_s)
 			if (variable == "mv_valve_k")
 			{
 				p_double = &(p_cmv_protocol->p_cmv_system->p_circulation->p_hemi_vent->p_mv->valve_k);
-
-				*p_double = *p_double + increment;
 			}
 
 			if (variable == "mv_valve_mass")
 			{
 				p_double = &(p_cmv_protocol->p_cmv_system->p_circulation->p_hemi_vent->p_mv->valve_mass);
-
-				*p_double = *p_double + increment;
 			}
 
 			if (variable == "mv_valve_eta")
 			{
 				p_double = &(p_cmv_protocol->p_cmv_system->p_circulation->p_hemi_vent->p_mv->valve_eta);
-
-				*p_double = *p_double + increment;
 			}
 
 			if (variable == "mv_valve_leak")
 			{
 				p_double = &(p_cmv_protocol->p_cmv_system->p_circulation->p_hemi_vent->p_mv->valve_leak);
-
-				*p_double = *p_double + increment;
 			}
 
 			if (variable == "av_valve_k")
 			{
 				p_double = &(p_cmv_protocol->p_cmv_system->p_circulation->p_hemi_vent->p_av->valve_k);
-
-				*p_double = *p_double + increment;
 			}
 
 			if (variable == "av_valve_mass")
 			{
 				p_double = &(p_cmv_protocol->p_cmv_system->p_circulation->p_hemi_vent->p_av->valve_mass);
-
-				*p_double = *p_double + increment;
 			}
 
 			if (variable == "av_valve_eta")
 			{
 				p_double = &(p_cmv_protocol->p_cmv_system->p_circulation->p_hemi_vent->p_av->valve_eta);
-
-				*p_double = *p_double + increment;
 			}
 
 			if (variable == "av_valve_leak")
 			{
 				p_double = &(p_cmv_protocol->p_cmv_system->p_circulation->p_hemi_vent->p_av->valve_leak);
-
-				*p_double = *p_double + increment;
 			}
 		}
 
@@ -255,8 +230,6 @@ void perturbation::impose(double sim_time_s)
 			if (variable == "prop_fibrosis")
 			{
 				p_double = &(p_cmv_protocol->p_cmv_system->p_circulation->p_hemi_vent->p_muscle->muscle_prop_fibrosis);
-
-				*p_double = *p_double + increment;
 			}
 		}
 		if (class_name == "membranes")
@@ -264,15 +237,11 @@ void perturbation::impose(double sim_time_s)
 			if (variable == "t_open")
 			{
 				p_double = &(p_cmv_protocol->p_cmv_system->p_circulation->p_hemi_vent->p_muscle->p_membranes->memb_t_open_s);
-
-				*p_double = *p_double + increment;
 			}
 
 			if (variable == "k_leak")
 			{
 				p_double = &(p_cmv_protocol->p_cmv_system->p_circulation->p_hemi_vent->p_muscle->p_membranes->memb_k_leak);
-
-				*p_double = *p_double + increment;
 			}
 		}
 
@@ -283,8 +252,6 @@ void perturbation::impose(double sim_time_s)
 			{
 				p_double = &(p_cmv_protocol->p_cmv_system->p_circulation->p_hemi_vent->p_muscle->
 					p_mitochondria->mito_ATP_generation_rate);
-
-				*p_double = *p_double + increment;
 			}
 		}
 
@@ -312,11 +279,9 @@ void perturbation::impose(double sim_time_s)
 				parameter_index = digits[2] - 1;
 
 				// This is tricky because the variable is stored in a gsl_vector
-				gsl_vector* p_gsl_v = p_FiberSim_hs->p_fs_model->p_m_scheme[0]->p_m_states[state_index]->
-					p_transitions[transition_index]->rate_parameters;
-
-				gsl_vector_set(p_gsl_v, parameter_index,
-					gsl_vector_get(p_gsl_v, parameter_index) + increment);
+				p_double = gsl_vector_ptr(p_FiberSim_hs->p_fs_model->p_m_scheme[0]->p_m_states[state_index]->
+					p_transitions[transition_index]->rate_parameters,
+					parameter_index);
 			}
 
 			if (variable.rfind("c_state", 0) == 0)
@@ -337,17 +302,11 @@ void perturbation::impose(double sim_time_s)
 				parameter_index = digits[2] - 1;
 
 				// This is tricky because the variable is stored in a gsl_vector
-				gsl_vector* p_gsl_v = p_FiberSim_hs->p_fs_model->p_c_scheme[0]->p_m_states[state_index]->
-					p_transitions[transition_index]->rate_parameters;
-
-				gsl_vector_set(p_gsl_v, parameter_index,
-					gsl_vector_get(p_gsl_v, parameter_index) + increment);
+				p_double = gsl_vector_ptr(p_FiberSim_hs->p_fs_model->p_c_scheme[0]->p_m_states[state_index]->
+					p_transitions[transition_index]->rate_parameters,
+					parameter_index);
 			}
 		}
-
-
-
-
 
 		/*
 		if (class_name == "myofilaments")
@@ -411,6 +370,51 @@ void perturbation::impose(double sim_time_s)
 			}
 		}
 		*/
+
+		make_adjustment(p_double, increment);
+	}
+}
+
+void perturbation::make_adjustment(double* p_double, double increment)
+{
+	//! Code makes adjustment to controlled variable. This is normally straightforward
+	//! but if the variable is under reflex control, we have to detect this and change
+	//! the setting for the reflex control
+
+	// Variables
+	bool reflex_controlled = false;
+
+	baroreflex* p_baroreflex;
+	reflex_control* p_rc;
+
+	// Code
+
+	// First find the baroreflex
+	p_baroreflex = p_cmv_protocol->p_cmv_system->p_circulation->p_baroreflex;
+
+	if (p_baroreflex != NULL)
+	{
+		for (int i = 0; i < p_baroreflex->no_of_reflex_controls; i++)
+		{
+			p_rc = p_baroreflex->p_rc[i];
+
+			if (p_rc->p_controlled_variable == p_double)
+			{
+				// We have a reflex controlled variable
+				p_rc->rc_base_value = p_rc->rc_base_value + increment;
+				p_rc->rc_symp_value = p_rc->rc_symp_factor * p_rc->rc_base_value;
+				p_rc->rc_para_value = p_rc->rc_para_factor * p_rc->rc_base_value;
+
+				reflex_controlled = true;
+
+				break;
+			}
+		}
+	}
+
+	if (!reflex_controlled)
+	{
+		*p_double = *p_double + increment;
 	}
 }
 
