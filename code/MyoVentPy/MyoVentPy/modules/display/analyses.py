@@ -122,7 +122,7 @@ def create_superposed_traces_figure(fig_data, batch_file_string):
 
     # Hold the no_of_conditions
     no_of_conditions = no_of_results_files
-    no_of_rows = 11
+    no_of_rows = 12
 
     # Set-up the figure
     fig = plt.figure(constrained_layout = False)
@@ -185,6 +185,9 @@ def create_superposed_traces_figure(fig_data, batch_file_string):
         
         plot_index = plot_index + 1
         ax[plot_index].plot(d['time'], d['vent_wall_thickness'])
+        
+        plot_index = plot_index + 1
+        ax[plot_index].plot(d['time'], d['hr_heart_rate_bpm'])
 
         plot_index = plot_index + 1
         ax[plot_index].plot(d['time'], d['muscle_stress'])
@@ -219,6 +222,7 @@ def create_superposed_traces_figure(fig_data, batch_file_string):
                      'Ventricular\nradius\n(m)',
                      'Ventricular\nheight\n(m)',
                      'Ventricular\nwall\nthickness\n(m)',
+                     'Heart-\nrate\n(bmp',
                      'Half-\nsarcomere\nstress\n(kN m^-2)',
                      'Half-\nsarcomere\nlength\n(nm)',
                      'Passive\nStresses\n(kN m^-2)',

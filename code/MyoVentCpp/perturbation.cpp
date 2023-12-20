@@ -18,6 +18,7 @@
 
 #include "valve.h"
 #include "muscle.h"
+#include "heart_rate.h"
 #include "membranes.h"
 #include "mitochondria.h"
 
@@ -232,6 +233,15 @@ void perturbation::impose(double sim_time_s)
 				p_double = &(p_cmv_protocol->p_cmv_system->p_circulation->p_hemi_vent->p_muscle->muscle_prop_fibrosis);
 			}
 		}
+
+		if (class_name == "heart_rate")
+		{
+			if (variable == "t_rr_interval_s")
+			{
+				p_double = &(p_cmv_protocol->p_cmv_system->p_circulation->p_hemi_vent->p_muscle->p_heart_rate->hr_t_RR_interval_s);
+			}
+		}
+
 		if (class_name == "membranes")
 		{
 			if (variable == "t_open")

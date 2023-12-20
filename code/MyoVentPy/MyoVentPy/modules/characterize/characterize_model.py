@@ -351,12 +351,35 @@ def deduce_freeform_properties(json_analysis_file_string,
                 
             new_results_file_string = os.path.join(sim_output_folder,
                                               'sim_output.txt')
+            
+            # Add in an output handler
+            if ('template_files' in characterization_struct):
+                oh = dict()
+                oh['templated_images'] = []
+                tf = dict()
+                tf['relative_to'] = 'this_file'
+                tf['template_file_string'] = os.path.join(base_dir,
+                                                          characterization_struct['template_files'][0])
+                tf['output_file_string'] = os.path.join(sim_output_folder,
+                                                        'output_%i' % sim_counter)
+                tf['output_image_formats'] = ['png', 'svg']
+                oh['templated_images'].append(tf)
+                
+                # Now make the file
+                new_output_handler_file_string = os.path.join(sim_input_folder,
+                                                              'output_handler.json')
+                
+                with open(new_output_handler_file_string, 'w') as f:
+                    json.dump(oh, f, indent=4)
                 
             # Add the job
             j['model_file'] = str(Path(new_model_file_string).resolve().absolute())
             j['options_file'] = str(Path(new_options_file_string).resolve().absolute())
             j['protocol_file'] = str(Path(new_protocol_file_string).resolve().absolute())
             j['results_file'] = str(Path(new_results_file_string).resolve().absolute())
+            
+            if ('template_files' in characterization_struct):
+                j['output_handler_file'] = str(Path(new_output_handler_file_string).resolve().absolute())
             
             # Update the counter
             sim_counter = sim_counter + 1
