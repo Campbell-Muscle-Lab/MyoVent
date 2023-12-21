@@ -429,6 +429,47 @@ double FiberSim_transition::calculate_rate(double x, double x_ext, double node_f
 		//printf("active_neigh: %g  rate: %f\n", (double)active_neigh, rate);
 	}
 
+	if (!strcmp(rate_type, "exp_wall_mybpc_dependent"))
+	{
+		// Variables
+		FiberSim_model* p_model = p_parent_m_state->p_parent_scheme->p_fs_model;
+
+		double k0 = gsl_vector_get(rate_parameters, 0);
+		double F = p_model->m_k_cb * (x + x_ext);
+		double d = gsl_vector_get(rate_parameters, 1);
+		double x_wall = gsl_vector_get(rate_parameters, 2);
+		double x_smooth = gsl_vector_get(rate_parameters, 3);
+
+		double modifier_k0;
+		double modifier_d;
+
+		int no_of_c_states = p_model->p_c_scheme[mybpc_iso]->no_of_states;
+
+		if (mybpc_state > 0)
+		{
+			int mod_index = 4 + ((mybpc_iso - 1) * 0) + (mybpc_state - 1);
+
+			modifier_d = gsl_vector_get(rate_parameters, mod_index);
+
+			modifier_k0 = exp(-(p_model->m_k_cb * x_ext * d) /
+				(1e18 * GSL_CONST_MKSA_BOLTZMANN * p_model->temperature)) /
+				exp(-(p_model->m_k_cb * x_ext * d * modifier_d) /
+					(1e18 * GSL_CONST_MKSA_BOLTZMANN * p_model->temperature));
+
+			d = d * modifier_d;
+
+			k0 = k0 * modifier_k0;
+		}
+		
+		// Code
+		rate = k0 * exp(-(F * d) /
+			(1e18 * GSL_CONST_MKSA_BOLTZMANN * p_model->temperature));
+
+		rate = rate + p_options->max_rate * (1 /
+			(1 + exp(-x_smooth * (x - x_wall))));
+	}
+	
+
 	// Curtail at max rate
 
 	if (rate > (p_options->max_rate))

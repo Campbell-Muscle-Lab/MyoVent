@@ -285,6 +285,10 @@ public:
     double thread_return_value;
 
     // Kinetics
+    int max_m_transitions;          /**< integer with the maximum number of myosin transitions */
+
+    int max_c_transitions;          /**< integer with the maximum number of mybpc transitions */
+
     int max_transitions;            /**< integer with the maximum number of transitions */
 
     gsl_vector* transition_probs;   /**< gsl_vector holding transition probabilities for

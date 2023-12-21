@@ -319,20 +319,22 @@ def deduce_freeform_properties(json_analysis_file_string,
                 characterization_struct['sim_duration_s'] / characterization_struct['time_step_s'])
             
             # Add in an activation
-            prot['activation'] = []
-            for i in range(len(characterization_struct['activation'])):
-                act = copy.deepcopy(characterization_struct['activation'][i])
-                if (np.any(np.asarray(act['simulation']) == (cond_ind+1))):
-                    del act['simulation']
-                    prot['activation'].append(act)                
+            if ('activation' in characterization_struct):
+                prot['activation'] = []
+                for i in range(len(characterization_struct['activation'])):
+                    act = copy.deepcopy(characterization_struct['activation'][i])
+                    if (np.any(np.asarray(act['simulation']) == (cond_ind+1))):
+                        del act['simulation']
+                        prot['activation'].append(act)                
             
             # Add in the perturbation
-            prot['perturbation'] = []
-            for i in range(len(characterization_struct['perturbation'])):
-                pert = copy.deepcopy(characterization_struct['perturbation'][i])
-                if (np.any(np.asarray(pert['simulation']) == (cond_ind+1))):
-                    del pert['simulation']
-                    prot['perturbation'].append(pert)
+            if ('perturbation' in characterization_struct):
+                prot['perturbation'] = []
+                for i in range(len(characterization_struct['perturbation'])):
+                    pert = copy.deepcopy(characterization_struct['perturbation'][i])
+                    if (np.any(np.asarray(pert['simulation']) == (cond_ind+1))):
+                        del pert['simulation']
+                        prot['perturbation'].append(pert)
             
             # Write it to file
             new_protocol_file_string = os.path.join(sim_input_folder,

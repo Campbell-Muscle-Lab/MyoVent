@@ -173,6 +173,7 @@ def create_superposed_traces_figure(fig_data, batch_file_string):
         plot_index = (i*no_of_rows)
         ax[plot_index].plot(d['time'], d['pressure_0'], label = 'Ventricle')
         ax[plot_index].plot(d['time'], d['pressure_1'], label = 'Aorta')
+        ax[plot_index].plot(d['time'], d['pressure_3'], label = 'Arterioles')
         
         plot_index = plot_index + 1
         ax[plot_index].plot(d['time'], d['volume_0'])
