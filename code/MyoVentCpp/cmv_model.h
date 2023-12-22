@@ -101,6 +101,11 @@ public:
 
 	int no_of_gc_controls;				/**< integer with the number of growth controls */
 
+	// Filling_control
+
+	double filling_venous_pressure;		/**< double holding the venous pressure when filling
+												control is activated */
+
 	// Ventricle
 	double vent_wall_density;			/**< double with wall density in kg m^-3 */
 

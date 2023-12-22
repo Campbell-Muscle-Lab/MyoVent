@@ -129,6 +129,19 @@ circulation::circulation(cmv_system* set_p_parent_cmv_system = NULL)
 	{
 		p_growth = NULL;
 	}
+
+	// Check for filling control
+	if (!gsl_isnan(p_cmv_model->filling_venous_pressure))
+	{
+		filling_control = true;
+		filling_control_venous_pressure = p_cmv_model->filling_venous_pressure;
+	}
+	else
+	{
+		filling_control = false;
+		filling_control_venous_pressure = GSL_NAN;
+	}
+
 }
 
 // Destructor
@@ -349,6 +362,27 @@ bool circulation::implement_time_step(double time_step_s)
 		p_growth->growth_active = p_cmv_protocol->return_activation("growth",
 			p_parent_cmv_system->cum_time_s);
 		p_growth->implement_time_step(time_step_s, new_beat);
+	}
+
+	// Check for active filling control
+	if (filling_control)
+	{
+		int control_active = p_cmv_protocol->return_activation("filling_control",
+			p_parent_cmv_system->cum_time_s);
+
+		if (control_active)
+		{
+			int venous_compartment = p_cmv_model->circ_no_of_compartments - 1;
+
+			double required_volume = circ_slack_volume[venous_compartment] +
+				(filling_control_venous_pressure * circ_compliance[venous_compartment]);
+
+			double delta_volume = required_volume - circ_volume[venous_compartment];
+
+			// Adjust
+			circ_volume[venous_compartment] = circ_volume[venous_compartment] + delta_volume;
+			circ_blood_volume = circ_blood_volume + delta_volume;
+		}
 	}
 
 	// Tidy up

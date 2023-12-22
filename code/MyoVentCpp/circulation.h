@@ -62,6 +62,12 @@ public:
 
 	growth* p_growth;									/**< Pointer to the growth object */
 
+	bool filling_control;								/**< bool defining whether filling control
+																has been defined */
+
+	double filling_control_venous_pressure;				/**< double with venous pressure when filling
+																is being controlled */
+
 	double circ_blood_volume;							/**< double holding total blood volume
 																in liters */
 

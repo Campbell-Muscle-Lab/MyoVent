@@ -33,7 +33,9 @@ public:
 	 // Variables
 	 string activation_type;				/**< string holding the activation type, typically
 													baroreflex
-													growth */
+													growth
+													filling_pressure
+													*/
 
 	 double t_start_s;						/**< double defining when the activation starts */
 

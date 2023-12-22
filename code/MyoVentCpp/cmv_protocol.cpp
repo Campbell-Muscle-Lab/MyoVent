@@ -54,7 +54,7 @@ cmv_protocol::cmv_protocol(cmv_system* set_p_cmv_system, string set_protocol_fil
 	}
 
 	// Null the perturbation pointers
-	for (int i = 0; i < MAX_NO_OF_ACTIVATIONS; i++)
+	for (int i = 0; i < MAX_NO_OF_PERTURBATIONS; i++)
 	{
 		p_perturbation[i] = NULL;
 	}

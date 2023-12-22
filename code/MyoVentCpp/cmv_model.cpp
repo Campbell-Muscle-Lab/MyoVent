@@ -86,6 +86,8 @@ cmv_model::cmv_model(string JSON_model_file_string)
 	baro_k_recov = GSL_NAN;
 	baro_P_compartment = -1;
 
+	filling_venous_pressure = GSL_NAN;
+
 	// Safe pointers
 
 	p_fs_model = NULL;
@@ -529,5 +531,14 @@ void cmv_model::initialise_model_from_JSON_file(string JSON_model_file_string)
 
 			no_of_gc_controls = no_of_gc_controls + 1;
 		}
+	}
+
+	// Now check for filling_contrl
+	if (JSON_functions::check_JSON_member_exists(myovent, "filling_control"))
+	{
+		const rapidjson::Value& fill_control = myovent["filling_control"];
+
+		JSON_functions::check_JSON_member_number(fill_control, "venous_pressure");
+		filling_venous_pressure = fill_control["venous_pressure"].GetDouble();
 	}
 }
