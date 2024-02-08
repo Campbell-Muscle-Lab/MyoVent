@@ -94,6 +94,10 @@ public:
 																holding pressure in each
 																compartment */
 
+	double* circ_static;								/**< Pointer to array of doubles
+																holding static pressure in
+																each compartment */
+
 	double* circ_volume;								/**< Pointer to array of doubles
 																holding pressure in each
 																compartment */

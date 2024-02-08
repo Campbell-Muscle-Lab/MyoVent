@@ -63,6 +63,9 @@ public:
 	double* circ_compliance;			/**< pointer to array of doubles with
 												compliance of individual compartments */
 
+	double* circ_static;				/**< pointer to array of doubles with
+												static pressure in each compartment */
+
 	double* circ_slack_volume;			/**< pointer to array of doubles with
 												slack volume of individual compartments */
 

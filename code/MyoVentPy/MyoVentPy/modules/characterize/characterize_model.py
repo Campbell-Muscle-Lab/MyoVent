@@ -117,7 +117,7 @@ def generate_model_files(json_analysis_file_string):
                     (a['variable'] == 'c_kinetics')):
 
                 kinetics_structure = adj_model['MyoVent']['circulation']['ventricle']['myocardium']['contraction'] \
-                    ['model']['muscle']['half_sarcomere'][a['variable']][a['isotype']-1]['scheme'][a['scheme']-1]
+                    ['model']['muscle']['half_sarcomere'][a['variable']][a['isotype']-1]['state'][a['state']-1]
 
                 # Special case for kinetics
                 if ('extension' in a):
@@ -141,7 +141,7 @@ def generate_model_files(json_analysis_file_string):
                         
                 # Insert back into model
                 adj_model['MyoVent']['circulation']['ventricle']['myocardium']['contraction'] \
-                    ['model']['muscle']['half_sarcomere'][a['variable']][a['isotype']-1]['scheme'][a['scheme']-1] = \
+                    ['model']['muscle']['half_sarcomere'][a['variable']][a['isotype']-1]['state'][a['state']-1] = \
                         kinetics_structure                  
                     
                 

@@ -204,16 +204,19 @@ def create_superposed_traces_figure(fig_data, batch_file_string):
         a_pops = [x for x in d.columns.to_list() if x.startswith('fs_hs_a_pop')]
         for (i, a) in enumerate(a_pops):
             ax[plot_index].plot(d['time'], d[a], label='a_pop_%i' % i)
+        ax[plot_index].set_ylim([0, 1])
             
         plot_index = plot_index + 1
         m_pops = [x for x in d.columns.to_list() if x.startswith('fs_hs_m_pop')]
         for (i, m) in enumerate(m_pops):
             ax[plot_index].plot(d['time'], d[m], label='m_pop_%i' % i)
+        ax[plot_index].set_ylim([0, 1])
             
         plot_index = plot_index + 1
         c_pops = [x for x in d.columns.to_list() if x.startswith('fs_hs_c_pop')]
         for (i, c) in enumerate(c_pops):
             ax[plot_index].plot(d['time'], d[c], label='c_pop_%i' % i)
+        ax[plot_index].set_ylim([0, 1])
 
                     
         

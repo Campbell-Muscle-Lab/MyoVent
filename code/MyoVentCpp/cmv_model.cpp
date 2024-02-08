@@ -72,6 +72,7 @@ cmv_model::cmv_model(string JSON_model_file_string)
 	// Reserve space for compartment variables
 	circ_resistance = (double*)malloc(MAX_NO_OF_COMPARTMENTS * sizeof(double));
 	circ_compliance = (double*)malloc(MAX_NO_OF_COMPARTMENTS * sizeof(double));
+	circ_static = (double*)malloc(MAX_NO_OF_COMPARTMENTS * sizeof(double));
 	circ_slack_volume = (double*)malloc(MAX_NO_OF_COMPARTMENTS * sizeof(double));
 	circ_inertance = (double*)malloc(MAX_NO_OF_COMPARTMENTS * sizeof(double));
 
@@ -137,6 +138,7 @@ cmv_model::~cmv_model(void)
 
 	free(circ_resistance);
 	free(circ_compliance);
+	free(circ_static);
 	free(circ_slack_volume);
 	free(circ_inertance);
 }
@@ -218,12 +220,42 @@ void cmv_model::initialise_model_from_JSON_file(string JSON_model_file_string)
 		circ_slack_volume[i] = sv_array[i].GetDouble();
 	}
 
-	JSON_functions::check_JSON_member_array(comp, "inertance");
-	const rapidjson::Value& in_array = comp["inertance"];
-
-	for (rapidjson::SizeType i = 0; i < sv_array.Size(); i++)
+	// Check for inertance
+	if (JSON_functions::check_JSON_member_exists(comp, "inertance"))
 	{
-		circ_inertance[i] = in_array[i].GetDouble();
+		const rapidjson::Value& in_array = comp["inertance"];
+
+		for (rapidjson::SizeType i = 0; i < in_array.Size(); i++)
+		{
+			circ_inertance[i] = in_array[i].GetDouble();
+		}
+	}
+	else
+	{
+		// Inertance has not been initialized
+		for (rapidjson::SizeType i = 0; i < sv_array.Size(); i++)
+		{
+			circ_inertance[i] = 0.0;
+		}
+	}
+
+	// Check for static
+	if (JSON_functions::check_JSON_member_exists(comp, "static"))
+	{
+		const rapidjson::Value& st_array = comp["static"];
+
+		for (rapidjson::SizeType i = 0; i < st_array.Size(); i++)
+		{
+			circ_static[i] = st_array[i].GetDouble();
+		}
+	}
+	else
+	{
+		// Static pressure has not been initialized
+		for (rapidjson::SizeType i = 0; i < sv_array.Size(); i++)
+		{
+			circ_static[i] = 0.0;
+		}
 	}
 
 	// Load the ventricle object

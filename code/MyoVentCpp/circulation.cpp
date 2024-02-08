@@ -58,6 +58,7 @@ circulation::circulation(cmv_system* set_p_parent_cmv_system = NULL)
 	circ_compliance = (double*)malloc(circ_no_of_compartments * sizeof(double));
 	circ_slack_volume = (double*)malloc(circ_no_of_compartments * sizeof(double));
 	circ_inertance = (double*)malloc(circ_no_of_compartments * sizeof(double));
+	circ_static = (double*)malloc(circ_no_of_compartments * sizeof(double));
 	circ_pressure = (double*)malloc(circ_no_of_compartments * sizeof(double));
 	circ_volume = (double*)malloc(circ_no_of_compartments * sizeof(double));
 	circ_flow = (double*)malloc(circ_no_of_compartments * sizeof(double));
@@ -72,17 +73,8 @@ circulation::circulation(cmv_system* set_p_parent_cmv_system = NULL)
 		circ_compliance[i] = p_cmv_model->circ_compliance[i];
 		circ_slack_volume[i] = p_cmv_model->circ_slack_volume[i];
 		circ_inertance[i] = p_cmv_model->circ_inertance[i];
+		circ_static[i] = p_cmv_model->circ_static[i];
 		circ_pressure[i] = 0.0;
-
-		/*if (i == 1)
-		{
-			circ_volume[i] = 1.5 * circ_slack_volume[i];
-		}
-		else
-		{
-			circ_volume[i] = circ_slack_volume[i];
-		}
-		*/
 		circ_volume[i] = circ_slack_volume[i];
 
 		circ_flow[i] = 0.0;
@@ -163,6 +155,7 @@ circulation::~circulation(void)
 	free(circ_compliance);
 	free(circ_slack_volume);
 	free(circ_inertance);
+	free(circ_static);
 	free(circ_pressure);
 	free(circ_volume);
 	free(circ_flow);
@@ -215,6 +208,12 @@ void circulation::initialise_simulation(void)
 	{
 		string label = string("flow_") + to_string(i);
 		p_cmv_results_beat->add_results_field(label, &circ_flow[i]);
+	}
+
+	for (int i = 0; i < circ_no_of_compartments; i++)
+	{
+		string label = string("static_") + to_string(i);
+		p_cmv_results_beat->add_results_field(label, &circ_static[i]);
 	}
 }
 
@@ -403,7 +402,7 @@ void circulation::calculate_pressures(const double v[], double p[], double time_
 	// Calculate the other pressures
 	for (int i = 1; i < circ_no_of_compartments; i++)
 	{
-		p[i] = (v[i] - circ_slack_volume[i]) / circ_compliance[i];
+		p[i] = ((v[i] - circ_slack_volume[i]) / circ_compliance[i]) + circ_static[i];
 	}
 }
 
@@ -426,16 +425,19 @@ void circulation::calculate_flows(const double v[], double flow[])
 	// These are flows from the aorta through to the veins
 	for (int i = 2; i < circ_no_of_compartments; i++)
 	{
-		p_diff = (circ_pressure[i - 1] - circ_pressure[i]);
+		p_diff = (circ_pressure[i - 1] - circ_static[i-1]) - 
+			(circ_pressure[i] - circ_static[i]);
 		flow[i] = p_diff / circ_resistance[i];
 	}
 
 	// Special case for flow through mitral valve
-	p_diff = circ_pressure[circ_no_of_compartments - 1] - circ_pressure[0];
+	p_diff = (circ_pressure[circ_no_of_compartments - 1] - circ_static[circ_no_of_compartments -1 ]) - 
+				(circ_pressure[0] - circ_static[0]);
 	flow[0] = fabs(p_mv->valve_pos) * p_diff / circ_resistance[0];
 
 	// Special case for flow through aortic valve
-	p_diff = circ_pressure[0] - circ_pressure[1];
+	p_diff = (circ_pressure[0] - circ_static[0]) - 
+				(circ_pressure[1] - circ_static[1]);
 	flow[1] = fabs(p_av->valve_pos) * p_diff / circ_resistance[1];
 }
 
